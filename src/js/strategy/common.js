@@ -11,10 +11,8 @@ export class StrategyCommon {
     }
 
     processBet(numbers, balance, chipSize = 0.1) {
-        let balanceChange = 0;
-
         if (this.betState === waitingForResults) {
-            balanceChange = this.getBetResult(numbers, chipSize);
+            this.getBetResult(numbers, chipSize);
             this.betState = waitingForSignal;
             this.betPlaced = false;
             this.bets = [];
@@ -28,8 +26,6 @@ export class StrategyCommon {
         if (this.betState === waitingForBet) {
             this.placeBets(balance, chipSize);
         }
-
-        return balanceChange;
     }
 
     placeBets(balance, chipSize) {
@@ -48,32 +44,29 @@ export class StrategyCommon {
         }
     }
 
-    registerResult(winLose, balanceChange, numbers, strategyName, chipSize, payoutModifier) {
+    registerResult(winLose, numbers, strategyName, chipSize, payoutModifier) {
         switch (winLose) {
             case winBet:
-                balanceChange = Math.abs(this.bets.length * chipSize) * payoutModifier;
                 console.log('rouletteBot', strategyName, 'won bet');
                 this.results.push({
-                    'status': 'won',
-                    'size': balanceChange,
+                    'status': winBet,
+                    'size': Math.abs(this.bets.length * chipSize) * payoutModifier,
                     'numbers': numbers,
                     'bets': this.bets,
                     'ts': Math.floor(Date.now() / 1000)
                 });
                 break;
             case loseBet:
-                balanceChange = Math.abs(this.bets.length * chipSize) * -1;
                 console.log('rouletteBot', strategyName, 'lost bet');
                 this.results.push({
-                    'status': 'lose',
-                    'size': balanceChange,
+                    'status': loseBet,
+                    'size': Math.abs(this.bets.length * chipSize) * -1,
                     'numbers': numbers,
                     'bets': this.bets,
                     'ts': Math.floor(Date.now() / 1000)
                 });
                 break;
         }
-        return balanceChange;
     }
 
     getBetSignal() {

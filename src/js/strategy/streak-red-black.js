@@ -4,13 +4,13 @@ import {StrategyCommon} from "./common";
 
 
 export class StreakRedBlack extends StrategyCommon {
-    constructor(roulette) {
+    constructor(roulette, streak) {
         super(roulette);
-        this.name = 'streak-red-black';
+        this.streak = streak;
+        this.name = 'streak-' + streak + '-red-black';
     }
 
     getBetResult(numbers, chipSize) {
-        let balanceChange = 0;
         let lastNumber = numbers[0];
 
         if (this.bets.length > 0) {
@@ -24,9 +24,8 @@ export class StreakRedBlack extends StrategyCommon {
                 winLose = (blackNumbers.includes(lastNumber) ? winBet : loseBet);
             }
 
-            balanceChange = this.registerResult(winLose, balanceChange, numbers, this.name, chipSize, 1);
+            this.registerResult(winLose, numbers, this.name, chipSize, 1);
         }
-        return balanceChange;
     }
 
     getBetSignal(numbers) {
@@ -42,13 +41,13 @@ export class StreakRedBlack extends StrategyCommon {
             }
         }
 
-        let subset = result.slice(0, 3).toString();
+        let subset = result.slice(0, this.streak + 1).toString();
 
-        if (subset === "r,r,g" || subset === "r,r,b") {
+        if (subset === "r,".repeat(this.streak) + "g" || subset === "r,".repeat(this.streak) + "b") {
             console.log('rouletteBot', this.name, 'signal found', 'black', numbers);
             this.bets = ['black'];
             return true;
-        } else if (subset === "b,b,g" || subset === "b,b,r") {
+        } else if (subset === "b,".repeat(this.streak) + "g" || subset === "b,".repeat(this.streak) + "r") {
             console.log('rouletteBot', this.name, 'signal found', 'red', numbers);
             this.bets = ['red'];
             return true;

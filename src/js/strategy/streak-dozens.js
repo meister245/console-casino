@@ -4,13 +4,13 @@ import {StrategyCommon} from "./common";
 
 
 export class StreakDozens extends StrategyCommon {
-    constructor(roulette) {
+    constructor(roulette, streak) {
         super(roulette);
-        this.name = 'streak-dozens';
+        this.streak = streak;
+        this.name = 'streak-' + streak + '-dozens';
     }
 
     getBetResult(numbers, chipSize) {
-        let balanceChange = 0;
         let lastNumber = numbers[0];
 
         if (this.bets.length > 0) {
@@ -26,9 +26,8 @@ export class StreakDozens extends StrategyCommon {
                 winLose = (25 <= lastNumber) ? loseBet : winBet;
             }
 
-            balanceChange = this.registerResult(winLose, balanceChange, numbers, this.name, chipSize, 0.5);
+            this.registerResult(winLose, numbers, this.name, chipSize, 0.5);
         }
-        return balanceChange;
     }
 
     getBetSignal(numbers) {
@@ -46,17 +45,17 @@ export class StreakDozens extends StrategyCommon {
             }
         }
 
-        let subset = result.slice(0, 4).toString();
+        let subset = result.slice(0, this.streak + 1).toString();
 
-        if (subset === "1,1,1,0" || subset === "1,1,1,2" || subset === "1,1,1,3") {
+        if (subset === "1,".repeat(this.streak) + "0" || subset === "1,".repeat(this.streak) + "2" || subset === "1,".repeat(this.streak) + "3") {
             console.log('rouletteBot', this.name, 'signal found', 'firstDozen', numbers);
             this.bets = ['secondDozen', 'thirdDozen'];
             return true;
-        } else if (subset === "2,2,2,0" || subset === "2,2,2,1" || subset === "2,2,2,3") {
+        } else if (subset === "2,".repeat(this.streak) + "0" || subset === "2,".repeat(this.streak) + "1" || subset === "2,".repeat(this.streak) + "3") {
             console.log('rouletteBot', this.name, 'signal found', 'secondDozen', numbers);
             this.bets = ['firstDozen', 'thirdDozen'];
             return true;
-        } else if (subset === "3,3,3,0" || subset === "3,3,3,1" || subset === "3,3,3,2") {
+        } else if (subset === "3,".repeat(this.streak) + "0" || subset === "3,".repeat(this.streak) + "1" || subset === "3,".repeat(this.streak) + "2") {
             console.log('rouletteBot', this.name, 'signal found', 'thirdDozen', numbers);
             this.bets = ['firstDozen', 'secondDozen'];
             return true;
