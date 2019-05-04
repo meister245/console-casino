@@ -1,0 +1,26 @@
+{
+  "name": "console-roulette",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/meister245/roulette-bot.git"
+  },
+  "author": "Zsolt Mester",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://gitlab.com/meister245/roulette-bot/issues"
+  },
+  "homepage": "https://gitlab.com/meister245/roulette-bot#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^1.0.4",
+    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-contrib-uglify-es": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
+    "grunt-regex-replace": "^0.4.0"
+  }
+}
