@@ -38,7 +38,7 @@ export class StrategyCommon {
 
             for (let i = 0; i < this.bets.length; i++) {
                 console.log('rouletteBot', 'placing bet', this.bets[i], chipSize);
-                // this.roulette.setBet(this.bets[i]);
+                // this.strategy.setBet(this.bets[i]);
             }
             this.betPlaced = true;
         }
