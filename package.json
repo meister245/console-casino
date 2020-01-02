@@ -1,5 +1,5 @@
 {
-  "name": "console-roulette",
+  "name": "console-casino",
   "version": "1.0.0",
   "description": "",
   "main": "Gruntfile.js",
@@ -8,19 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/meister245/roulette-bot.git"
+    "url": "git+ssh://git@github.com/meister245/console-casino.git"
   },
   "author": "Zsolt Mester",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://gitlab.com/meister245/roulette-bot/issues"
+    "url": "https://github.com/meister245/console-casino/issues"
   },
-  "homepage": "https://gitlab.com/meister245/roulette-bot#readme",
+  "homepage": "https://github.com/meister245/console-casino",
   "dependencies": {},
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
     "grunt": "^1.0.4",
+    "grunt-babel": "^8.0.0",
+    "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-uglify-es": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
-    "grunt-regex-replace": "^0.4.0"
+    "grunt-contrib-uglify": "^4.0.1"
   }
 }
