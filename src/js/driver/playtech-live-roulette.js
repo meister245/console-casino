@@ -1,17 +1,8 @@
-import {simulatedClick, getElementByAttribute} from "../util";
+import {DriverCommon} from "./common";
 
-
-export class PlaytechLiveRoulette {
-    constructor() {
-        this.dataLocatorAttrName = 'data-automation-locator';
-
-        this.chipMapping = {
-            0.10: 'chip_rate-10', 0.25: 'chip_rate-25', 0.50: 'chip_rate-50', 1: 'chip_rate-100',
-            5: 'chip_rate-500', 10: 'chip_rate-1000', 25: 'chip_rate-2500', 100: 'chip_rate-10000',
-            500: 'chip_rate-50000', 1000: 'chip_rate-100000'
-        };
-
-        this.betMapping = {
+export class PlaytechLiveRoulette extends DriverCommon {
+    betMapping() {
+        return {
             'low': 'betPlace.spots50x50-1to18',
             'even': 'betPlace.spots50x50-even',
             'red': 'betPlace.spots50x50-red',
@@ -25,17 +16,27 @@ export class PlaytechLiveRoulette {
             'secondDozen': 'betPlace.dozen-2nd12',
             'thirdDozen': 'betPlace.dozen-3rd12'
         };
+    }
 
-        Object.freeze(this);
+    chipMapping() {
+        return {
+            0.10: 'chip_rate-10', 0.25: 'chip_rate-25', 0.50: 'chip_rate-50', 1: 'chip_rate-100',
+            5: 'chip_rate-500', 10: 'chip_rate-1000', 25: 'chip_rate-2500', 100: 'chip_rate-10000',
+            500: 'chip_rate-50000', 1000: 'chip_rate-100000'
+        };
+    }
+
+    dataLocatorAttrName() {
+        return 'data-automation-locator';
     }
 
     getBalance() {
-        let text = getElementByAttribute(this.dataLocatorAttrName, 'footer.balance').textContent;
+        let text = this.getElementByAttribute(this.dataLocatorAttrName, 'footer.balance').textContent;
         return parseFloat(text.match(/[0-9]+(?:\.[0-9]+)*/g)[0]);
     }
 
     getBetAmount() {
-        let text = getElementByAttribute(this.dataLocatorAttrName, 'footer.betAmount').textContent;
+        let text = this.getElementByAttribute(this.dataLocatorAttrName, 'footer.betAmount').textContent;
         return parseFloat(text.match(/[0-9]+(?:\.[0-9]+)*/g)[0]);
     }
 
@@ -63,32 +64,32 @@ export class PlaytechLiveRoulette {
     }
 
     getWinAmount() {
-        let elem = getElementByAttribute(this.dataLocatorAttrName, 'footer.winAmount');
+        let elem = this.getElementByAttribute(this.dataLocatorAttrName, 'footer.winAmount');
         return parseFloat(elem.textContent.match(/[0-9]+(?:\.[0-9]+)*/g)[0]);
     }
 
     setBet(type) {
-        let elem = getElementByAttribute(this.dataLocatorAttrName, this.betMapping[type]);
-        simulatedClick(elem);
+        let elem = this.getElementByAttribute(this.dataLocatorAttrName, this.betMapping[type]);
+        this.simulatedClick(elem);
     }
 
     setBetDouble() {
         let elem = document.getElementsByClassName('action-button_double')[0];
-        simulatedClick(elem);
+        this.simulatedClick(elem);
     }
 
     setBetUndo() {
         let elem = document.getElementsByClassName('action-button_undo')[0];
-        simulatedClick(elem);
+        this.simulatedClick(elem);
     }
 
     setChipSize(size) {
         let elem = document.getElementsByClassName(this.chipMapping[size])[0];
-        simulatedClick(elem);
+        this.simulatedClick(elem);
     }
 
     viewStatistics() {
-        let elem = getElementByAttribute(this.dataLocatorAttrName, 'button.statistic');
-        simulatedClick(elem);
+        let elem = this.getElementByAttribute(this.dataLocatorAttrName, 'button.statistic');
+        this.simulatedClick(elem);
     }
 }
