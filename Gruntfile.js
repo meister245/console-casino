@@ -1,43 +1,44 @@
 module.exports = function (grunt) {
-    grunt.loadNpmTasks('grunt-contrib-uglify-es');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-regex-replace');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-babel');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['@babel/preset-env']
+            },
+            dist: {
+                files: [{
+                    "expand": true,
+                    "cwd": "src",
+                    "src": ["**/*.js"],
+                    "dest": "build/",
+                    "ext": "-compiled.js"
+                }]
+            },
+        },
         uglify: {
             dist: {
-                files: {
-                    'dist/roulette-bot.min.js': ['src/**/*.js']
-                }
+                options: {
+                    sourceMap: true,
+                    sourceMapName: 'build/sourceMap.map'
+                },
+                src: 'build/**/*.js',
+                dest: 'dist/console-casino.min.js'
             }
         },
-
         jshint: {
             dist: ['src/**/*.js'],
             options: {
-              'esversion': 8,
+                'esversion': 8,
             },
-        },
-
-        "regex-replace": {
-            dist: {
-                src: ['dist/roulette-bot.min.js'],
-                actions: [
-                    {
-                        name: 'remove export',
-                        search: 'export\\s',
-                        replace: '',
-                        flags: 'gm'
-                    },{
-                        name: 'remove import',
-                        search: 'import\\{(?:(?:,)*[aA-zZ]{1,})*\\}from"(?:\\.{1,}(?:\\/)?)*(?:[aA-zZ-](?:\\/)?)*";',
-                        replace: '',
-                        flags: 'gm'
-                    }
-                ]
-            }
         }
     });
-    grunt.registerTask('default', ['uglify', 'jshint', 'regex-replace'])
+
+    grunt.registerTask('default', ['jshint', 'babel', 'uglify'])
 };
