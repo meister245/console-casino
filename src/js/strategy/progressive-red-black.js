@@ -1,18 +1,16 @@
 import {StrategyCommon} from "./common";
 
 export class ProgressiveRedBlack extends StrategyCommon {
-    constructor() {
-        super();
+    constructor(driver, bagSize, options) {
+        super(driver);
+        this.bagSize = bagSize;
+        this.options = options || {};
     }
 
-    runStrategy(driver, bagSize) {
-        let balance = driver.getBalance();
-        let numbers = driver.getLastNumbers();
-        let dealerMessage = driver.getDealerMessage().toLowerCase();
-
-        console.log(balance);
-        console.log(numbers);
-        console.log(dealerMessage);
+    runStrategy() {
+        let balance = this.driver.getBalance();
+        let numbers = this.driver.getLastNumbers();
+        let dealerMessage = this.driver.getDealerMessage().toLowerCase();
 
     }
 }

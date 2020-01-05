@@ -1,13 +1,12 @@
 import {waitingForResults, waitingForSignal, waitingForBet, winBet, loseBet} from "../constants";
 
 export class StrategyCommon {
-    constructor(roulette) {
-        this.bets = [];
-        this.results = [];
-        this.betState = waitingForSignal;
+    constructor(driver) {
         this.betPlaced = false;
+        this.betState = waitingForSignal;
 
-        this.roulette = roulette;
+        this.results = {};
+        this.driver = driver;
     }
 
     processBet(numbers, balance, chipSize = 0.1) {
@@ -30,7 +29,7 @@ export class StrategyCommon {
 
     placeBets(balance, chipSize) {
         if (this.bets.length > 0 && !(this.betPlaced)) {
-            this.roulette.setChipSize(chipSize);
+            this.driver.setChipSize(chipSize);
 
             if (this.bets.length * chipSize >= balance) {
                 throw Error('not enough balance');
