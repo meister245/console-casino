@@ -16,6 +16,10 @@ export class DriverCommon {
         throw new Error('abstract method');
     }
 
+    getExtendedHistory() {
+        throw new Error('abstract method');
+    }
+
     getLastNumber() {
         throw new Error('abstract method');
     }
@@ -45,6 +49,10 @@ export class DriverCommon {
     }
 
     viewStatistics() {
+        throw new Error('abstract method');
+    }
+
+    viewExtendedHistory() {
         throw new Error('abstract method');
     }
 

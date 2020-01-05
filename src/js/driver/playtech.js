@@ -1,9 +1,10 @@
 import {DriverCommon} from "./common";
 
-export class PlaytechLiveRoulette extends DriverCommon {
+export class Playtech extends DriverCommon {
     constructor() {
         super();
-        this.betMapping = {
+        this.dataLocatorAttrName = 'data-automation-locator';
+        this.rouletteBetMapping = {
             'low': 'betPlace.spots50x50-1to18',
             'even': 'betPlace.spots50x50-even',
             'red': 'betPlace.spots50x50-red',
@@ -22,7 +23,6 @@ export class PlaytechLiveRoulette extends DriverCommon {
             5: 'chip_rate-500', 10: 'chip_rate-1000', 25: 'chip_rate-2500', 100: 'chip_rate-10000',
             500: 'chip_rate-50000', 1000: 'chip_rate-100000'
         };
-        this.dataLocatorAttrName = 'data-automation-locator';
     }
 
     getBalance() {
@@ -75,7 +75,7 @@ export class PlaytechLiveRoulette extends DriverCommon {
     }
 
     setBet(type) {
-        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, this.betMapping[type]));
+        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, this.rouletteBetMapping[type]));
     }
 
     setBetDouble() {
