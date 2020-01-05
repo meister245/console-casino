@@ -1,42 +1,63 @@
+import {Playtech} from "../driver/playtech";
+
 export class ConsoleBot {
     constructor() {
         this.tasks = {};
     }
 
-    runTask() {
+    start() {
         throw new Error('abstract method');
     }
 
-    isActiveTask(taskID) {
-        return this.getTask(taskID).active;
-    }
-
-    stopTask(taskID) {
+    stop(taskID) {
         let task = this.getTask(taskID);
         task.active = false;
-        this.updateTask(taskID, task);
+        this.tasks[taskID] = task;
 
         console.log('stopped taskID:' + taskID);
     }
 
-    getDriver() {
-        throw new Error('abstract method');
+    createTask(taskID, gameType, strategyName, bagSize) {
+        if (taskID in this.tasks) {
+            throw new Error('existing task ID: ' + taskID);
+        }
+
+        this.tasks[taskID] = {
+            active: true,
+            createTime: Math.floor(Date.now() / 1000),
+            game: gameType,
+            bagSize: bagSize,
+            strategy: strategyName,
+            results: {}
+        };
+
+        console.log('created task ID: ' + taskID);
     }
 
     getTask(taskID) {
-        return this.tasks[taskID];
+        if (taskID in this.tasks) {
+            return this.tasks[taskID];
+        }
+
+        throw new Error('invalid task ID: ' + taskID);
     }
 
-    getTasks() {
-        return this.tasks;
+    getDriver(driverName) {
+        if (driverName === 'playtech') {
+            return new Playtech();
+        }
+
+        throw new Error('driver not found: ' + driverName);
     }
 
     generateTaskID() {
         return Math.random().toString(36).substr(2, 9);
     }
 
-    updateTask(taskID, data) {
-        this.tasks[taskID] = data;
+    updateTaskResults(taskID, results = {}) {
+        let task = this.getTask(taskID);
+        task.results = results;
+        this.tasks[taskID] = task;
     }
 
     getRunningTime(createTime) {
