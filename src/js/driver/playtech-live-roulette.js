@@ -1,8 +1,9 @@
 import {DriverCommon} from "./common";
 
 export class PlaytechLiveRoulette extends DriverCommon {
-    betMapping() {
-        return {
+    constructor() {
+        super();
+        this.betMapping = {
             'low': 'betPlace.spots50x50-1to18',
             'even': 'betPlace.spots50x50-even',
             'red': 'betPlace.spots50x50-red',
@@ -16,18 +17,12 @@ export class PlaytechLiveRoulette extends DriverCommon {
             'secondDozen': 'betPlace.dozen-2nd12',
             'thirdDozen': 'betPlace.dozen-3rd12'
         };
-    }
-
-    chipMapping() {
-        return {
+        this.chipMapping = {
             0.10: 'chip_rate-10', 0.25: 'chip_rate-25', 0.50: 'chip_rate-50', 1: 'chip_rate-100',
             5: 'chip_rate-500', 10: 'chip_rate-1000', 25: 'chip_rate-2500', 100: 'chip_rate-10000',
             500: 'chip_rate-50000', 1000: 'chip_rate-100000'
         };
-    }
-
-    dataLocatorAttrName() {
-        return 'data-automation-locator';
+        this.dataLocatorAttrName = 'data-automation-locator';
     }
 
     getBalance() {
@@ -46,6 +41,17 @@ export class PlaytechLiveRoulette extends DriverCommon {
 
     getDealerName() {
         return document.getElementsByClassName('header__dealer-name')[0].textContent;
+    }
+
+    getExtendedHistory() {
+        let numbers = [];
+        let elements = document.getElementsByClassName('roulette-history-items')[0].innerText.split('\n');
+
+        for (let i in elements) {
+            numbers.push(parseInt(elements[i]))
+        }
+
+        return numbers;
     }
 
     getLastNumber() {
@@ -69,27 +75,26 @@ export class PlaytechLiveRoulette extends DriverCommon {
     }
 
     setBet(type) {
-        let elem = this.getElementByAttribute(this.dataLocatorAttrName, this.betMapping[type]);
-        this.simulatedClick(elem);
+        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, this.betMapping[type]));
     }
 
     setBetDouble() {
-        let elem = document.getElementsByClassName('action-button_double')[0];
-        this.simulatedClick(elem);
+        this.simulatedClick(document.getElementsByClassName('action-button_double')[0]);
     }
 
     setBetUndo() {
-        let elem = document.getElementsByClassName('action-button_undo')[0];
-        this.simulatedClick(elem);
+        this.simulatedClick(document.getElementsByClassName('action-button_undo')[0]);
     }
 
     setChipSize(size) {
-        let elem = document.getElementsByClassName(this.chipMapping[size])[0];
-        this.simulatedClick(elem);
+        this.simulatedClick(document.getElementsByClassName(this.chipMapping[size])[0]);
+    }
+
+    viewExtendedHistory() {
+        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, 'button.extenededHistory'));
     }
 
     viewStatistics() {
-        let elem = this.getElementByAttribute(this.dataLocatorAttrName, 'button.statistic');
-        this.simulatedClick(elem);
+        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, 'button.statistic'));
     }
 }
