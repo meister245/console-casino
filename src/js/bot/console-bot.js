@@ -60,6 +60,23 @@ export class ConsoleBot {
         this.tasks[taskID] = task;
     }
 
+    getOptions(options) {
+        options = options || {};
+
+        let opts = {
+            dryRun: false,
+            chipSize: 0.20
+        };
+
+        for (let key in opts) {
+            if (options.hasOwnProperty(key)) {
+                opts[key] = options[key];
+            }
+        }
+
+        return opts
+    }
+
     getRunningTime(createTime) {
         let timeDiff = Math.floor(Date.now() / 1000) - createTime;
         return Math.round(timeDiff / 60 / 60).toFixed(1) + ' hours';
