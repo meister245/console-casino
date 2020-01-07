@@ -55,15 +55,15 @@ export class Playtech extends DriverCommon {
     }
 
     getLastNumber() {
-        return this.getLastNumbers()[0];
+        return parseInt(this.getElementByAttribute(this.dataLocatorAttrName, 'field.lastHistoryItem').textContent);
     }
 
     getLastNumbers() {
         let numbers = [];
-        let elements = document.getElementsByClassName('roulette-history-line-item');
+        let elements = document.getElementsByClassName('roulette-history-line')[0].innerText.split('\n');
 
-        for (let i = 0; i < elements.length; i++) {
-            numbers.push(parseInt(elements[i].textContent));
+        for (let i in elements) {
+            numbers.push(parseInt(elements[i]));
         }
 
         return numbers;
