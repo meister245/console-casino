@@ -26,10 +26,13 @@ export class ProgressiveRedBlack extends StrategyCommon {
     runStrategy() {
         if (this.gameState.stage === stageSpin) {
             this.runStageSpin();
+
         } else if (this.gameState.stage === stageBet) {
             this.runStageBet();
+
         } else if (this.gameState.stage === stageResults) {
             this.runStageResult();
+
         } else if (this.gameState.stage === stageWait) {
             this.runStageWait();
         }
@@ -49,13 +52,13 @@ export class ProgressiveRedBlack extends StrategyCommon {
         let betMapping = null;
         let dryRun = true;
         let chipSize = 0.2;
+        let msg = [this.taskID, 'stage', 'bet'];
+        let totalBet = this.gameState.betMultiplier * chipSize;
 
         let lastNumber = this.driver.getLastNumber();
         let dealerMessage = this.driver.getDealerMessage().toLowerCase();
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
-            console.log(this.taskID, 'stage', 'bet');
-
             if (rouletteRedNumbers.includes(lastNumber)) {
                 betName = 'red';
                 betMapping = this.driver.rouletteBetMapping.red;
@@ -65,12 +68,12 @@ export class ProgressiveRedBlack extends StrategyCommon {
                 betMapping = this.driver.rouletteBetMapping.black;
             }
 
-            console.log(this.taskID, 'lastNumber', lastNumber);
+            msg.push('lastNumber', lastNumber);
 
             if (betName === null) {
                 this.gameState.bet = {'null': 0};
 
-            } else if (this.gameState.bagSizeCurrent < this.gameState.betMultiplier * chipSize) {
+            } else if (this.gameState.bagSizeCurrent < totalBet) {
                 throw new Error('out of money');
 
             } else if (Object.keys(this.gameState.bet).length === 0) {
@@ -82,13 +85,14 @@ export class ProgressiveRedBlack extends StrategyCommon {
                     this.gameState.bagSizeCurrent -= chipSize;
                 }
 
-                console.log(this.taskID, 'bet', betName, this.gameState.betMultiplier * chipSize);
-                console.log(this.taskID, 'bagsize', this.gameState.bagSizeCurrent);
+                msg.push('bet', betName, totalBet.toFixed(2));
 
-                this.gameState.bet[betName] = this.gameState.betMultiplier * chipSize;
+                this.gameState.bet[betName] = totalBet;
             }
 
             this.gameState.stage = stageWait;
+
+            console.log(msg.join(' '));
         }
     }
 
@@ -103,33 +107,32 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
     runStageResult() {
         let resultName = null;
+        let msg = [this.taskID, 'stage', 'result'];
         let lastNumber = this.driver.getLastNumber();
         let dealerMessage = this.driver.getDealerMessage().toLowerCase();
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
-            console.log(this.taskID, 'stage', 'result');
-
             if (rouletteBlackNumbers.includes(lastNumber)) {
                 resultName = 'black';
+
             } else if (rouletteRedNumbers.includes(lastNumber)) {
                 resultName = 'red';
             }
 
-            console.log(this.taskID, 'lastNumber', lastNumber);
-
             if (this.gameState.bet.hasOwnProperty('null')) {
+                msg.push('N/A');
+
                 this.gameState.bet = {};
 
             } else if (this.gameState.bet.hasOwnProperty(resultName)) {
-                console.log(this.taskID, 'result', 'win');
+                msg.push('win');
+
                 this.gameState.bagSizeCurrent += this.gameState.bet[resultName] * 2;
 
                 if (this.gameState.bagSizeCurrent > this.gameState.bagSize) {
                     this.results.profit += this.gameState.bagSizeCurrent - this.gameState.bagSize;
                     this.gameState.bagSizeCurrent = this.gameState.bagSize.valueOf();
                     this.gameState.betMultiplier = 1;
-
-                    console.log(this.taskID, 'profit', this.results.profit);
                 }
 
                 this.results.gameWin += 1;
@@ -137,14 +140,19 @@ export class ProgressiveRedBlack extends StrategyCommon {
                 this.gameState.betMultiplier -= (this.gameState.betMultiplier === 1) ? 0 : 1;
 
             } else if (Object.keys(this.gameState.bet).length > 0) {
-                console.log(this.taskID, 'result', 'lose');
+                msg.push('lose');
+
                 this.results.gameLost += 1;
                 this.gameState.bet = {};
-                this.gameState.betMultiplier += 1;
+                this.gameState.betMultiplier += (this.gameState.betMultiplier === 5) ? 0 : 1;
             }
 
-            console.log(this.taskID, 'bagsize', this.gameState.bagSizeCurrent);
+            msg.push('bagsize', this.gameState.bagSizeCurrent.toFixed(2));
+            msg.push('profit', this.results.profit.toFixed(2));
+
             this.gameState.stage = stageBet;
+
+            console.log(msg.join(' '));
         }
     }
 }
