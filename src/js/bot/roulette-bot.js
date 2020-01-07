@@ -15,22 +15,26 @@ class RouletteBot extends ConsoleBot {
         }
 
         let taskID = await this.generateTaskID();
-        let strategy = await this.getStrategy(this.driver, strategyName, bagSize, options);
+        let strategy = await this.getStrategy(this.driver, taskID, strategyName, bagSize, options);
 
         await this.createTask(taskID, 'roulette', strategyName, Object.assign({}, strategy.results));
 
         while (this.getTask(taskID).active) {
-            console.log('running task ID: ' + taskID);
+            try {
+                await strategy.runStrategy();
+                await this.updateTaskResults(taskID, Object.assign({}, strategy.results));
+                await this.sleep(1500);
 
-            await strategy.runStrategy();
-            await this.updateTaskResults(taskID, Object.assign({}, strategy.results));
-            await this.sleep(3000);
+            } catch (e) {
+                await this.stop(taskID);
+                console.log(e);
+            }
         }
     }
 
-    getStrategy(driver, strategyName, bagSize, options) {
+    getStrategy(driver, taskID, strategyName, bagSize, options) {
         if (strategyName === 'progressive-red-black') {
-            return new ProgressiveRedBlack(driver, bagSize, options);
+            return new ProgressiveRedBlack(driver, taskID, bagSize, options);
         }
 
         throw new Error('strategy not found: ' + strategyName);

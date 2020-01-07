@@ -14,7 +14,7 @@ export class ConsoleBot {
         task.active = false;
         this.tasks[taskID] = task;
 
-        console.log('stopped taskID:' + taskID);
+        console.log('stopped', 'taskID', taskID);
     }
 
     createTask(taskID, gameType, strategyName, bagSize) {
@@ -31,7 +31,7 @@ export class ConsoleBot {
             results: {}
         };
 
-        console.log('created task ID: ' + taskID);
+        console.log('created', 'taskID', taskID);
     }
 
     getTask(taskID) {
@@ -39,7 +39,7 @@ export class ConsoleBot {
             return this.tasks[taskID];
         }
 
-        throw new Error('invalid task ID: ' + taskID);
+        throw new Error('invalid taskID: ' + taskID);
     }
 
     getDriver(driverName) {
