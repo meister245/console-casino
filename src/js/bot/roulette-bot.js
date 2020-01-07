@@ -2,12 +2,12 @@ import {ConsoleBot} from "./console-bot";
 import {ProgressiveRedBlack} from "../strategy/progressive-red-black";
 
 class RouletteBot extends ConsoleBot {
-    constructor(driverName) {
+    constructor(driverName = '') {
         super();
         this.driver = this.getDriver(driverName);
     }
 
-    async start(strategyName, bagSize, options) {
+    async start(strategyName = '', bagSize = 0, options = {}) {
         options = await this.getOptions(options);
 
         if (!(options.dryRun) && bagSize > await this.driver.getBalance()) {
