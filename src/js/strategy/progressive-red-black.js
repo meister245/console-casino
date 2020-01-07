@@ -24,39 +24,38 @@ export class ProgressiveRedBlack extends StrategyCommon {
     }
 
     runStrategy() {
+        let lastNumber = this.driver.getLastNumber();
+        let dealerMessage = this.driver.getDealerMessage().toLowerCase();
+
         if (this.gameState.stage === stageSpin) {
-            this.runStageSpin();
+            this.runStageSpin(dealerMessage);
 
         } else if (this.gameState.stage === stageBet) {
-            this.runStageBet();
-
-        } else if (this.gameState.stage === stageResults) {
-            this.runStageResult();
+            this.runStageBet(dealerMessage, lastNumber);
 
         } else if (this.gameState.stage === stageWait) {
-            this.runStageWait();
+            this.runStageWait(dealerMessage);
+
+        } else if (this.gameState.stage === stageResults) {
+            this.runStageResult(dealerMessage, lastNumber);
+
         }
     }
 
-    runStageSpin() {
-        let dealerMessage = this.driver.getDealerMessage().toLowerCase();
-
+    runStageSpin(dealerMessage) {
         if (dealerMessage === 'wait for the next round') {
             console.log(this.taskID, 'stage', 'spin');
             this.gameState.stage = stageBet;
         }
     }
 
-    runStageBet() {
+    runStageBet(dealerMessage, lastNumber) {
         let betName = null;
         let betMapping = null;
         let dryRun = true;
         let chipSize = 0.2;
         let msg = [this.taskID, 'stage', 'bet'];
         let totalBet = this.gameState.betMultiplier * chipSize;
-
-        let lastNumber = this.driver.getLastNumber();
-        let dealerMessage = this.driver.getDealerMessage().toLowerCase();
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
             if (rouletteRedNumbers.includes(lastNumber)) {
@@ -96,20 +95,16 @@ export class ProgressiveRedBlack extends StrategyCommon {
         }
     }
 
-    runStageWait() {
-        let dealerMessage = this.driver.getDealerMessage().toLowerCase();
-
+    runStageWait(dealerMessage) {
         if (dealerMessage === 'wait for the next round') {
             console.log(this.taskID, 'stage', 'wait');
             this.gameState.stage = stageResults;
         }
     }
 
-    runStageResult() {
+    runStageResult(dealerMessage, lastNumber) {
         let resultName = null;
         let msg = [this.taskID, 'stage', 'result'];
-        let lastNumber = this.driver.getLastNumber();
-        let dealerMessage = this.driver.getDealerMessage().toLowerCase();
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
             if (rouletteBlackNumbers.includes(lastNumber)) {
@@ -144,7 +139,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
                 this.results.gameLost += 1;
                 this.gameState.bet = {};
-                this.gameState.betMultiplier += (this.gameState.betMultiplier === 5) ? 0 : 1;
+                this.gameState.betMultiplier += 1;
             }
 
             msg.push('bagsize', this.gameState.bagSizeCurrent.toFixed(2));
