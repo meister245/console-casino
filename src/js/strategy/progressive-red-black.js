@@ -82,7 +82,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
                     this.gameState.bagSizeCurrent -= chipSize;
                 }
 
-                console.log(this.taskID, 'bet', betName, 'size', this.gameState.betMultiplier * chipSize);
+                console.log(this.taskID, 'bet', betName, this.gameState.betMultiplier * chipSize);
                 console.log(this.taskID, 'bagsize', this.gameState.bagSizeCurrent);
 
                 this.gameState.bet[betName] = this.gameState.betMultiplier * chipSize;
@@ -127,18 +127,20 @@ export class ProgressiveRedBlack extends StrategyCommon {
                 if (this.gameState.bagSizeCurrent > this.gameState.bagSize) {
                     this.results.profit += this.gameState.bagSizeCurrent - this.gameState.bagSize;
                     this.gameState.bagSizeCurrent = this.gameState.bagSize.valueOf();
+                    this.gameState.betMultiplier = 1;
+
                     console.log(this.taskID, 'profit', this.results.profit);
                 }
 
                 this.results.gameWin += 1;
-                this.gameState.betMultiplier = 1;
                 this.gameState.bet = {};
+                this.gameState.betMultiplier -= (this.gameState.betMultiplier === 1) ? 0 : 1;
 
             } else if (Object.keys(this.gameState.bet).length > 0) {
                 console.log(this.taskID, 'result', 'lose');
                 this.results.gameLost += 1;
-                this.gameState.betMultiplier *= 2;
                 this.gameState.bet = {};
+                this.gameState.betMultiplier += 1;
             }
 
             console.log(this.taskID, 'bagsize', this.gameState.bagSizeCurrent);
