@@ -6,7 +6,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
         super();
         this.driver = driver;
         this.taskID = taskID;
-        this.options = options || {};
+        this.options = options;
 
         this.results = {
             gameWin: 0,
@@ -52,10 +52,8 @@ export class ProgressiveRedBlack extends StrategyCommon {
     runStageBet(dealerMessage, lastNumber) {
         let betName = null;
         let betMapping = null;
-        let dryRun = true;
-        let chipSize = 0.2;
         let msg = [this.taskID, 'stage', 'bet'];
-        let totalBet = this.gameState.betMultiplier * chipSize;
+        let totalBet = this.gameState.betMultiplier * this.options.chipSize;
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
             if (rouletteRedNumbers.includes(lastNumber)) {
@@ -77,20 +75,19 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
             } else if (Object.keys(this.gameState.bet).length === 0) {
                 for (let i = 1; i <= this.gameState.betMultiplier; i++) {
-                    if (!dryRun) {
-                        this.driver.setChipSize(chipSize);
+                    if (!this.options.dryRun) {
+                        this.driver.setChipSize(this.options.chipSize);
                         this.driver.setBet(betMapping);
                     }
-                    this.gameState.bagSizeCurrent -= chipSize;
+
+                    this.gameState.bagSizeCurrent -= this.options.chipSize;
                 }
 
-                msg.push('bet', betName, totalBet.toFixed(2));
-
                 this.gameState.bet[betName] = totalBet;
+                msg.push('bet', betName, totalBet.toFixed(2));
             }
 
             this.gameState.stage = stageWait;
-
             console.log(msg.join(' '));
         }
     }

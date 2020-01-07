@@ -3,11 +3,11 @@ export class StrategyCommon {
         throw new Error('abstract method')
     }
 
-    runStageBet() {
+    runStageSpin() {
         throw new Error('abstract method');
     }
 
-    runStageResult() {
+    runStageBet() {
         throw new Error('abstract method');
     }
 
@@ -15,7 +15,7 @@ export class StrategyCommon {
         throw new Error('abstract method');
     }
 
-    runStageSpin() {
+    runStageResult() {
         throw new Error('abstract method');
     }
 }

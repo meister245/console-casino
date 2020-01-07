@@ -8,9 +8,9 @@ class RouletteBot extends ConsoleBot {
     }
 
     async start(strategyName, bagSize, options) {
-        let balance = this.driver.getBalance();
+        options = await this.getOptions(options);
 
-        if (bagSize > balance) {
+        if (!(options.dryRun) && bagSize > await this.driver.getBalance()) {
             throw new Error('balance too low')
         }
 
