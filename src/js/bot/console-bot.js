@@ -77,11 +77,6 @@ export class ConsoleBot {
         return opts
     }
 
-    getRunningTime(createTime) {
-        let timeDiff = Math.floor(Date.now() / 1000) - createTime;
-        return Math.round(timeDiff / 60 / 60).toFixed(1) + ' hours';
-    }
-
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }

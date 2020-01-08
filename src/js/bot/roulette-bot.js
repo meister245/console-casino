@@ -7,7 +7,7 @@ class RouletteBot extends ConsoleBot {
         this.driver = this.getDriver(driverName);
     }
 
-    async start(strategyName = '', bagSize = 0, options = {}) {
+    async start(strategyName, bagSize = 5.0, options = {}) {
         options = await this.getOptions(options);
 
         if (!(options.dryRun) && bagSize > await this.driver.getBalance()) {
@@ -15,7 +15,7 @@ class RouletteBot extends ConsoleBot {
         }
 
         let taskID = await this.generateTaskID();
-        let strategy = await this.getStrategy(this.driver, taskID, strategyName, bagSize, options);
+        let strategy = await this.getStrategy(taskID, strategyName, bagSize, options);
 
         await this.createTask(taskID, 'roulette', strategyName, Object.assign({}, strategy.results));
 
@@ -32,9 +32,27 @@ class RouletteBot extends ConsoleBot {
         }
     }
 
-    getStrategy(driver, taskID, strategyName, bagSize, options) {
+    async backtest(strategyName, bagSize = 5.0, options = {}) {
+        let numbers;
+        let strategy;
+
+        options = await this.getOptions(options);
+        options.dryRun = true;
+
+        try {
+            numbers = await this.driver.getExtendedHistory();
+        } catch (e) {
+            await this.driver.viewExtendedHistory();
+            numbers = await this.driver.getExtendedHistory();
+        } finally {
+            strategy = await this.getStrategy('backtest', strategyName, bagSize, options);
+            await strategy.runBacktest(numbers);
+        }
+    }
+
+    getStrategy(taskID, strategyName, bagSize, options) {
         if (strategyName === 'progressive-red-black') {
-            return new ProgressiveRedBlack(driver, taskID, bagSize, options);
+            return new ProgressiveRedBlack(this.driver, taskID, bagSize, this.getOptions(options));
         }
 
         throw new Error('strategy not found: ' + strategyName);
