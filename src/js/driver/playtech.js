@@ -51,7 +51,7 @@ export class Playtech extends DriverCommon {
             numbers.push(parseInt(elements[i]))
         }
 
-        return numbers;
+        return numbers.reverse();
     }
 
     getLastNumber() {
