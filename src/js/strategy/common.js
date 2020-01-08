@@ -18,4 +18,8 @@ export class StrategyCommon {
     runStageResult() {
         throw new Error('abstract method');
     }
+
+    runBacktest() {
+        throw new Error('abstract method');
+    }
 }

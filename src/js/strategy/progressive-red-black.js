@@ -16,6 +16,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
         this.gameState = {
             bet: {},
+            betNumber: 1,
             betMultiplier: 1,
             bagSize: bagSize.valueOf(),
             bagSizeCurrent: bagSize.valueOf(),
@@ -42,9 +43,18 @@ export class ProgressiveRedBlack extends StrategyCommon {
         }
     }
 
+    runBacktest(numbers) {
+        for (let i = 1; i < numbers.length; i++) {
+            this.gameState.stage = stageBet;
+            this.runStageBet('place your bets', numbers[i - 1]);
+            this.gameState.stage = stageResults;
+            this.runStageResult('place your bets', numbers[i]);
+        }
+    }
+
     runStageSpin(dealerMessage) {
         if (dealerMessage === 'wait for the next round') {
-            console.log(this.taskID, 'stage', 'spin');
+            console.log(this.taskID, this.gameState.betNumber, 'stage', 'spin');
             this.gameState.stage = stageBet;
         }
     }
@@ -52,7 +62,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
     runStageBet(dealerMessage, lastNumber) {
         let betName = null;
         let betMapping = null;
-        let msg = [this.taskID, 'stage', 'bet'];
+        let msg = [this.taskID, this.gameState.betNumber, 'stage', 'bet'];
         let totalBet = this.gameState.betMultiplier * this.options.chipSize;
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
@@ -87,21 +97,22 @@ export class ProgressiveRedBlack extends StrategyCommon {
                 msg.push('bet', betName, totalBet.toFixed(2));
             }
 
-            this.gameState.stage = stageWait;
             console.log(msg.join(' '));
+
+            this.gameState.stage = stageWait;
         }
     }
 
     runStageWait(dealerMessage) {
         if (dealerMessage === 'wait for the next round') {
-            console.log(this.taskID, 'stage', 'wait');
+            console.log(this.taskID, this.gameState.betNumber, 'stage', 'wait');
             this.gameState.stage = stageResults;
         }
     }
 
     runStageResult(dealerMessage, lastNumber) {
         let resultName = null;
-        let msg = [this.taskID, 'stage', 'result'];
+        let msg = [this.taskID, this.gameState.betNumber, 'stage', 'result'];
 
         if (dealerMessage === 'place your bets' || dealerMessage === 'last bets') {
             if (rouletteBlackNumbers.includes(lastNumber)) {
@@ -142,9 +153,10 @@ export class ProgressiveRedBlack extends StrategyCommon {
             msg.push('bagsize', this.gameState.bagSizeCurrent.toFixed(2));
             msg.push('profit', this.results.profit.toFixed(2));
 
-            this.gameState.stage = stageBet;
-
             console.log(msg.join(' '));
+
+            this.gameState.stage = stageBet;
+            this.gameState.betNumber += 1;
         }
     }
 }
