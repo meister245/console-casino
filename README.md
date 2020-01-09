@@ -1,7 +1,8 @@
 console-casino
 --------------
 
-Casino gambling bot for automating online casino games using state machines in the browser console
+Casino gambling bot for backtesting and automating online casino games
+using state machines in the browser developer console
 
 #### Disclaimer
 
@@ -13,36 +14,67 @@ Casino gambling bot for automating online casino games using state machines in t
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 
-#### Requirements
+#### Description & Usage
+
+**Requirements**
 
 - Modern web browser supporting ES7+
-- Tested using Google Chrome (79.0.x)
+- Personal account on online casino website that provides
+- Tested using Google Chrome Developer Tools Console (79.0.x)
 
-#### Usage
+**Loading Script**
 
-1. Navigate browser to casino game window
-2. Open Chrome Developer Tools or equivalent
-3. Load script into document
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
 
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
+    fetch('https://raw.githubusercontent.com/meister245/console-casino/master/dist/console-casino.min.js')
+        .then(response => response.text())
+        .then(text => script.textContent = text)
 
-        fetch('https://raw.githubusercontent.com/meister245/console-casino/master/dist/console-casino.min.js')
-            .then(response => response.text())
-            .then(text => script.textContent = text)
+    document.body.appendChild(script);
 
-        document.body.appendChild(script);
+**Drivers & Strategies**
 
-4. Instantiate bot instance, specify driver name
+The casino bots use a driver for each different game provider in order to interact with the
+game window.
 
-        var driverName = 'playtech'; // casino game vendor driver name
+    // list of drivers
+    ConsoleCasino.getDrivers();
 
-        const r = new RouletteBot(driverName);
+Each casino game type has a list of available supported strategies.
 
-5. Start betting task
+    // list of strategies
+    ConsoleCasino.getStrategies();
 
-        var bagSize = 30.0; // reserve amount for task from total balance
-        var strategyName = 'progressive-red-black'; // strategy name
-        var options = {dryRun: false, chipSize: 0.20}; // simulation only, bet unit size
+**Parameters**
 
-        r.start(strategyName, bagSize, options);
+- `driverName` - string, driver name
+- `strategyName` - string, strategy name
+- `bagSize` - number, reserve money amount from total balance for strategy
+- `dryRun` - boolean, simulation or live run
+- `chipSize` - number, base bet amount for strategies
+
+**Demo**
+
+    // instantiate script
+    var driverName = 'playtech'; 
+    const casino = new ConsoleCasino(driverName);
+
+    // strategy parameters
+    var strategyName = 'progressive-red-black';
+    var bagSize = 5.0;
+    var options = {dryRun: false, chipSize: 0.2}
+
+    // run roulette strategy
+    casino.roulette.start(strategyName, bagSize, options);
+
+    // run backtest for roulette strategy
+    casino.roulette.backtest(strategyName, bagSize, options);
+
+    // get submitted tasks
+    casino.roulette.getTasks();
+
+**Supported Casinos**
+
+- Any casino using Playtech gaming software
+- Tested on [Betfair](https://www.betfair.com/) Live Casino
