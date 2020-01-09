@@ -72,7 +72,7 @@ Each casino game type has a list of available supported strategies.
     casino.roulette.backtest(strategyName, bagSize, options);
 
     // get submitted tasks
-    casino.roulette.getTasks();
+    casino.roulette.tasks;
 
 **Supported Casinos**
 
