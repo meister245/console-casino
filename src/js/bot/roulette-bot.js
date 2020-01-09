@@ -1,10 +1,11 @@
 import {CommonBot} from "./common";
+import {ConsoleCasino} from "../console-casino";
 import {ProgressiveRedBlack} from "../strategy/progressive-red-black";
 
 export class RouletteBot extends CommonBot {
-    constructor(driverName) {
+    constructor(driver) {
         super();
-        this.driver = this.getDriver(driverName);
+        this.driver = driver;
     }
 
     async start(strategyName, bagSize = 5.0, options = {}) {
@@ -17,7 +18,7 @@ export class RouletteBot extends CommonBot {
         let taskID = await this.generateTaskID();
         let strategy = await this.getStrategy(taskID, strategyName, bagSize, options);
 
-        await this.createTask(taskID, 'roulette', strategyName, Object.assign({}, strategy.results));
+        await this.createTask(taskID, strategyName, Object.assign({}, strategy.results));
 
         while (this.getTask(taskID).active) {
             await strategy.runStrategy();
@@ -26,35 +27,32 @@ export class RouletteBot extends CommonBot {
         }
     }
 
-    async backtest(strategyName, bagSize = 5.0, options = {}) {
-        let numbers;
-        let strategy;
+    async backtest(strategyName, bagSize, options = {}) {
+        let numbers; let strategy;
 
         options = await this.getOptions(options);
         options.dryRun = true;
 
         try {
             numbers = await this.driver.getExtendedHistory();
+
         } catch (e) {
             await this.driver.viewExtendedHistory();
             numbers = await this.driver.getExtendedHistory();
-        }
 
-        strategy = await this.getStrategy('backtest', strategyName, bagSize, options);
-        await strategy.runBacktest(numbers);
+        } finally {
+            strategy = await this.getStrategy('backtest', strategyName, bagSize, options);
+            await strategy.runBacktest(numbers);
+        }
     }
 
     getStrategy(taskID, strategyName, bagSize, options) {
-        if (!(RouletteBot.getStrategies().includes(strategyName))) {
+        if (!(ConsoleCasino.getStrategies().roulette.includes(strategyName))) {
             throw new Error('invalid strategy name ' + strategyName);
         }
 
         if (strategyName === 'progressive-red-black') {
             return new ProgressiveRedBlack(this.driver, taskID, bagSize, this.getOptions(options));
         }
-    }
-
-    static getStrategies() {
-        return ['progressive-red-black']
     }
 }

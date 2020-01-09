@@ -3,7 +3,7 @@ export class CommonBot {
         this.tasks = {};
     }
 
-    createTask(taskID, gameType, strategyName, bagSize) {
+    createTask(taskID, strategyName, bagSize) {
         if (taskID in this.tasks) {
             throw new Error('existing task ID: ' + taskID);
         }
@@ -11,7 +11,6 @@ export class CommonBot {
         this.tasks[taskID] = {
             active: true,
             createTime: Math.floor(Date.now() / 1000),
-            game: gameType,
             bagSize: bagSize,
             strategy: strategyName,
             results: {}
