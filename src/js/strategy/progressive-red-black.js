@@ -10,7 +10,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
         this.results = {
             gameWin: 0,
-            gameLost: 0,
+            gameLose: 0,
             profit: 0
         };
 
@@ -54,7 +54,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
     runStageSpin(dealerMessage) {
         if (dealerMessage === 'wait for the next round') {
-            console.log(this.taskID, this.gameState.betNumber, 'stage', 'spin');
+            console.log(this.taskID + ' ' + this.gameState.betNumber + ' stage spin');
             this.gameState.stage = stageBet;
         }
     }
@@ -105,7 +105,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
 
     runStageWait(dealerMessage) {
         if (dealerMessage === 'wait for the next round') {
-            console.log(this.taskID, this.gameState.betNumber, 'stage', 'wait');
+            console.log(this.taskID + ' ' + this.gameState.betNumber + ' stage wait');
             this.gameState.stage = stageResults;
         }
     }
@@ -145,7 +145,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
             } else if (Object.keys(this.gameState.bet).length > 0) {
                 msg.push('lose');
 
-                this.results.gameLost += 1;
+                this.results.gameLose += 1;
                 this.gameState.bet = {};
                 this.gameState.betMultiplier += 1;
             }

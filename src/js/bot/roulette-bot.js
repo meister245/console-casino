@@ -18,7 +18,7 @@ export class RouletteBot extends CommonBot {
         let taskID = await this.generateTaskID();
         let strategy = await this.getStrategy(taskID, strategyName, bagSize, options);
 
-        await this.createTask(taskID, strategyName, Object.assign({}, strategy.results));
+        await this.createTask(taskID, strategyName, bagSize);
 
         while (this.getTask(taskID).active) {
             await strategy.runStrategy();

@@ -10,8 +10,8 @@ export class CommonBot {
 
         this.tasks[taskID] = {
             active: true,
-            createTime: Math.floor(Date.now() / 1000),
             bagSize: bagSize,
+            createTime: Math.floor(Date.now() / 1000),
             strategy: strategyName,
             results: {}
         };
