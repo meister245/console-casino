@@ -1,16 +1,9 @@
-import { rouletteNumbers } from '../constants';
-
 export class StrategyCommon {
+  constructor () {
+    this.lastBetTime = null
+  }
 
-    getWinTypes(lastNumber) {
-        let winTypes = []
-
-        Object.keys(rouletteNumbers).forEach(key => {
-            if (rouletteNumbers[key].includes(lastNumber)) {
-                winTypes.push(key);
-            }
-        });
-
-        return winTypes;
-    }
+  updateLastBetTime () {
+    this.lastBetTime = Math.floor(Date.now() / 1000)
+  }
 }
