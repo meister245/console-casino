@@ -33,19 +33,6 @@ using state machines in the browser developer console
 
     document.body.appendChild(script);
 
-**Drivers & Strategies**
-
-The casino bots use a driver for each different game provider in order to interact with the
-game window.
-
-    // list of drivers
-    ConsoleCasino.getDrivers();
-
-Each casino game type has a list of available supported strategies.
-
-    // list of strategies
-    ConsoleCasino.getStrategies();
-
 **Parameters**
 
 - `driverName` - string, driver name
@@ -61,15 +48,11 @@ Each casino game type has a list of available supported strategies.
     const casino = new ConsoleCasino(driverName);
 
     // strategy parameters
-    var strategyName = 'progressive-red-black';
-    var bagSize = 5.0;
-    var options = {dryRun: false, chipSize: 0.2}
+    var bagSize = 5.0, dryRun = true, chipSize = 0.2;
+    var options = {dryRun: dryRun, chipSize: chipSize}
 
     // run roulette strategy
     casino.roulette.start(strategyName, bagSize, options);
-
-    // run backtest for roulette strategy
-    casino.roulette.backtest(strategyName, bagSize, options);
 
     // get submitted tasks
     casino.roulette.tasks;

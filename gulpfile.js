@@ -1,19 +1,21 @@
-const gulp = require('gulp');
-const concat = require('gulp-concat');
-const jshint = require('gulp-jshint');
-const plumber = require('gulp-plumber');
-const rename = require('gulp-rename');
-const replace = require('gulp-replace');
-const terser = require('gulp-terser');
+const gulp = require('gulp')
+const concat = require('gulp-concat')
+const jshint = require('gulp-jshint')
+// const insert = require('gulp-insert')
+const plumber = require('gulp-plumber')
+const rename = require('gulp-rename')
+const replace = require('gulp-replace')
+const terser = require('gulp-terser')
 
 gulp.task('default', () => {
-    return gulp.src('src/**/*.js')
-        .pipe(plumber())
-        .pipe(jshint({'esversion': 8}))
-        .pipe(replace(/import.+;/g, ''))
-        .pipe(replace('export', ''))
-        .pipe(concat('console-casino.js'))
-        .pipe(terser())
-        .pipe(rename('console-casino.min.js'))
-        .pipe(gulp.dest('./dist'))
-});
+  return gulp.src('src/**/*.js')
+    .pipe(plumber())
+    .pipe(jshint({ esversion: 12 }))
+    .pipe(replace(/import.+/g, ''))
+    .pipe(replace(/export\s/g, ''))
+    .pipe(concat('console-casino.js'))
+    .pipe(terser())
+    // .pipe(insert.transform(contents => `(function () {${contents}})()`))
+    .pipe(rename('console-casino.min.js'))
+    .pipe(gulp.dest('./dist'))
+})

@@ -1,72 +1,29 @@
 export class CommonBot {
-    constructor() {
-        this.tasks = {};
+  constructor (driver) {
+    this.driver = driver
+    this.running = false
+    this.timeStarted = Math.floor(Date.now() / 1000)
+  }
+
+  getOptions (o) {
+    const options = o || {}
+
+    const opts = {
+      dryRun: true,
+      bagSize: 10.0,
+      chipSize: 0.20
     }
 
-    createTask(taskID, strategyName, bagSize) {
-        if (taskID in this.tasks) {
-            throw new Error('existing task ID: ' + taskID);
-        }
-
-        this.tasks[taskID] = {
-            active: true,
-            bagSize: bagSize,
-            createTime: Math.floor(Date.now() / 1000),
-            strategy: strategyName,
-            results: {}
-        };
-
-        console.log('created', 'taskID', taskID);
+    for (const key in opts) {
+      if (key in options) {
+        opts[key] = options[key]
+      }
     }
 
-    generateTaskID() {
-        return Math.random().toString(36).substr(2, 9);
-    }
+    return opts
+  }
 
-    getTask(taskID) {
-        if (taskID in this.tasks) {
-            return this.tasks[taskID];
-        }
-
-        throw new Error('invalid taskID: ' + taskID);
-    }
-
-    getOptions(options) {
-        options = options || {};
-
-        let opts = {
-            dryRun: false,
-            chipSize: 0.20
-        };
-
-        for (let key in opts) {
-            if (options.hasOwnProperty(key)) {
-                opts[key] = options[key];
-            }
-        }
-
-        return opts
-    }
-
-    updateTaskResults(taskID, results = {}) {
-        let task = this.getTask(taskID);
-        task.results = results;
-        this.tasks[taskID] = task;
-    }
-
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    start() {
-        throw new Error('abstract method');
-    }
-
-    stop(taskID) {
-        let task = this.getTask(taskID);
-        task.active = false;
-        this.tasks[taskID] = task;
-
-        console.log('stopped', 'taskID', taskID);
-    }
+  sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
 }
