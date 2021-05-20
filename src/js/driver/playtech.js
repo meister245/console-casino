@@ -1,9 +1,10 @@
-import {DriverCommon} from "./common";
+import { DriverCommon } from "./common";
 
 export class Playtech extends DriverCommon {
+
     constructor() {
         super();
-        this.dataLocatorAttrName = 'data-automation-locator';
+
         this.rouletteBetMapping = {
             'low': 'betPlace.spots50x50-1to18',
             'even': 'betPlace.spots50x50-even',
@@ -18,83 +19,85 @@ export class Playtech extends DriverCommon {
             'secondDozen': 'betPlace.dozen-2nd12',
             'thirdDozen': 'betPlace.dozen-3rd12'
         };
+
         this.chipMapping = {
-            0.10: 'chip_rate-10', 0.25: 'chip_rate-25', 0.50: 'chip_rate-50', 1: 'chip_rate-100',
-            5: 'chip_rate-500', 10: 'chip_rate-1000', 25: 'chip_rate-2500', 100: 'chip_rate-10000',
-            500: 'chip_rate-50000', 1000: 'chip_rate-100000'
+            0.10: 'chipsPanel.chip10', 0.20: 'chipsPanel.chip20', 0.25: 'chipsPanel.chip25',
+            0.50: 'chipsPanel.chip50', 1: 'chipsPanel.chip100', 5: 'chipsPanel.chip500',
+            10: 'chipsPanel.chip1000', 25: 'chipsPanel.chip2500', 100: 'chipsPanel.chip10000',
+            500: 'chipsPanel.chip50000', 1000: 'chipsPanel.chip100000'
         };
     }
 
     getBalance() {
-        let text = this.getElementByAttribute(this.dataLocatorAttrName, 'footer.balance').textContent;
-        return parseFloat(text.match(/[0-9]+(?:\.[0-9]+)*/g)[0]);
+        let text = document.querySelector('[data-automation-locator="footer.balance"]').textContent;
+        return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0]);
     }
 
     getBetAmount() {
-        let text = this.getElementByAttribute(this.dataLocatorAttrName, 'footer.betAmount').textContent;
-        return parseFloat(text.match(/[0-9]+(?:\.[0-9]+)*/g)[0]);
+        let text = document.querySelector('[data-automation-locator="footer.betAmount"]').textContent;
+        return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0]);
     }
 
     getDealerMessage() {
-        return document.getElementsByClassName('dealer-message-text')[0].textContent;
+        return document.querySelector('[class="dealer-message-text"]').textContent;
     }
 
     getDealerName() {
-        return document.getElementsByClassName('header__dealer-name')[0].textContent;
+        return document.querySelector('[data-automation-locator="field.dealerNickname"]').textContent;
     }
 
     getExtendedHistory() {
-        let numbers = [];
-        let elements = document.getElementsByClassName('roulette-history-items')[0].innerText.split('\n');
-
-        for (let i in elements) {
-            numbers.push(parseInt(elements[i]))
-        }
-
+        let numberHistoryParentElement = document.querySelector('[class^="roulette-history-extended__items"]');
+        let numbers = [...numberHistoryParentElement.children].map(elem => parseInt(elem.textContent));
         return numbers.reverse();
     }
 
     getLastNumber() {
-        return parseInt(this.getElementByAttribute(this.dataLocatorAttrName, 'field.lastHistoryItem').textContent);
+        let elem = document.querySelector('[data-automation-locator="field.lastHistoryItem"]');
+        return parseInt(elem.textContent);
     }
 
     getLastNumbers() {
-        let numbers = [];
-        let elements = document.getElementsByClassName('roulette-history-line')[0].innerText.split('\n');
+        let historyLineElement = document.querySelector('.roulette-game-area__history-line');
+        let historyNumbersParentElement = historyLineElement.children[0];
 
-        for (let i in elements) {
-            numbers.push(parseInt(elements[i]));
-        }
-
-        return numbers;
+        return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent));
     }
 
     getWinAmount() {
-        let elem = this.getElementByAttribute(this.dataLocatorAttrName, 'footer.winAmount');
+        let elem = document.querySelector('[data-automation-locator="footer.winAmount"]');
         return parseFloat(elem.textContent.match(/[0-9]+(?:\.[0-9]+)*/g)[0]);
     }
 
     setBet(type) {
-        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, this.rouletteBetMapping[type]));
+        this.simulatedClick(document.querySelector(`[data-automation-locator="${this.rouletteBetMapping[type]}"]`));
     }
 
     setBetDouble() {
-        this.simulatedClick(document.getElementsByClassName('action-button_double')[0]);
+        this.simulatedClick(document.querySelector('[data-automation-locator="button.Double"]'));
     }
 
     setBetUndo() {
-        this.simulatedClick(document.getElementsByClassName('action-button_undo')[0]);
+        this.simulatedClick(document.querySelector('[data-automation-locator="button.Undo"]'));
     }
 
     setChipSize(size) {
-        this.simulatedClick(document.getElementsByClassName(this.chipMapping[size])[0]);
+        this.simulatedClick(document.querySelector(`[data-automation-locator="${this.chipMapping[size]}"]`));
+    }
+
+    viewTableLimits() {
+        this.simulatedClick(document.querySelector('[data-automation-locator="button.limits"]'));
     }
 
     viewExtendedHistory() {
-        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, 'button.extenededHistory'));
+        this.simulatedClick(document.querySelector('[data-automation-locator="button.extenededHistory"]'));
     }
 
     viewStatistics() {
-        this.simulatedClick(this.getElementByAttribute(this.dataLocatorAttrName, 'button.statistic'));
+        this.simulatedClick(document.querySelector('[data-automation-locator="button.statistic"]'));
+    }
+
+    viewStatisticsChart() {
+        this.simulatedClick(document.querySelector('[data-automation-locator="button.StatisticChart"]'));
     }
 }

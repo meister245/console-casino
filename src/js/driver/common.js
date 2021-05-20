@@ -56,22 +56,6 @@ export class DriverCommon {
         throw new Error('abstract method');
     }
 
-    getElementByAttribute(attr, value, root) {
-        root = root || document.body;
-        if (root.hasAttribute(attr) && root.getAttribute(attr) === value) {
-            return root;
-        }
-        let children = root.children,
-            element;
-        for (let i = children.length; i--;) {
-            element = this.getElementByAttribute(attr, value, children[i]);
-            if (element) {
-                return element;
-            }
-        }
-        return null;
-    }
-
     simulatedClick(target, o) {
         let event = target.ownerDocument.createEvent('MouseEvents'),
             options = o || {},
