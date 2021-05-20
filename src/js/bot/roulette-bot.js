@@ -1,6 +1,6 @@
-import {CommonBot} from "./common";
-import {ConsoleCasino} from "../console-casino";
-import {ProgressiveRedBlack} from "../strategy/progressive-red-black";
+import { CommonBot } from "./common";
+import { ConsoleCasino } from "../console-casino";
+import { ProgressiveRedBlack } from "../strategy/progressive-red-black";
 
 export class RouletteBot extends CommonBot {
     constructor(driver) {

@@ -1,25 +1,16 @@
+import { rouletteNumbers } from '../constants';
+
 export class StrategyCommon {
-    runStrategy() {
-        throw new Error('abstract method')
-    }
 
-    runStageSpin() {
-        throw new Error('abstract method');
-    }
+    getWinTypes(lastNumber) {
+        let winTypes = []
 
-    runStageBet() {
-        throw new Error('abstract method');
-    }
+        Object.keys(rouletteNumbers).forEach(key => {
+            if (rouletteNumbers[key].includes(lastNumber)) {
+                winTypes.push(key);
+            }
+        });
 
-    runStageWait() {
-        throw new Error('abstract method');
-    }
-
-    runStageResult() {
-        throw new Error('abstract method');
-    }
-
-    runBacktest() {
-        throw new Error('abstract method');
+        return winTypes;
     }
 }

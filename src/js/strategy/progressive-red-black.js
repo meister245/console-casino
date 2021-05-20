@@ -1,5 +1,5 @@
-import {StrategyCommon} from "./common";
-import {rouletteNumbers, gameState} from "../constants";
+import { StrategyCommon } from "./common";
+import { rouletteNumbers, gameState } from "../constants";
 
 export class ProgressiveRedBlack extends StrategyCommon {
     constructor(driver, taskID, bagSize, options) {
@@ -78,7 +78,7 @@ export class ProgressiveRedBlack extends StrategyCommon {
             msg.push('lastNumber', lastNumber);
 
             if (betName === null) {
-                this.gameState.bet = {'null': 0};
+                this.gameState.bet = { 'null': 0 };
 
             } else if (this.gameState.bagSizeCurrent < totalBet) {
                 throw new Error('out of money');

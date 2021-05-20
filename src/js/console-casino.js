@@ -6,9 +6,11 @@ export class ConsoleCasino {
         this.roulette = new RouletteBot(this.getDriver(driverName));
     }
 
-    getDriver(driverName, gameType) {
-        if (!(ConsoleCasino.getDrivers(gameType).includes(driverName))) {
-            throw new Error('invalid driver name ' + driverName);
+    getDriver(driverName) {
+        const allDrivers = ConsoleCasino.getDrivers();
+
+        if (!allDrivers.includes(driverName)) {
+            throw new Error(`invalid driver name ${driverName}`);
         }
 
         if (driverName === 'playtech') {
