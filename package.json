@@ -3,7 +3,6 @@
   "version": "1.2.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp"
   },
   "repository": {
@@ -16,15 +15,13 @@
     "url": "https://github.com/meister245/console-casino/issues"
   },
   "homepage": "https://github.com/meister245/console-casino",
-  "dependencies": {
-    "gulp-replace": "^1.0.0"
-  },
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
     "gulp-concat": "^2.6.1",
     "gulp-jshint": "^2.1.0",
     "gulp-plumber": "^1.2.1",
+    "gulp-replace": "^1.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-terser": "^1.2.0",
     "jshint": "^2.11.0-rc1"
