@@ -64,7 +64,7 @@ export class RouletteBetManager extends BetManager {
       if (this.state.pendingGame === null) {
         this.logMessage('no bets in progress')
 
-        const lastNumbers = this.driver.getExtendedHistory()
+        const numberHistory = this.driver.getNumberHistory()
 
         for (const strategyName in rouletteStrategy) {
           const strategy = rouletteStrategy[strategyName]
@@ -72,11 +72,11 @@ export class RouletteBetManager extends BetManager {
           let patternMatching = false
           let percentageMatching = false
 
-          if (this.isPatternMatching(strategy.trigger.pattern, lastNumbers)) {
+          if (this.isPatternMatching(strategy.trigger.pattern, numberHistory)) {
             patternMatching = true
           }
 
-          if (this.isPercentageMatching(strategy.trigger.distribution, lastNumbers)) {
+          if (this.isPercentageMatching(strategy.trigger.distribution, numberHistory)) {
             percentageMatching = true
           }
 
@@ -160,14 +160,14 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  isPercentageMatching (config, lastNumbers) {
+  isPercentageMatching (config, numberHistory) {
     const sampleBet = config[0]
     const sampleSize = config[1]
     const percentageTarget = config[2]
     const percentageOperator = config[3]
 
     const betNumbers = rouletteNumbers[sampleBet]
-    const sampleNumberSet = [...lastNumbers.reverse()].slice(0, sampleSize)
+    const sampleNumberSet = numberHistory.slice(0, sampleSize)
 
     let occurrence = 0
 
@@ -192,17 +192,17 @@ export class RouletteBetManager extends BetManager {
   }
 
   isPatternMatching (pattern, lastNumbers) {
-    let isPatternMatch = true
-
     for (const i in pattern) {
       const betPattern = pattern[i]
-      const resultNumber = lastNumbers[lastNumbers.length - i]
+      const resultNumber = lastNumbers[i]
       const resultWinTypes = this.getWinTypes(resultNumber)
 
-      isPatternMatch = isPatternMatch && resultWinTypes.includes(betPattern)
+      if (!resultWinTypes.includes(betPattern)) {
+        return false
+      }
     }
 
-    return isPatternMatch
+    return true
   }
 
   getWinTypes (lastNumber) {

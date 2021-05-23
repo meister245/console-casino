@@ -52,10 +52,9 @@ export class Playtech extends DriverCommon {
     return document.querySelector('[data-automation-locator="field.dealerNickname"]').textContent
   }
 
-  getExtendedHistory () {
+  getNumberHistory () {
     const numberHistoryParentElement = document.querySelector('[class^="roulette-history-extended__items"]')
-    const numbers = [...numberHistoryParentElement.children].map(elem => parseInt(elem.textContent))
-    return [...numbers.reverse()]
+    return [...numberHistoryParentElement.children].map(elem => parseInt(elem.textContent))
   }
 
   getLastNumber () {

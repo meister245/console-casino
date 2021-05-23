@@ -11,7 +11,7 @@ export class CommonBot {
     const opts = {
       dryRun: true,
       bagSize: 10.0,
-      chipSize: 0.20
+      chipSize: 0.10
     }
 
     for (const key in opts) {
