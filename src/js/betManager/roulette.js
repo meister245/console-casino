@@ -21,7 +21,7 @@ export class RouletteBetManager extends BetManager {
     try {
       const msg = this.driver.getModalConfirm()
       msg.match(/(inactive|disconnected)/g) && window.location.reload()
-    } finally {
+    } catch {} finally {
       const lastNumber = this.driver.getLastNumber()
       const dealerMessage = this.driver.getDealerMessage().toLowerCase()
 
