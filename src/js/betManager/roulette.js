@@ -8,6 +8,7 @@ export class RouletteBetManager extends BetManager {
 
     this.driver = driver
     this.options = options
+    this.lastLogMessage = null
 
     this.state = {
       gameCount: 0,
@@ -227,7 +228,12 @@ export class RouletteBetManager extends BetManager {
   }
 
   logMessage (msg) {
-    const logMessage = ['console-casino', this.state.gameStage, this.state.gameCount, msg]
-    console.log(logMessage.join(' - '))
+    const logMessage = [
+      'console-casino', this.state.gameStage, this.state.gameCount, msg]
+
+    if (logMessage.toString() !== this.lastLogMessage) {
+      this.lastLogMessage = logMessage.toString()
+      console.log(logMessage.join(' - '))
+    }
   }
 }
