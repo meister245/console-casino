@@ -18,35 +18,27 @@ export class RouletteBetManager extends BetManager {
   }
 
   runStrategy () {
-    let isNetworkError = false
-
     try {
-      const msg = this.driver.getPopupMessage()
-      isNetworkError = msg.match(/(inactive|disconnected)/g)
-    } catch {
-      isNetworkError = true
-    }
+      const msg = this.driver.getModalConfirm()
+      msg.match(/(inactive|disconnected)/g) && window.location.reload()
+    } finally {
+      const lastNumber = this.driver.getLastNumber()
+      const dealerMessage = this.driver.getDealerMessage().toLowerCase()
 
-    if (isNetworkError) {
-      window.location.reload()
-    }
-
-    const lastNumber = this.driver.getLastNumber()
-    const dealerMessage = this.driver.getDealerMessage().toLowerCase()
-
-    switch (this.state.gameStage) {
-      case gameState.stageSpin:
-        this.runStageSpin(dealerMessage)
-        break
-      case gameState.stageBet:
-        this.runStageBet(dealerMessage)
-        break
-      case gameState.stageWait:
-        this.runStageWait(dealerMessage)
-        break
-      case gameState.stageResults:
-        this.runStageResult(dealerMessage, lastNumber)
-        break
+      switch (this.state.gameStage) {
+        case gameState.stageSpin:
+          this.runStageSpin(dealerMessage)
+          break
+        case gameState.stageBet:
+          this.runStageBet(dealerMessage)
+          break
+        case gameState.stageWait:
+          this.runStageWait(dealerMessage)
+          break
+        case gameState.stageResults:
+          this.runStageResult(dealerMessage, lastNumber)
+          break
+      }
     }
   }
 

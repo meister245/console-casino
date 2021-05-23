@@ -4,6 +4,11 @@ import { RouletteBetManager } from '../betManager/roulette'
 export class RouletteBot extends CommonBot {
   async start (options = {}) {
     const opts = await this.getOptions(options)
+
+    while (!this.driver.isGameLoaded()) {
+      await this.sleep(1500)
+    }
+
     const balance = await this.driver.getBalance()
 
     if (!options.dryRun && opts.bagSize > balance) {

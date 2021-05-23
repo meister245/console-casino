@@ -34,6 +34,10 @@ export class Playtech extends DriverCommon {
     }
   }
 
+  isGameLoaded () {
+    return document.querySelector('[class="dealer-message-text"]')
+  }
+
   getBalance () {
     const text = document.querySelector('[data-automation-locator="footer.balance"]').textContent
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0])
@@ -75,8 +79,8 @@ export class Playtech extends DriverCommon {
     return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent))
   }
 
-  getPopupMessage () {
-    return document.querySelector('[data-automation-locator="popup.action"]').textContent
+  getModalConfirm () {
+    return document.querySelector('.modal-confirm_desktop').textContent
   }
 
   getWinAmount () {
