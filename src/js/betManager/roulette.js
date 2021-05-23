@@ -10,9 +10,9 @@ export class RouletteBetManager extends BetManager {
     this.options = options
 
     this.state = {
+      gameCount: 0,
       pendingGame: null,
-      gameStage: gameState.stageSpin,
-      bagSizeCurrent: this.options.bagSize.valueOf()
+      gameStage: gameState.stageSpin
     }
   }
 
@@ -21,7 +21,7 @@ export class RouletteBetManager extends BetManager {
 
     try {
       const msg = this.driver.getPopupMessage()
-      isNetworkError = msg.match(/(reload|try\sagain)/g)
+      isNetworkError = msg.match(/(inactive|disconnected)/g)
     } catch {
       isNetworkError = true
     }
@@ -134,6 +134,7 @@ export class RouletteBetManager extends BetManager {
 
         if (isWin) {
           this.logMessage('win')
+          this.state.gameCount += 1
           this.state.pendingGame = null
         } else if (this.state.pendingGame.multiplier.current !== this.state.pendingGame.multiplier.limit) {
           this.logMessage('lose')
@@ -226,7 +227,7 @@ export class RouletteBetManager extends BetManager {
   }
 
   logMessage (msg) {
-    const logMessage = ['console-casino', this.state.gameStage, msg]
+    const logMessage = ['console-casino', this.state.gameStage, this.state.gameCount, msg]
     console.log(logMessage.join(' - '))
   }
 }
