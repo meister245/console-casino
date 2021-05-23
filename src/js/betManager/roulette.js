@@ -150,14 +150,22 @@ export class RouletteBetManager extends BetManager {
   submitBets () {
     this.logMessage('submit bets')
 
-    if (!this.options.dryRun) {
-      this.driver.setChipSize(this.options.chipSize)
-      this.state.pendingGame.bets.forEach(bet => this.driver.setBet(bet))
+    let betSize = 0
 
-      for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
-        this.driver.setBetDouble()
-      }
+    !this.options.dryRun && this.driver.setChipSize(this.options.chipSize)
+
+    this.state.pendingGame.bets.forEach(bet => {
+      !this.options.dryRun && this.driver.setBet(bet)
+      betSize += this.options.chipSize
+    })
+
+    for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
+      !this.options.dryRun && this.driver.setBetDouble()
+      betSize = betSize * 2
     }
+
+    this.logMessage('bets: ' + this.state.pendingGame.bets)
+    this.logMessage('total: ' + betSize)
   }
 
   isPercentageMatching (config, numberHistory) {
