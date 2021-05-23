@@ -5,22 +5,19 @@ export class CommonBot {
     this.timeStarted = Math.floor(Date.now() / 1000)
   }
 
-  getOptions (o) {
-    const options = o || {}
+  async getConfig (o) {
+    const config = o || {}
 
-    const opts = {
-      dryRun: true,
-      bagSize: 10.0,
-      chipSize: 0.10
-    }
-
-    for (const key in opts) {
-      if (key in options) {
-        opts[key] = options[key]
-      }
-    }
-
-    return opts
+    return fetch('http://localhost:8080/config/')
+      .then(resp => resp.json())
+      .then(data => {
+        for (const key in data) {
+          if (key in config) {
+            data[key] = config[key]
+          }
+        }
+        return data
+      })
   }
 
   sleep (ms) {

@@ -3,11 +3,11 @@ import { rouletteStrategy } from '../strategy/roulette'
 import { BetManager } from './common'
 
 export class RouletteBetManager extends BetManager {
-  constructor (driver, options) {
+  constructor (driver, config) {
     super()
 
     this.driver = driver
-    this.options = options
+    this.config = config
     this.lastLogMessage = null
 
     this.state = {
@@ -17,7 +17,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  runStrategy () {
+  async runStrategy () {
     try {
       const msg = this.driver.getModalConfirm()
       msg.match(/(inactive|disconnected|restart)/g) && window.location.reload()
@@ -30,13 +30,13 @@ export class RouletteBetManager extends BetManager {
           this.runStageSpin(dealerMessage)
           break
         case gameState.stageBet:
-          this.runStageBet(dealerMessage)
+          await this.runStageBet(dealerMessage)
           break
         case gameState.stageWait:
           this.runStageWait(dealerMessage)
           break
         case gameState.stageResults:
-          this.runStageResult(dealerMessage, lastNumber)
+          await this.runStageResult(dealerMessage, lastNumber)
           break
       }
     }
@@ -50,7 +50,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  runStageBet (dealerMessage) {
+  async runStageBet (dealerMessage) {
     this.logMessage('waiting to be able to place bets')
 
     if (['place your bets', 'last bets'].includes(dealerMessage)) {
@@ -76,17 +76,27 @@ export class RouletteBetManager extends BetManager {
           if (patternMatching && percentageMatching) {
             this.logMessage('strategy matched - ' + strategyName)
 
-            this.state.pendingGame = {
-              bets: strategy.bets,
-              progression: strategy.progression,
-              strategy: strategyName,
-              multiplier: {
-                current: 1,
-                limit: strategy.stopLossLimit
+            const response = await fetch('http://localhost:8080/bet/')
+              .then(resp => resp.json())
+
+            if (response.success) {
+              this.logMessage('server accepted bet')
+
+              this.state.pendingGame = {
+                bets: strategy.bets,
+                progression: strategy.progression,
+                strategy: strategyName,
+                multiplier: {
+                  current: 1,
+                  limit: strategy.stopLossLimit
+                }
               }
+
+              this.submitBets()
+            } else {
+              this.logMessage('server refused bet')
             }
 
-            this.submitBets()
             break
           }
         }
@@ -107,7 +117,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  runStageResult (dealerMessage, lastNumber) {
+  async runStageResult (dealerMessage, lastNumber) {
     this.logMessage('waiting for result')
 
     if (['place your bets', 'last bets'].includes(dealerMessage)) {
@@ -126,14 +136,19 @@ export class RouletteBetManager extends BetManager {
         })
 
         if (isWin) {
-          this.logMessage('win')
+          const response = await fetch('http://localhost:8080/result/win/').then(resp => resp.json())
+          response.success && this.logMessage('registered win, resetting state')
+
           this.state.gameCount += 1
           this.state.pendingGame = null
         } else if (this.state.pendingGame.multiplier.current !== this.state.pendingGame.multiplier.limit) {
-          this.logMessage('lose')
           this.state.pendingGame.multiplier.current += 1
+          this.logMessage('lost game, increasing progression multiplier')
         } else {
-          throw new Error('stop loss limit reached')
+          const response = await fetch('http://localhost:8080/result/lose/').then(resp => resp.json())
+          response.success && this.logMessage('registered loss')
+
+          window.location.href = 'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'
         }
       }
 
@@ -142,19 +157,17 @@ export class RouletteBetManager extends BetManager {
   }
 
   submitBets () {
-    this.logMessage('submit bets')
-
     let betSize = 0
 
-    !this.options.dryRun && this.driver.setChipSize(this.options.chipSize)
+    !this.config.dryRun && this.driver.setChipSize(this.config.chipSize)
 
     this.state.pendingGame.bets.forEach(bet => {
-      !this.options.dryRun && this.driver.setBet(bet)
-      betSize += this.options.chipSize
+      !this.config.dryRun && this.driver.setBet(bet)
+      betSize += this.config.chipSize
     })
 
     for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
-      !this.options.dryRun && this.driver.setBetDouble()
+      !this.config.dryRun && this.driver.setBetDouble()
       betSize = betSize * 2
     }
 

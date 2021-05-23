@@ -3,7 +3,7 @@ import { RouletteBetManager } from '../betManager/roulette'
 
 export class RouletteBot extends CommonBot {
   async start (options = {}) {
-    const opts = await this.getOptions(options)
+    const config = await this.getConfig(options)
 
     while (!this.driver.isGameLoaded()) {
       await this.sleep(1500)
@@ -11,7 +11,7 @@ export class RouletteBot extends CommonBot {
 
     const balance = await this.driver.getBalance()
 
-    if (!options.dryRun && opts.bagSize > balance) {
+    if (!config.dryRun && config.minBalance > balance) {
       throw new Error('balance too low')
     }
 
@@ -21,9 +21,7 @@ export class RouletteBot extends CommonBot {
 
     this.running = true
 
-    const betManager = new RouletteBetManager(this.driver, opts)
-
-    this.driver.toggleExtendedHistory()
+    const betManager = new RouletteBetManager(this.driver, config)
 
     while (this.running) {
       await betManager.runStrategy()

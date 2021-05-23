@@ -3,7 +3,8 @@
   "version": "1.2.0",
   "description": "",
   "scripts": {
-    "build": "gulp"
+    "build": "gulp",
+    "server": "node src/server/app"
   },
   "repository": {
     "type": "git",
@@ -24,12 +25,15 @@
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
     "gulp-concat": "^2.6.1",
-    "gulp-insert": "^0.5.0",
     "gulp-jshint": "^2.1.0",
     "gulp-plumber": "^1.2.1",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-terser": "^1.2.0",
     "jshint": "^2.11.0-rc1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
   }
 }
