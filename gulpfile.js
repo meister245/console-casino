@@ -8,7 +8,7 @@ const replace = require('gulp-replace')
 const terser = require('gulp-terser')
 
 gulp.task('default', () => {
-  return gulp.src('src/**/*.js')
+  return gulp.src('src/console/**/*.js')
     .pipe(plumber())
     .pipe(jshint({ esversion: 12 }))
     .pipe(replace(/import.+/g, ''))
