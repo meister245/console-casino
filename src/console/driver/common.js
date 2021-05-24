@@ -46,4 +46,8 @@ export class DriverCommon {
 
     target.dispatchEvent(event)
   }
+
+  sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
 }

@@ -6,7 +6,7 @@ export class RouletteBot extends CommonBot {
     const config = await this.getConfig(options)
 
     while (!this.driver.isGameLoaded()) {
-      await this.sleep(1500)
+      await this.driver.sleep(1500)
     }
 
     const balance = await this.driver.getBalance()
@@ -25,7 +25,7 @@ export class RouletteBot extends CommonBot {
 
     while (this.running) {
       await betManager.runStrategy()
-      await this.sleep(1500)
+      await this.driver.sleep(1500)
     }
   }
 

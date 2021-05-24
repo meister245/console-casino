@@ -19,8 +19,4 @@ export class CommonBot {
         return data
       })
   }
-
-  sleep (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
 }
