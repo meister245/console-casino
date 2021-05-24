@@ -12,7 +12,7 @@ const gameConfig = {
 const serverState = {
   gamesWin: 0,
   gamesLose: 0,
-  gamesInProgress: 0
+  gamesInProgress: []
 }
 
 app.get('/', cors(), (req, res) => {
@@ -25,7 +25,7 @@ app.get('/config/', cors(), (req, res) => {
 
 app.get('/result/win/', cors(), (req, res) => {
   if (serverState.gamesInProgress > 0) {
-    serverState.gamesInProgress -= 1
+    serverState.gamesInProgress.shift()
     serverState.gamesWin += 1
   }
 
@@ -34,7 +34,7 @@ app.get('/result/win/', cors(), (req, res) => {
 
 app.get('/result/lose/', cors(), (req, res) => {
   if (serverState.gamesInProgress > 0) {
-    serverState.gamesInProgress -= 1
+    serverState.gamesInProgress.shift()
     serverState.gamesLose += 1
   }
 
@@ -42,10 +42,22 @@ app.get('/result/lose/', cors(), (req, res) => {
 })
 
 app.get('/bet/', cors(), (req, res) => {
-  const success = serverState.gamesInProgress < gameConfig.concurrentGamesLimit
+  let success = false
 
-  if (success) {
-    serverState.gamesInProgress += 1
+  const currentTime = Math.floor(Date.now() / 1000)
+
+  if (serverState.gamesInProgress.length < gameConfig.concurrentGamesLimit) {
+    serverState.gamesInProgress.push(currentTime)
+    success = true
+  } else if (serverState.gamesInProgress.length > 0) {
+    const oldestTime = serverState.gamesInProgress[0]
+    const timeDiff = currentTime - oldestTime
+
+    if (timeDiff > 60 * 10) {
+      serverState.gamesInProgress.shift()
+      serverState.gamesInProgress.push(currentTime)
+      success = true
+    }
   }
 
   res.send(JSON.stringify({ success: success }))
