@@ -38,6 +38,10 @@ export class Playtech extends DriverCommon {
     return document.querySelector('[class="dealer-message-text"]')
   }
 
+  getMessageModal () {
+    return document.querySelector('.modal-confirm_desktop')
+  }
+
   getBalance () {
     const text = document.querySelector('[data-automation-locator="footer.balance"]').textContent
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0])
@@ -77,10 +81,6 @@ export class Playtech extends DriverCommon {
     const historyNumbersParentElement = historyLineElement.children[0]
 
     return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent))
-  }
-
-  getModalConfirm () {
-    return document.querySelector('.modal-confirm_desktop').textContent
   }
 
   getWinAmount () {

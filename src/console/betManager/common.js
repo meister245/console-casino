@@ -1,6 +1,6 @@
 export class BetManager {
   constructor () {
-    this.lastBetTime = null
+    this.lastBetTime = Math.floor(Date.now() / 1000)
   }
 
   updateLastBetTime () {

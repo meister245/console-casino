@@ -18,27 +18,33 @@ export class RouletteBetManager extends BetManager {
   }
 
   async runStrategy () {
-    try {
-      const msg = this.driver.getModalConfirm()
-      msg.match(/(inactive|disconnected|restart)/g) && window.location.reload()
-    } catch {} finally {
-      const lastNumber = this.driver.getLastNumber()
-      const dealerMessage = this.driver.getDealerMessage().toLowerCase()
+    const messageModal = this.driver.getMessageModal()
+    const timeSinceLastBet = Math.floor(Date.now() / 1000) - this.lastBetTime
 
-      switch (this.state.gameStage) {
-        case gameState.stageSpin:
-          this.runStageSpin(dealerMessage)
-          break
-        case gameState.stageBet:
-          await this.runStageBet(dealerMessage)
-          break
-        case gameState.stageWait:
-          this.runStageWait(dealerMessage)
-          break
-        case gameState.stageResults:
-          await this.runStageResult(dealerMessage, lastNumber)
-          break
-      }
+    if (!this.state.pendingGame && timeSinceLastBet > 15 * 60) {
+      window.location.reload()
+    }
+
+    messageModal && messageModal.textContent
+      .match(/(inactive|disconnected|restart|unavailable)/g) &&
+      window.location.reload()
+
+    const lastNumber = this.driver.getLastNumber()
+    const dealerMessage = this.driver.getDealerMessage().toLowerCase()
+
+    switch (this.state.gameStage) {
+      case gameState.stageSpin:
+        this.runStageSpin(dealerMessage)
+        break
+      case gameState.stageBet:
+        await this.runStageBet(dealerMessage)
+        break
+      case gameState.stageWait:
+        this.runStageWait(dealerMessage)
+        break
+      case gameState.stageResults:
+        await this.runStageResult(dealerMessage, lastNumber)
+        break
     }
   }
 
@@ -170,6 +176,8 @@ export class RouletteBetManager extends BetManager {
       !this.config.dryRun && this.driver.setBetDouble()
       betSize = betSize * 2
     }
+
+    !this.config.dryRun && this.updateLastBetTime()
 
     this.logMessage('bets: ' + this.state.pendingGame.bets)
     this.logMessage('total: ' + betSize)
