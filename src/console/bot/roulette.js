@@ -5,7 +5,7 @@ export class RouletteBot extends CommonBot {
   async start () {
     const { config, strategy } = await this.getConfig('roulette')
 
-    while (!this.driver.isGameLoaded()) {
+    while (!this.driver.getDealerMessage()) {
       await this.driver.sleep(1500)
     }
 

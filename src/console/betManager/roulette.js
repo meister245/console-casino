@@ -18,21 +18,20 @@ export class RouletteBetManager extends BetManager {
   }
 
   async runStrategy () {
-    const messageModal = this.driver.getMessageModal()
+    const modalMessage = this.driver.getModalMessage()
     const timeSinceLastBet = Math.floor(Date.now() / 1000) - this.lastBetTime
 
-    if (!this.state.pendingGame && timeSinceLastBet > 15 * 60) {
+    if (!this.state.pendingGame && timeSinceLastBet > 25 * 60) {
       window.location.reload()
+      return
+    } else if (modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
+      this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
+      window.location.reload()
+      return
+    } else if (modalMessage.match(/table.will.be.closed/g)) {
+      this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
+      return
     }
-
-    messageModal && messageModal.textContent
-      .match(/(inactive|disconnected|restart|unavailable)/g) &&
-      window.location.reload()
-
-    this.state.pendingGame && messageModal && messageModal.textContent
-      .match(/table.will.be.closed/g) &&
-      await this.reportResult('abort', this.state.pendingGame) &&
-      window.location.reload()
 
     const lastNumber = this.driver.getLastNumber()
     const dealerMessage = this.driver.getDealerMessage().toLowerCase()

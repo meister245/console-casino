@@ -34,12 +34,8 @@ export class Playtech extends DriverCommon {
     }
   }
 
-  isGameLoaded () {
-    return document.querySelector('[class="dealer-message-text"]')
-  }
-
-  getMessageModal () {
-    return document.querySelector('.modal-confirm_desktop')
+  getModalMessage () {
+    return document.querySelector('.modal-confirm_desktop')?.textContent ?? ''
   }
 
   getBalance () {
@@ -53,11 +49,11 @@ export class Playtech extends DriverCommon {
   }
 
   getDealerMessage () {
-    return document.querySelector('[class="dealer-message-text"]').textContent
+    return document.querySelector('[class="dealer-message-text"]')?.textContent ?? ''
   }
 
   getDealerName () {
-    return document.querySelector('[data-automation-locator="field.dealerNickname"]').textContent
+    return document.querySelector('[data-automation-locator="field.dealerNickname"]')?.textContent ?? ''
   }
 
   getNumberHistory () {
