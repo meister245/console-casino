@@ -2,60 +2,84 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const gameConfig = {
-  dryRun: true,
-  chipSize: 0.1,
-  minBalance: 26.0,
-  concurrentGamesLimit: 1
-}
+const { gameConfig, getStrategy } = require('./config')
 
-const serverState = {
+const gameStats = {
   gamesWin: 0,
   gamesLose: 0,
+  gamesAborted: 0,
   gamesInProgress: []
 }
 
-app.get('/', cors(), (req, res) => {
-  res.send(JSON.stringify(serverState))
+const strategyStats = {}
+
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+app.get('/stats/', (req, res) => {
+  res.send(JSON.stringify({
+    game: gameStats,
+    strategy: strategyStats
+  }, null, 2))
 })
 
-app.get('/config/', cors(), (req, res) => {
-  res.send(JSON.stringify(gameConfig))
+app.get('/config/', (req, res) => {
+  const strategy = getStrategy(req.query.game)
+
+  res.send(JSON.stringify({
+    strategy,
+    config: gameConfig
+  }))
 })
 
-app.get('/result/win/', cors(), (req, res) => {
-  if (serverState.gamesInProgress > 0) {
-    serverState.gamesInProgress.shift()
-    serverState.gamesWin += 1
+app.post('/result/', (req, res) => {
+  const result = req.body.result
+  const strategy = req.body.strategy
+  const multiplier = req.body.multiplier
+
+  if (gameStats.gamesInProgress > 0) {
+    gameStats.gamesInProgress.shift()
+  }
+
+  switch (result) {
+    case 'win':
+      gameStats.gamesWin += 1
+      break
+    case 'lose':
+      gameStats.gamesLose += 1
+      break
+    case 'abort':
+      gameStats.gamesAborted += 1
+      break
+  }
+
+  if (!(strategy in strategyStats)) {
+    strategyStats[strategy] = 0
+  }
+
+  if (strategyStats[strategy] < multiplier) {
+    strategyStats[strategy] = multiplier
   }
 
   res.send(JSON.stringify({ success: true }))
 })
 
-app.get('/result/lose/', cors(), (req, res) => {
-  if (serverState.gamesInProgress > 0) {
-    serverState.gamesInProgress.shift()
-    serverState.gamesLose += 1
-  }
-
-  res.send(JSON.stringify({ success: true }))
-})
-
-app.get('/bet/', cors(), (req, res) => {
+app.post('/bet/', (req, res) => {
   let success = false
 
   const currentTime = Math.floor(Date.now() / 1000)
 
-  if (serverState.gamesInProgress.length < gameConfig.concurrentGamesLimit) {
-    serverState.gamesInProgress.push(currentTime)
+  if (gameStats.gamesInProgress.length < gameConfig.concurrentGamesLimit) {
+    gameStats.gamesInProgress.push(currentTime)
     success = true
-  } else if (serverState.gamesInProgress.length > 0) {
-    const oldestTime = serverState.gamesInProgress[0]
+  } else if (gameStats.gamesInProgress.length > 0) {
+    const oldestTime = gameStats.gamesInProgress[0]
     const timeDiff = currentTime - oldestTime
 
     if (timeDiff > 60 * 10) {
-      serverState.gamesInProgress.shift()
-      serverState.gamesInProgress.push(currentTime)
+      gameStats.gamesInProgress.shift()
+      gameStats.gamesInProgress.push(currentTime)
       success = true
     }
   }

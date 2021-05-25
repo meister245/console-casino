@@ -1,3 +1,5 @@
+import { serverUrl } from '../constants'
+
 export class CommonBot {
   constructor (driver) {
     this.driver = driver
@@ -5,18 +7,8 @@ export class CommonBot {
     this.timeStarted = Math.floor(Date.now() / 1000)
   }
 
-  async getConfig (o) {
-    const config = o || {}
-
-    return fetch('http://localhost:8080/config/')
+  async getConfig (name) {
+    return fetch(`${serverUrl}/config/?game=${name}`)
       .then(resp => resp.json())
-      .then(data => {
-        for (const key in data) {
-          if (key in config) {
-            data[key] = config[key]
-          }
-        }
-        return data
-      })
   }
 }

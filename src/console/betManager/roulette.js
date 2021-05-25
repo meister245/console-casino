@@ -1,13 +1,13 @@
 import { rouletteNumbers, gameState } from '../constants'
-import { rouletteStrategy } from '../strategy/roulette'
 import { BetManager } from './common'
 
 export class RouletteBetManager extends BetManager {
-  constructor (driver, config) {
+  constructor (driver, config, strategy) {
     super()
 
     this.driver = driver
     this.config = config
+    this.strategy = strategy
     this.lastLogMessage = null
 
     this.state = {
@@ -27,6 +27,11 @@ export class RouletteBetManager extends BetManager {
 
     messageModal && messageModal.textContent
       .match(/(inactive|disconnected|restart|unavailable)/g) &&
+      window.location.reload()
+
+    this.state.pendingGame && messageModal && messageModal.textContent
+      .match(/table.will.be.closed/g) &&
+      await this.reportResult('abort', this.state.pendingGame) &&
       window.location.reload()
 
     const lastNumber = this.driver.getLastNumber()
@@ -65,8 +70,8 @@ export class RouletteBetManager extends BetManager {
 
         const numberHistory = this.driver.getNumberHistory()
 
-        for (const strategyName in rouletteStrategy) {
-          const strategy = rouletteStrategy[strategyName]
+        for (const strategyName in this.strategy) {
+          const strategy = this.strategy[strategyName]
 
           let patternMatching = false
           let percentageMatching = false
@@ -82,8 +87,7 @@ export class RouletteBetManager extends BetManager {
           if (patternMatching && percentageMatching) {
             this.logMessage('strategy matched - ' + strategyName)
 
-            const response = await fetch('http://localhost:8080/bet/')
-              .then(resp => resp.json())
+            const response = await this.requestBet()
 
             if (response.success) {
               this.logMessage('server accepted bet')
@@ -131,7 +135,7 @@ export class RouletteBetManager extends BetManager {
 
       if (this.state.pendingGame) {
         const winTypes = this.getWinTypes(lastNumber)
-        const strategy = rouletteStrategy[this.state.pendingGame.strategy]
+        const strategy = this.strategy[this.state.pendingGame.strategy]
 
         let isWin = false
 
@@ -142,7 +146,7 @@ export class RouletteBetManager extends BetManager {
         })
 
         if (isWin) {
-          const response = await fetch('http://localhost:8080/result/win/').then(resp => resp.json())
+          const response = await this.reportResult('win', this.state.pendingGame)
           response.success && this.logMessage('registered win, resetting state')
 
           this.state.gameCount += 1
@@ -151,7 +155,7 @@ export class RouletteBetManager extends BetManager {
           this.state.pendingGame.multiplier.current += 1
           this.logMessage('lost game, increasing progression multiplier')
         } else {
-          const response = await fetch('http://localhost:8080/result/lose/').then(resp => resp.json())
+          const response = await this.reportResult('lose', this.state.pendingGame)
           response.success && this.logMessage('registered loss')
 
           window.location.href = 'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'

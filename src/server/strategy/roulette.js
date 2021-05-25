@@ -1,4 +1,4 @@
-export const rouletteStrategy = {
+module.exports = {
   redLowOccurrence: {
     bets: ['red'],
     progression: 'martingale',

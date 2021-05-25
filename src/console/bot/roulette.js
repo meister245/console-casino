@@ -2,8 +2,8 @@ import { CommonBot } from './common'
 import { RouletteBetManager } from '../betManager/roulette'
 
 export class RouletteBot extends CommonBot {
-  async start (options = {}) {
-    const config = await this.getConfig(options)
+  async start () {
+    const { config, strategy } = await this.getConfig('roulette')
 
     while (!this.driver.isGameLoaded()) {
       await this.driver.sleep(1500)
@@ -21,7 +21,7 @@ export class RouletteBot extends CommonBot {
 
     this.running = true
 
-    const betManager = new RouletteBetManager(this.driver, config)
+    const betManager = new RouletteBetManager(this.driver, config, strategy)
 
     while (this.running) {
       await betManager.runStrategy()

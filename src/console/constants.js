@@ -1,3 +1,8 @@
+
+export const serverPort = 8080
+export const serverHostname = 'localhost'
+export const serverUrl = `http://${serverHostname}:${serverPort}`
+
 export const gameState = {
   stageBet: 'stage-bet',
   stageSpin: 'stage-spin',
