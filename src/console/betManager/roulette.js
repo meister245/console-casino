@@ -24,11 +24,11 @@ export class RouletteBetManager extends BetManager {
     if (!this.state.pendingGame && timeSinceLastBet > 25 * 60) {
       window.location.reload()
       return
-    } else if (modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
+    } else if (modalMessage && modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
       this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
       window.location.reload()
       return
-    } else if (modalMessage.match(/table.will.be.closed/g)) {
+    } else if (modalMessage && modalMessage.match(/table.will.be.closed/g)) {
       this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
       return
     }
