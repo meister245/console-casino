@@ -23,6 +23,8 @@ export class RouletteBot extends CommonBot {
 
     const betManager = new RouletteBetManager(this.driver, config, strategy)
 
+    betManager.logMessage(config.dryRun ? 'DEVELOPMENT' : 'PRODUCTION')
+
     while (this.running) {
       await betManager.runStrategy()
       await this.driver.sleep(1500)

@@ -27,9 +27,9 @@ export class Playtech extends DriverCommon {
         columnBottom: 'betPlace.column-1',
         columnMiddle: 'betPlace.column-2',
         columnTop: 'betPlace.column-3',
-        firstDozen: 'betPlace.dozen-1st12',
-        secondDozen: 'betPlace.dozen-2nd12',
-        thirdDozen: 'betPlace.dozen-3rd12'
+        dozenFirst: 'betPlace.dozen-1st12',
+        dozenSecond: 'betPlace.dozen-2nd12',
+        dozenThird: 'betPlace.dozen-3rd12'
       }
     }
   }

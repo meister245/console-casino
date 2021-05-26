@@ -65,8 +65,6 @@ export class RouletteBetManager extends BetManager {
 
     if (['place your bets', 'last bets'].includes(dealerMessage)) {
       if (this.state.pendingGame === null) {
-        this.logMessage('no bets in progress')
-
         const numberHistory = this.driver.getNumberHistory()
 
         for (const strategyName in this.strategy) {
@@ -107,6 +105,7 @@ export class RouletteBetManager extends BetManager {
             break
           }
         }
+        this.logMessage('no strategies matched')
       } else {
         this.logMessage('continue with betting')
         await this.submitBets()
@@ -173,24 +172,21 @@ export class RouletteBetManager extends BetManager {
     await this.driver.sleep(2500)
 
     !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
-    !this.config.dryRun && await this.driver.sleep(250)
 
-    for (const iterator in this.state.pendingGame.bets) {
-      !this.config.dryRun && await this.driver.setBet(this.state.pendingGame.bets[iterator])
-      !this.config.dryRun && await this.driver.sleep(250)
+    await this.state.pendingGame.bets.forEach(betName => {
+      !this.config.dryRun && this.driver.setBet(betName)
       betSize += this.config.chipSize
-    }
+    })
 
     for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
       !this.config.dryRun && await this.driver.setBetDouble()
-      !this.config.dryRun && await this.driver.sleep(250)
       betSize = betSize * 2
     }
 
     !this.config.dryRun && this.updateLastBetTime()
 
-    this.logMessage('bets: ' + this.state.pendingGame.bets)
-    this.logMessage('total: ' + betSize)
+    this.logMessage(`bets: ${this.state.pendingGame.bets}`)
+    this.logMessage(`total: ${betSize}`)
   }
 
   isPercentageMatching (config, numberHistory) {
