@@ -53,7 +53,7 @@ export class RouletteBetManager extends BetManager {
   }
 
   runStageSpin (dealerMessage) {
-    this.logMessage('waiting for next round')
+    this.logMessage('waiting for next spin')
 
     if (dealerMessage === 'wait for the next round') {
       this.state.gameStage = gameState.stageBet
@@ -120,7 +120,11 @@ export class RouletteBetManager extends BetManager {
     this.logMessage('waiting for next round')
 
     if (dealerMessage === 'wait for the next round') {
-      this.state.gameStage = gameState.stageResults
+      if (this.state.pendingGame) {
+        this.state.gameStage = gameState.stageResults
+      } else {
+        this.state.gameStage = gameState.stageBet
+      }
     }
   }
 
