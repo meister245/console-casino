@@ -52,59 +52,5 @@ module.exports = {
       pattern: ['low', 'low'],
       distribution: ['high', 100, 40, 'lowerEqual']
     }
-  },
-  dozenFirstHighOccurrence: {
-    bets: ['dozenSecond', 'dozenThird'],
-    progression: 'martingale',
-    stopLossLimit: 7,
-    trigger: {
-      pattern: ['dozenFirst', 'dozenFirst'],
-      distribution: ['dozenFirst', 100, 36, 'higherEqual']
-    }
-  },
-  dozenSecondHighOccurrence: {
-    bets: ['dozenFirst', 'dozenThird'],
-    progression: 'martingale',
-    stopLossLimit: 7,
-    trigger: {
-      pattern: ['dozenSecond', 'dozenSecond'],
-      distribution: ['dozenSecond', 100, 36, 'higherEqual']
-    }
-  },
-  dozenThirdHighOccurrence: {
-    bets: ['dozenFirst', 'dozenSecond'],
-    progression: 'martingale',
-    betLossLimit: 7,
-    trigger: {
-      pattern: ['dozenThird', 'dozenThird'],
-      distribution: ['dozenThird', 100, 36, 'higherEqual']
-    }
-  },
-  columnTopHighOccurrence: {
-    bets: ['columnMiddle', 'columnBottom'],
-    progression: 'martingale',
-    stopLossLimit: 7,
-    trigger: {
-      pattern: ['columnTop', 'columnTop'],
-      distribution: ['columnTop', 100, 36, 'higherEqual']
-    }
-  },
-  columnMiddleHighOccurrence: {
-    bets: ['columnTop', 'columnBottom'],
-    progression: 'martingale',
-    stopLossLimit: 7,
-    trigger: {
-      pattern: ['columnMiddle', 'columnMiddle'],
-      distribution: ['columnMiddle', 100, 36, 'higherEqual']
-    }
-  },
-  columnBottomHighOccurrence: {
-    bets: ['columnTop', 'columnMiddle'],
-    progression: 'martingale',
-    stopLossLimit: 7,
-    trigger: {
-      pattern: ['columnBottom', 'columnBottom'],
-      distribution: ['columnBottom', 100, 36, 'higherEqual']
-    }
   }
 }
