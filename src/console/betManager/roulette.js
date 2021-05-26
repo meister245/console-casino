@@ -100,18 +100,16 @@ export class RouletteBetManager extends BetManager {
                   limit: strategy.stopLossLimit
                 }
               }
-
-              this.submitBets()
+              await this.submitBets()
             } else {
               this.logMessage('server refused bet')
             }
-
             break
           }
         }
       } else {
         this.logMessage('continue with betting')
-        this.submitBets()
+        await this.submitBets()
       }
 
       this.state.gameStage = gameState.stageWait
@@ -165,18 +163,18 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  submitBets () {
+  async submitBets () {
     let betSize = 0
 
-    !this.config.dryRun && this.driver.setChipSize(this.config.chipSize)
+    !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
 
-    this.state.pendingGame.bets.forEach(bet => {
+    await this.state.pendingGame.bets.forEach(bet => {
       !this.config.dryRun && this.driver.setBet(bet)
       betSize += this.config.chipSize
     })
 
     for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
-      !this.config.dryRun && this.driver.setBetDouble()
+      !this.config.dryRun && await this.driver.setBetDouble()
       betSize = betSize * 2
     }
 

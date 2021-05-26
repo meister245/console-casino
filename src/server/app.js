@@ -68,19 +68,21 @@ app.post('/result/', (req, res) => {
 app.post('/bet/', (req, res) => {
   let success = false
 
-  const currentTime = Math.floor(Date.now() / 1000)
+  if (gameStats.gamesLose === 0 && gameStats.gamesAborted === 0) {
+    const currentTime = Math.floor(Date.now() / 1000)
 
-  if (gameStats.gamesInProgress.length < gameConfig.concurrentGamesLimit) {
-    gameStats.gamesInProgress.push(currentTime)
-    success = true
-  } else if (gameStats.gamesInProgress.length > 0) {
-    const oldestTime = gameStats.gamesInProgress[0]
-    const timeDiff = currentTime - oldestTime
-
-    if (timeDiff > 60 * 10) {
-      gameStats.gamesInProgress.shift()
+    if (gameStats.gamesInProgress.length < gameConfig.concurrentGamesLimit) {
       gameStats.gamesInProgress.push(currentTime)
       success = true
+    } else if (gameStats.gamesInProgress.length > 0) {
+      const oldestTime = gameStats.gamesInProgress[0]
+      const timeDiff = currentTime - oldestTime
+
+      if (timeDiff > 60 * 10) {
+        gameStats.gamesInProgress.shift()
+        gameStats.gamesInProgress.push(currentTime)
+        success = true
+      }
     }
   }
 
