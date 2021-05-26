@@ -166,15 +166,20 @@ export class RouletteBetManager extends BetManager {
   async submitBets () {
     let betSize = 0
 
-    !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
+    await this.driver.sleep(2500)
 
-    await this.state.pendingGame.bets.forEach(bet => {
-      !this.config.dryRun && this.driver.setBet(bet)
+    !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
+    !this.config.dryRun && await this.driver.sleep(250)
+
+    for (const iterator in this.state.pendingGame.bets) {
+      !this.config.dryRun && await this.driver.setBet(this.state.pendingGame.bets[iterator])
+      !this.config.dryRun && await this.driver.sleep(250)
       betSize += this.config.chipSize
-    })
+    }
 
     for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
       !this.config.dryRun && await this.driver.setBetDouble()
+      !this.config.dryRun && await this.driver.sleep(250)
       betSize = betSize * 2
     }
 
