@@ -30,7 +30,7 @@ const updateGameStats = (result) => {
 }
 
 const updateStrategyStats = (strategy, multiplier) => {
-  const totalGames = gameStats.reduce((obj, item) => obj + item, 0)
+  const totalGames = Object.values(gameStats).reduce((obj, item) => obj + item, 0)
   const strategyMultiplierStats = strategyStats[strategy]?.multiplier ?? {}
 
   if (!(multiplier in multiplierStats)) {

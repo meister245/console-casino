@@ -11,6 +11,8 @@ export class BetManager {
       mode: 'cors'
     }).then(
       resp => resp.json()
+    ).catch(
+      err => console.error(err)
     )
   }
 
@@ -32,6 +34,8 @@ export class BetManager {
       body: JSON.stringify({ ...data })
     }).then(
       resp => resp.json()
+    ).catch(
+      err => console.error(err)
     )
   }
 

@@ -1,6 +1,9 @@
 import { rouletteNumbers, gameState } from '../constants'
 import { BetManager } from './common'
 
+const lostGameUrl =
+  'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'
+
 export class RouletteBetManager extends BetManager {
   constructor (driver, config, strategy) {
     super()
@@ -82,36 +85,29 @@ export class RouletteBetManager extends BetManager {
           }
 
           if (patternMatching && percentageMatching) {
-            this.logMessage('strategy matched - ' + strategyName)
-
-            const response = await this.requestBet()
-
-            if (response.success) {
-              this.logMessage('server accepted bet')
-
-              this.state.pendingGame = {
-                bets: strategy.bets,
-                progression: strategy.progression,
-                strategy: strategyName,
-                multiplier: {
-                  current: 1,
-                  limit: strategy.stopLossLimit
-                }
-              }
-              await this.submitBets()
-            } else {
-              this.logMessage('server refused bet')
-            }
+            await this.registerBet(strategyName, strategy)
             break
           }
         }
-        this.logMessage('no strategies matched')
       } else {
-        this.logMessage('continue with betting')
+        this.logMessage(`continue betting - ${this.state.pendingGame.strategy}`)
         await this.submitBets()
       }
 
       this.state.gameStage = gameState.stageWait
+    }
+  }
+
+  async registerBet (strategyName, strategy) {
+    this.logMessage(`strategy matched - ${strategyName}`)
+    const response = await this.requestBet()
+
+    if (response.success) {
+      this.logMessage('server accepted bet')
+      this.setupGameState(strategyName, strategy)
+      await this.submitBets()
+    } else {
+      this.logMessage('server refused bet')
     }
   }
 
@@ -140,9 +136,7 @@ export class RouletteBetManager extends BetManager {
         let isWin = false
 
         strategy.bets.forEach(betName => {
-          if (winTypes.includes(betName)) {
-            isWin = true
-          }
+          isWin = isWin || winTypes.includes(betName)
         })
 
         if (isWin) {
@@ -153,12 +147,12 @@ export class RouletteBetManager extends BetManager {
           this.state.pendingGame = null
         } else if (this.state.pendingGame.multiplier.current !== this.state.pendingGame.multiplier.limit) {
           this.state.pendingGame.multiplier.current += 1
+          this.state.pendingGame.betSize = this.state.pendingGame.betSize * this.state.pendingGame.multiplier.progression
           this.logMessage('lost game, increasing progression multiplier')
         } else {
           const response = await this.reportResult('lose', this.state.pendingGame)
           response.success && this.logMessage('registered loss')
-
-          window.location.href = 'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'
+          window.location.href = lostGameUrl
         }
       }
 
@@ -167,26 +161,27 @@ export class RouletteBetManager extends BetManager {
   }
 
   async submitBets () {
-    let betSize = 0
+    let totalBetSize = 0
 
     await this.driver.sleep(2500)
 
     !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
 
-    await this.state.pendingGame.bets.forEach(betName => {
-      !this.config.dryRun && this.driver.setBet(betName)
-      betSize += this.config.chipSize
-    })
+    for (const betName of this.state.pendingGame.bets) {
+      const betSize = this.state.pendingGame.betSize.valueOf()
+      const clickTimes = Math.floor(betSize / this.config.chipSize)
 
-    for (let step = 1; step < this.state.pendingGame.multiplier.current; step++) {
-      !this.config.dryRun && await this.driver.setBetDouble()
-      betSize = betSize * 2
+      for (let step = 0; step < clickTimes; step++) {
+        !this.config.dryRun && await this.driver.setBet(betName)
+        totalBetSize += this.config.chipSize.valueOf()
+        this.logMessage(`click ${step + 1}`)
+      }
     }
 
     !this.config.dryRun && this.updateLastBetTime()
 
     this.logMessage(`bets: ${this.state.pendingGame.bets}`)
-    this.logMessage(`total: ${betSize}`)
+    this.logMessage(`total: ${totalBetSize}`)
   }
 
   isPercentageMatching (config, numberHistory) {
@@ -232,6 +227,19 @@ export class RouletteBetManager extends BetManager {
     }
 
     return true
+  }
+
+  setupGameState (strategyName, strategy) {
+    this.state.pendingGame = {
+      bets: strategy.bets,
+      betSize: this.config.chipSize.valueOf(),
+      strategy: strategyName,
+      multiplier: {
+        current: 1,
+        limit: strategy.stopLossLimit,
+        progression: strategy.progressionMultiplier
+      }
+    }
   }
 
   getWinTypes (lastNumber) {

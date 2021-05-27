@@ -9,6 +9,10 @@ export class CommonBot {
 
   async getConfig (name) {
     return fetch(`${serverUrl}/config/?game=${name}`)
-      .then(resp => resp.json())
+      .then(
+        resp => resp.json()
+      ).catch(
+        err => console.error(err)
+      )
   }
 }

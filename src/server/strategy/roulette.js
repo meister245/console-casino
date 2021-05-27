@@ -1,7 +1,7 @@
 module.exports = {
   redLowOccurrence: {
     bets: ['red'],
-    progression: 'martingale',
+    progressionMultiplier: 2,
     stopLossLimit: 8,
     trigger: {
       pattern: ['black', 'black'],
@@ -10,7 +10,7 @@ module.exports = {
   },
   blackLowOccurrence: {
     bets: ['black'],
-    progression: 'martingale',
+    progressionMultiplier: 2,
     stopLossLimit: 8,
     trigger: {
       pattern: ['red', 'red'],
@@ -19,7 +19,7 @@ module.exports = {
   },
   evenLowOccurrence: {
     bets: ['even'],
-    progression: 'martingale',
+    progressionMultiplier: 2,
     stopLossLimit: 8,
     trigger: {
       pattern: ['odd', 'odd'],
@@ -28,7 +28,7 @@ module.exports = {
   },
   oddLowOccurrence: {
     bets: ['odd'],
-    progression: 'martingale',
+    progressionMultiplier: 2,
     stopLossLimit: 8,
     trigger: {
       pattern: ['even', 'even'],
@@ -37,7 +37,7 @@ module.exports = {
   },
   lowLowOccurrence: {
     bets: ['low'],
-    progression: 'martingale',
+    progressionMultiplier: 2,
     stopLossLimit: 8,
     trigger: {
       pattern: ['high', 'high'],
@@ -46,7 +46,7 @@ module.exports = {
   },
   highLowOccurrence: {
     bets: ['high'],
-    progression: 'martingale',
+    progressionMultiplier: 2,
     stopLossLimit: 8,
     trigger: {
       pattern: ['low', 'low'],
