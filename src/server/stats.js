@@ -1,0 +1,64 @@
+const rouletteStrategies = require('./strategy/roulette')
+
+const gameStats = {
+  gamesWin: 0,
+  gamesLose: 0,
+  gamesAborted: 0
+}
+
+const multiplierStats = {}
+
+const strategyStats = Object.keys(rouletteStrategies).reduce(
+  (obj, item) => Object.assign(obj, { [item]: {} }), {})
+
+const updateGameStats = (result) => {
+  if (gameStats.gamesInProgress > 0) {
+    gameStats.gamesInProgress.shift()
+  }
+
+  switch (result) {
+    case 'win':
+      gameStats.gamesWin += 1
+      break
+    case 'lose':
+      gameStats.gamesLose += 1
+      break
+    case 'abort':
+      gameStats.gamesAborted += 1
+      break
+  }
+}
+
+const updateStrategyStats = (strategy, multiplier) => {
+  const totalGames = gameStats.reduce((obj, item) => obj + item, 0)
+  const strategyMultiplierStats = strategyStats[strategy]?.multiplier ?? {}
+
+  if (!(multiplier in multiplierStats)) {
+    multiplierStats[multiplier] = { count: 0, percent: 0 }
+  }
+
+  multiplierStats[multiplier].count += 1
+  multiplierStats[multiplier].percent = Math.floor(multiplierStats[multiplier].count / totalGames * 100)
+
+  if (!(multiplier in strategyMultiplierStats)) {
+    strategyMultiplierStats[multiplier] = 0
+  }
+
+  strategyMultiplierStats[multiplier] += 1
+  strategyStats[strategy].multiplier = strategyMultiplierStats
+}
+
+module.exports = {
+  gameStats,
+  getStats: () => {
+    return {
+      gameStats,
+      strategyStats,
+      multiplierStats
+    }
+  },
+  updateStats: (result, strategy, multiplier) => {
+    updateGameStats(result)
+    updateStrategyStats(strategy, multiplier)
+  }
+}

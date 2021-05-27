@@ -2,85 +2,52 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const { gameConfig, getStrategy } = require('./config')
+const { getStats, updateStats } = require('./stats')
+const { getConfig, getStrategy } = require('./config')
 
-const gameStats = {
-  gamesWin: 0,
-  gamesLose: 0,
-  gamesAborted: 0,
-  gamesInProgress: []
-}
-
-const strategyStats = {}
+const gamesInProgress = []
 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/stats/', (req, res) => {
-  res.send(JSON.stringify({
-    game: gameStats,
-    strategy: strategyStats
-  }, null, 2))
+  const stats = getStats()
+  res.send(JSON.stringify({ gamesInProgress, ...stats }, null, 2))
 })
 
 app.get('/config/', (req, res) => {
-  const strategy = getStrategy(req.query.game)
-
   res.send(JSON.stringify({
-    strategy,
-    config: gameConfig
+    config: getConfig(),
+    strategy: getStrategy(req.query.game)
   }))
 })
 
 app.post('/result/', (req, res) => {
-  const result = req.body.result
-  const strategy = req.body.strategy
-  const multiplier = req.body.multiplier
-
-  if (gameStats.gamesInProgress > 0) {
-    gameStats.gamesInProgress.shift()
-  }
-
-  switch (result) {
-    case 'win':
-      gameStats.gamesWin += 1
-      break
-    case 'lose':
-      gameStats.gamesLose += 1
-      break
-    case 'abort':
-      gameStats.gamesAborted += 1
-      break
-  }
-
-  if (!(strategy in strategyStats)) {
-    strategyStats[strategy] = 0
-  }
-
-  if (strategyStats[strategy] < multiplier) {
-    strategyStats[strategy] = multiplier
-  }
-
+  gamesInProgress > 0 && gamesInProgress.shift()
+  updateStats(req.body.result, req.body.strategy, req.body.multiplier)
   res.send(JSON.stringify({ success: true }))
 })
 
 app.post('/bet/', (req, res) => {
+  const { gameStats } = getStats()
+  const { concurrentGamesLimit } = getConfig()
+
   let success = false
 
   if (gameStats.gamesLose === 0 && gameStats.gamesAborted === 0) {
     const currentTime = Math.floor(Date.now() / 1000)
 
-    if (gameStats.gamesInProgress.length < gameConfig.concurrentGamesLimit) {
-      gameStats.gamesInProgress.push(currentTime)
+    if (gamesInProgress.length < concurrentGamesLimit) {
+      gamesInProgress.push(currentTime)
       success = true
-    } else if (gameStats.gamesInProgress.length > 0) {
-      const oldestTime = gameStats.gamesInProgress[0]
+    } else if (gamesInProgress.length > 0) {
+      const oldestTime = gamesInProgress[0]
       const timeDiff = currentTime - oldestTime
 
       if (timeDiff > 60 * 10) {
-        gameStats.gamesInProgress.shift()
-        gameStats.gamesInProgress.push(currentTime)
+        gamesInProgress.shift()
+        gamesInProgress.push(currentTime)
         success = true
       }
     }

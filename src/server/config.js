@@ -1,10 +1,12 @@
 const rouletteStrategy = require('./strategy/roulette')
 
-const gameConfig = {
-  dryRun: true,
-  chipSize: 0.1,
-  minBalance: 26.0,
-  concurrentGamesLimit: 1
+const getConfig = () => {
+  return {
+    dryRun: true,
+    chipSize: 0.1,
+    minBalance: 26.0,
+    concurrentGamesLimit: 1
+  }
 }
 
 const getStrategy = (name) => {
@@ -17,6 +19,6 @@ const getStrategy = (name) => {
 }
 
 module.exports = {
-  gameConfig,
+  getConfig,
   getStrategy
 }
