@@ -174,14 +174,14 @@ export class RouletteBetManager extends BetManager {
       for (let step = 0; step < clickTimes; step++) {
         !this.config.dryRun && await this.driver.setBet(betName)
         totalBetSize += this.config.chipSize.valueOf()
-        this.logMessage(`click ${step + 1}`)
+        this.logMessage(`click ${betName} ${step + 1}`)
       }
     }
 
     !this.config.dryRun && this.updateLastBetTime()
 
     this.logMessage(`bets: ${this.state.pendingGame.bets}`)
-    this.logMessage(`total: ${totalBetSize}`)
+    this.logMessage(`total: ${totalBetSize.toFixed(2)}`)
   }
 
   isPercentageMatching (config, numberHistory) {

@@ -12,10 +12,6 @@ const strategyStats = Object.keys(rouletteStrategies).reduce(
   (obj, item) => Object.assign(obj, { [item]: {} }), {})
 
 const updateGameStats = (result) => {
-  if (gameStats.gamesInProgress > 0) {
-    gameStats.gamesInProgress.shift()
-  }
-
   switch (result) {
     case 'win':
       gameStats.gamesWin += 1
@@ -38,7 +34,11 @@ const updateStrategyStats = (strategy, multiplier) => {
   }
 
   multiplierStats[multiplier].count += 1
-  multiplierStats[multiplier].percent = Math.floor(multiplierStats[multiplier].count / totalGames * 100)
+
+  Object.keys(multiplierStats).forEach(key => {
+    multiplierStats[key].percent =
+      Math.floor(multiplierStats[key].count / totalGames * 100)
+  })
 
   if (!(multiplier in strategyMultiplierStats)) {
     strategyMultiplierStats[multiplier] = 0
