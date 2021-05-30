@@ -39,17 +39,17 @@ export class Playtech extends DriverCommon {
   }
 
   getBalance () {
-    const text = document.querySelector('[data-automation-locator="footer.balance"]').textContent
+    const text = document.querySelector('[data-automation-locator="footer.balance"]')?.textContent ?? ''
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0])
   }
 
   getBetAmount () {
-    const text = document.querySelector('[data-automation-locator="footer.betAmount"]').textContent
+    const text = document.querySelector('[data-automation-locator="footer.betAmount"]')?.textContent ?? ''
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0])
   }
 
   getDealerMessage () {
-    return document.querySelector('[class="dealer-message-text"]')?.textContent ?? ''
+    return document.querySelector('.dealer-message-text')?.textContent ?? ''
   }
 
   getDealerName () {

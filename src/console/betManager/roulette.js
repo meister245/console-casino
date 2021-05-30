@@ -22,12 +22,8 @@ export class RouletteBetManager extends BetManager {
 
   async runStrategy () {
     const modalMessage = this.driver.getModalMessage()
-    const timeSinceLastBet = Math.floor(Date.now() / 1000) - this.lastBetTime
 
-    if (!this.state.pendingGame && timeSinceLastBet > 25 * 60) {
-      window.location.reload()
-      return
-    } else if (modalMessage && modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
+    if (modalMessage && modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
       this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
       window.location.reload()
       return
@@ -177,8 +173,6 @@ export class RouletteBetManager extends BetManager {
         this.logMessage(`click ${betName} ${step + 1}`)
       }
     }
-
-    !this.config.dryRun && this.updateLastBetTime()
 
     this.logMessage(`bets: ${this.state.pendingGame.bets}`)
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`)

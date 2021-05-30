@@ -1,10 +1,6 @@
 import { serverUrl } from '../constants'
 
 export class BetManager {
-  constructor () {
-    this.lastBetTime = Math.floor(Date.now() / 1000)
-  }
-
   async requestBet () {
     return fetch(`${serverUrl}/bet/`, {
       method: 'POST',
@@ -37,9 +33,5 @@ export class BetManager {
     ).catch(
       err => console.error(err)
     )
-  }
-
-  updateLastBetTime () {
-    this.lastBetTime = Math.floor(Date.now() / 1000)
   }
 }
