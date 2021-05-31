@@ -4,6 +4,12 @@ import { BetManager } from './common'
 const lostGameUrl =
   'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'
 
+const messages = {
+  waitForNextRound: 'wait for the next round',
+  placeYourBets: 'place your bets',
+  lastBets: 'last bets'
+}
+
 export class RouletteBetManager extends BetManager {
   constructor (driver, config, strategy) {
     super()
@@ -21,7 +27,7 @@ export class RouletteBetManager extends BetManager {
   }
 
   async runStrategy () {
-    const modalMessage = this.driver.getModalMessage()
+    const modalMessage = this.driver.getModalMessage().toLowerCase()
 
     if (modalMessage && modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
       this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
@@ -32,7 +38,6 @@ export class RouletteBetManager extends BetManager {
       return
     }
 
-    const lastNumber = this.driver.getLastNumber()
     const dealerMessage = this.driver.getDealerMessage().toLowerCase()
 
     switch (this.state.gameStage) {
@@ -46,7 +51,7 @@ export class RouletteBetManager extends BetManager {
         this.runStageWait(dealerMessage)
         break
       case gameState.stageResults:
-        await this.runStageResult(dealerMessage, lastNumber)
+        await this.runStageResult(dealerMessage)
         break
     }
   }
@@ -54,7 +59,7 @@ export class RouletteBetManager extends BetManager {
   runStageSpin (dealerMessage) {
     this.logMessage('waiting for next spin')
 
-    if (dealerMessage === 'wait for the next round') {
+    if (dealerMessage === messages.waitForNextRound) {
       this.state.gameStage = gameState.stageBet
     }
   }
@@ -62,7 +67,7 @@ export class RouletteBetManager extends BetManager {
   async runStageBet (dealerMessage) {
     this.logMessage('waiting to be able to place bets')
 
-    if (['place your bets', 'last bets'].includes(dealerMessage)) {
+    if ([messages.placeYourBets, messages.lastBets].includes(dealerMessage)) {
       if (this.state.pendingGame === null) {
         const numberHistory = this.driver.getNumberHistory()
 
@@ -111,7 +116,7 @@ export class RouletteBetManager extends BetManager {
     this.logMessage('waiting for next round')
 
     const expectedMessage = this.state.pendingGame === null
-      ? 'wait for the next round'
+      ? messages.waitForNextRound
       : ''
 
     if (dealerMessage === expectedMessage) {
@@ -123,11 +128,13 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  async runStageResult (dealerMessage, lastNumber) {
+  async runStageResult (dealerMessage) {
     this.logMessage('waiting for result')
 
-    if (['place your bets', 'last bets'].includes(dealerMessage)) {
+    if ([messages.placeYourBets, messages.lastBets].includes(dealerMessage)) {
       this.logMessage('processing results')
+
+      const lastNumber = this.driver.getLastNumber()
 
       if (this.state.pendingGame) {
         const winTypes = this.getWinTypes(lastNumber)
@@ -163,7 +170,7 @@ export class RouletteBetManager extends BetManager {
   async submitBets () {
     let totalBetSize = 0
 
-    await this.driver.sleep(2500)
+    await this.driver.sleep(2000)
 
     !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
 
