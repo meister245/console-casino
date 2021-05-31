@@ -110,7 +110,11 @@ export class RouletteBetManager extends BetManager {
   runStageWait (dealerMessage) {
     this.logMessage('waiting for next round')
 
-    if (dealerMessage === 'wait for the next round') {
+    const expectedMessage = this.state.pendingGame === null
+      ? 'wait for the next round'
+      : ''
+
+    if (dealerMessage === expectedMessage) {
       if (this.state.pendingGame) {
         this.state.gameStage = gameState.stageResults
       } else {
