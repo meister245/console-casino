@@ -1,4 +1,4 @@
-const rouletteStrategies = require('./strategy/roulette')
+const { rouletteConfig } = require('./config')
 
 const gameStats = {
   gamesWin: 0,
@@ -8,7 +8,7 @@ const gameStats = {
 
 const multiplierStats = {}
 
-const strategyStats = Object.keys(rouletteStrategies).reduce(
+const strategyStats = Object.keys(rouletteConfig.strategies).reduce(
   (obj, item) => Object.assign(obj, { [item]: {} }), {})
 
 const updateGameStats = (result) => {
