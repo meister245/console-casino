@@ -59,11 +59,11 @@ export class Playtech extends DriverCommon {
   getNumberHistory () {
     try {
       const numberHistoryParentElement = document.querySelector('[class^="roulette-history-extended__items"]')
-      return [...numberHistoryParentElement.children].map(elem => parseInt(elem.textContent))
+      const numberHistoryElements = numberHistoryParentElement.querySelectorAll('[class^=roulette-history-item__value-text]')
+      return [...numberHistoryElements].map(elem => parseInt(elem.textContent))
     } catch {
       this.toggleExtendedHistory()
-      const numberHistoryParentElement = document.querySelector('[class^="roulette-history-extended__items"]')
-      return [...numberHistoryParentElement.children].map(elem => parseInt(elem.textContent))
+      return this.getNumberHistory()
     }
   }
 
