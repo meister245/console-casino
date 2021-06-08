@@ -12,9 +12,8 @@ const messages = {
 
 export class RouletteBetManager extends BetManager {
   constructor (driver, config, strategies) {
-    super()
+    super(driver)
 
-    this.driver = driver
     this.config = config
     this.strategies = strategies
     this.lastLogMessage = null

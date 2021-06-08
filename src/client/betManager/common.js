@@ -1,8 +1,15 @@
 import { serverUrl } from '../constants'
 
 export class BetManager {
+  constructor (driver) {
+    this.driver = driver
+  }
+
   async getServerState () {
-    return fetch(`${serverUrl}/state/`)
+    const tableName = this.driver.getTableName()
+    const source = tableName.replace(/\s/, '-').toLowerCase()
+
+    return fetch(`${serverUrl}/state/?tableName=${source}`)
       .then(
         resp => resp.json()
       ).catch(
@@ -11,7 +18,10 @@ export class BetManager {
   }
 
   async betRequest (data) {
-    return fetch(`${serverUrl}/bet/`, {
+    const tableName = this.driver.getTableName()
+    const source = tableName.replace(/\s/, '-').toLowerCase()
+
+    return fetch(`${serverUrl}/bet/?tableName=${source}`, {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },

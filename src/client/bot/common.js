@@ -8,7 +8,10 @@ export class CommonBot {
   }
 
   async getConfig () {
-    return fetch(`${serverUrl}/config/`)
+    const tableName = this.driver.getTableName()
+    const source = tableName.replace(/\s/, '-').toLowerCase()
+
+    return fetch(`${serverUrl}/config/?tableName=${source}`)
       .then(
         resp => resp.json()
       ).catch(

@@ -11,7 +11,7 @@ const logger = winston.createLogger({
 })
 
 const logRequest = (req, res, next) => {
-  logger.info(`${req.url} - ${JSON.stringify(req.body)}`)
+  logger.info(`${req.method} ${req.url} - ${JSON.stringify(req.body)}`)
   next()
 }
 

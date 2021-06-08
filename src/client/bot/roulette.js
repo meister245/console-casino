@@ -3,12 +3,11 @@ import { RouletteBetManager } from '../betManager/roulette'
 
 export class RouletteBot extends CommonBot {
   async start () {
-    const { config, strategies } = await this.getConfig()
-
     while (!this.driver.getDealerMessage()) {
       await this.driver.sleep(1500)
     }
 
+    const { config, strategies } = await this.getConfig()
     const balance = await this.driver.getBalance()
 
     if (!config.dryRun && config.minBalance > balance) {
