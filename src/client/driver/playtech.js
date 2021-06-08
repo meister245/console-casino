@@ -80,7 +80,8 @@ export class Playtech extends DriverCommon {
   }
 
   getTableName () {
-    return document.querySelector('.table-info__name')?.textContent ?? ''
+    const tableName = document.querySelector('.table-info__name')?.textContent ?? ''
+    return tableName.replace(/\s/g, '-').toLowerCase()
   }
 
   getWinAmount () {

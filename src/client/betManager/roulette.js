@@ -75,8 +75,8 @@ export class RouletteBetManager extends BetManager {
           betStrategy: lastBetStrategy
         } = await this.getServerState()
 
-        for (const strategyName in this.strategy) {
-          const strategy = this.strategy[strategyName]
+        for (const strategyName in this.strategies) {
+          const strategy = this.strategies[strategyName]
 
           let patternMatching = false
           let percentageMatching = false

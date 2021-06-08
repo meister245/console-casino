@@ -19,9 +19,8 @@ export class BetManager {
 
   async betRequest (data) {
     const tableName = this.driver.getTableName()
-    const source = tableName.replace(/\s/, '-').toLowerCase()
 
-    return fetch(`${serverUrl}/bet/?tableName=${source}`, {
+    return fetch(`${serverUrl}/bet/?tableName=${tableName}`, {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
