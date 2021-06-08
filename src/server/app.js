@@ -3,6 +3,7 @@ const cors = require('cors')
 const app = express()
 
 const { rouletteConfig } = require('./config')
+const { logger, logRequest, logRequestError } = require('./logger')
 
 const {
   getStats,
@@ -21,6 +22,8 @@ const {
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(logRequest)
+app.use(logRequestError)
 
 app.get('/config/', (req, res) => {
   res.send(JSON.stringify(rouletteConfig, null, 2))
@@ -58,4 +61,4 @@ app.post('/bet/', (req, res) => {
   res.send(JSON.stringify({ success: success, serverState: gameState }))
 })
 
-app.listen(8080, () => console.log('console-casino server is running'))
+app.listen(8080, () => logger.info('console-casino server is running'))
