@@ -3,7 +3,7 @@ import { RouletteBetManager } from '../betManager/roulette'
 
 export class RouletteBot extends CommonBot {
   async start () {
-    const { config, strategy } = await this.getConfig('roulette')
+    const { config, strategies } = await this.getConfig()
 
     while (!this.driver.getDealerMessage()) {
       await this.driver.sleep(1500)
@@ -21,12 +21,12 @@ export class RouletteBot extends CommonBot {
 
     this.running = true
 
-    const betManager = new RouletteBetManager(this.driver, config, strategy)
+    const betManager = new RouletteBetManager(this.driver, config, strategies)
 
     betManager.logMessage(config.dryRun ? 'DEVELOPMENT' : 'PRODUCTION')
 
     while (this.running) {
-      await betManager.runStrategy()
+      await betManager.start()
       await this.driver.sleep(1500)
     }
   }

@@ -1,7 +1,7 @@
 const gameState = {
   active: false,
   suspended: false,
-  betSize: 0,
+  betSize: undefined,
   betStrategy: undefined,
   tableName: undefined
 }
@@ -9,7 +9,7 @@ const gameState = {
 const resetGameState = () => {
   gameState.active = false
   gameState.suspended = false
-  gameState.betSize = 0
+  gameState.betSize = undefined
   gameState.betStrategy = undefined
   gameState.tableName = undefined
 }

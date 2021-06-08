@@ -7,8 +7,8 @@ export class CommonBot {
     this.timeStarted = Math.floor(Date.now() / 1000)
   }
 
-  async getConfig (name) {
-    return fetch(`${serverUrl}/config/?game=${name}`)
+  async getConfig () {
+    return fetch(`${serverUrl}/config/`)
       .then(
         resp => resp.json()
       ).catch(
