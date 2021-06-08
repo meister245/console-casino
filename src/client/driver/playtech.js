@@ -79,6 +79,10 @@ export class Playtech extends DriverCommon {
     return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent))
   }
 
+  getTableName () {
+    return document.querySelector('.table-info__name')?.textContent ?? ''
+  }
+
   getWinAmount () {
     const elem = document.querySelector('[data-automation-locator="footer.winAmount"]')
     return parseFloat(elem.textContent.match(/[0-9]+(?:\.[0-9]+)*/g)[0])
