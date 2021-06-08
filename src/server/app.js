@@ -2,9 +2,21 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const { getStats, updateStats } = require('./stats')
 const { rouletteConfig } = require('./config')
-const { gameState, initGameBet, resetGameState } = require('./state')
+
+const {
+  getStats,
+  updateStats
+} = require('./stats')
+
+const {
+  gameState,
+  initGameState,
+  updateGameState,
+  suspendGameState,
+  resumeSuspendedGameState,
+  resetGameState
+} = require('./state')
 
 app.use(cors())
 app.use(express.json())
@@ -23,28 +35,27 @@ app.get('/stats/', (req, res) => {
 })
 
 app.post('/bet/', (req, res) => {
-  const { gameStats } = getStats()
+  const action = req.body.action
+  const isTableMatching = req.body.action.tableName === gameState.tableName
 
-  if (gameStats.gamesLose === 0 && gameStats.gamesAborted === 0) {
-    if (!gameState.active) {
-      initGameBet(req.body.strategyName)
-      res.send(JSON.stringify({ success: true }))
-    } else {
-      res.send(JSON.stringify({ success: false }))
-    }
+  let success = true
+
+  if (action === 'init' && !gameState.active) {
+    gameState.suspended
+      ? resumeSuspendedGameState(req.body.strategyName, req.body.tableName)
+      : initGameState(req.body.strategyName, req.body.tableName)
+  } else if (action === 'update' && gameState.active && isTableMatching) {
+    updateGameState(req.body.betSize)
+  } else if (action === 'suspend' && gameState.active && isTableMatching) {
+    suspendGameState(req.body.betSize)
+  } else if (action === 'reset' && gameState.active && isTableMatching) {
+    resetGameState()
+    updateStats(req.body.result, req.body.strategy, req.body.multiplier)
+  } else {
+    success = false
   }
 
-  res.send(JSON.stringify({ success: false }))
-})
-
-app.post('/result/', (req, res) => {
-  resetGameState()
-  updateStats(req.body.result, req.body.strategy, req.body.multiplier)
-  res.send(JSON.stringify({ success: true }))
-})
-
-app.post('/suspend/', (req, res) => {
-  res.send(JSON.stringify({ success: true }))
+  res.send(JSON.stringify({ success: success, serverState: gameState }))
 })
 
 app.listen(8080, () => console.log('console-casino server is running'))

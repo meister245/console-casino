@@ -1,28 +1,50 @@
 const gameState = {
   active: false,
   suspended: false,
-  lastBetSize: 0,
-  lastBetStrategy: undefined,
-  lastGameTime: undefined
+  betSize: 0,
+  betStrategy: undefined,
+  tableName: undefined
 }
 
 const resetGameState = () => {
   gameState.active = false
   gameState.suspended = false
-  gameState.lastBetSize = 0
-  gameState.lastBetStrategy = undefined
-  gameState.lastGameTime = undefined
+  gameState.betSize = 0
+  gameState.betStrategy = undefined
+  gameState.tableName = undefined
 }
 
-const initGameBet = (strategyName) => {
+const initGameState = (strategyName, tableName) => {
   gameState.active = true
   gameState.suspended = false
-  gameState.lastBetStrategy = strategyName
-  gameState.lastGameTime = Math.floor(Date.now() / 1000)
+  gameState.betStrategy = strategyName
+  gameState.tableName = tableName
+}
+
+const updateGameState = (betSize) => {
+  gameState.betSize = betSize
+}
+
+const suspendGameState = (betSize) => {
+  gameState.active = false
+  gameState.suspended = true
+  gameState.betSize = betSize
+  gameState.betStrategy = undefined
+  gameState.tableName = undefined
+}
+
+const resumeSuspendedGameState = (strategyName, tableName) => {
+  gameState.active = true
+  gameState.suspended = true
+  gameState.betStrategy = strategyName
+  gameState.tableName = tableName
 }
 
 module.exports = {
   gameState,
-  initGameBet,
-  resetGameState
+  initGameState,
+  updateGameState,
+  resetGameState,
+  resumeSuspendedGameState,
+  suspendGameState
 }
