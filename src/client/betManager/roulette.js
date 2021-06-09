@@ -130,7 +130,7 @@ export class RouletteBetManager extends BetManager {
   runStageWait (dealerMessage) {
     this.logMessage('waiting for next round')
 
-    const expectedMessage = this.state.pendingGame === null
+    const expectedMessage = this.config.dryRun || this.state.pendingGame === null
       ? messages.waitForNextRound
       : ''
 

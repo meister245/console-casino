@@ -11,7 +11,12 @@ const logger = winston.createLogger({
 })
 
 const logRequest = (req, res, next) => {
-  logger.info(`${req.method} ${req.url} - ${JSON.stringify(req.body)}`)
+  logger.info(`${req.method} ${req.url}`)
+
+  if (Object.keys(req.body).length > 0) {
+    logger.info(JSON.stringify(req.body))
+  }
+
   next()
 }
 
