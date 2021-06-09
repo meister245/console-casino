@@ -39,7 +39,7 @@ app.get('/stats/', (req, res) => {
 
 app.post('/bet/', (req, res) => {
   const action = req.body.action
-  const isTableMatching = req.body.action.tableName === gameState.tableName
+  const isTableMatching = req.body.tableName === gameState.tableName
 
   let success = true
 
