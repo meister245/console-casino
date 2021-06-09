@@ -120,7 +120,7 @@ export class RouletteBetManager extends BetManager {
     if (success) {
       this.logMessage('server accepted bet')
       this.setupGameState(strategy, serverState)
-      this.logMessage(serverState)
+
       await this.submitBets()
     } else {
       this.logMessage('server refused bet')
@@ -176,23 +176,23 @@ export class RouletteBetManager extends BetManager {
 
           this.state.gameCount += 1
           this.state.pendingGame = null
-        } else if (this.state.pendingGame.suspendLoss > 0) {
+        } else if (this.state.pendingGame.suspendLossLimit > 0) {
           this.state.pendingGame.betSize = this.state.pendingGame.betSize * this.state.pendingGame.progressionMultiplier
 
           if (!isSuspendLossReached) {
-            const { success } = await this.betUpdate(this.state.betSize, tableName)
+            const { success } = await this.betUpdate(this.state.pendingGame.betSize, tableName)
             success && this.logMessage('updated bet size, updated server state')
             this.state.pendingGame.progressionCount += 1
           } else if (isSuspendLossReached) {
-            const { success } = await this.betSuspend(this.state.betSize, tableName)
+            const { success } = await this.betSuspend(this.state.pendingGame.betSize, this.state.pendingGame.betStrategy, tableName)
             success && this.logMessage('suspend limit reached, reset server state')
             this.state.pendingGame = null
           }
-        } else if (this.state.pendingGame.stopLosslimit > 0) {
+        } else if (this.state.pendingGame.stopLossLimit > 0) {
           this.state.pendingGame.betSize = this.state.pendingGame.betSize * this.state.pendingGame.progressionMultiplier
 
           if (!isStopLossReached) {
-            const { success } = await this.betUpdate(this.state.betSize, tableName)
+            const { success } = await this.betUpdate(this.state.pendingGame.betSize, tableName)
             success && this.logMessage('updated bet size, updated server state')
             this.state.pendingGame.progressionCount += 1
           } else if (isStopLossReached) {

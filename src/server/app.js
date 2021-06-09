@@ -50,7 +50,7 @@ app.post('/bet/', (req, res) => {
   } else if (action === 'update' && gameState.active && isTableMatching) {
     updateGameState(req.body.betSize)
   } else if (action === 'suspend' && gameState.active && isTableMatching) {
-    suspendGameState(req.body.betSize)
+    suspendGameState(req.body.betSize, req.body.betStrategy)
   } else if (action === 'reset' && gameState.active && isTableMatching) {
     resetGameState()
     updateStats(req.body.result, req.body.strategy, req.body.multiplier)

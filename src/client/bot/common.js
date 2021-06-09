@@ -1,16 +1,23 @@
 import { serverUrl } from '../constants'
+import { Playtech } from '../driver/playtech'
 
 export class CommonBot {
-  constructor (driver) {
-    this.driver = driver
-    this.running = false
+  constructor () {
+    this.running = true
     this.timeStarted = Math.floor(Date.now() / 1000)
   }
 
-  async getConfig () {
-    const tableName = this.driver.getTableName()
+  async getDriver (driverName) {
+    switch (driverName) {
+      case 'playtech':
+        return new Playtech()
+      default:
+        throw new Error(`invalid driver name ${driverName}`)
+    }
+  }
 
-    return fetch(`${serverUrl}/config/?tableName=${tableName}`)
+  async getConfig () {
+    return fetch(`${serverUrl}/config/`)
       .then(
         resp => resp.json()
       ).catch(

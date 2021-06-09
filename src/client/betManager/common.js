@@ -44,9 +44,9 @@ export class BetManager {
     })
   }
 
-  async betSuspend (betSize, tableName) {
+  async betSuspend (betSize, betStrategy, tableName) {
     return await this.betRequest({
-      action: 'suspend', betSize, tableName
+      action: 'suspend', betSize, betStrategy, tableName
     })
   }
 

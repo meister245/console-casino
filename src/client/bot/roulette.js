@@ -3,30 +3,25 @@ import { RouletteBetManager } from '../betManager/roulette'
 
 export class RouletteBot extends CommonBot {
   async start () {
-    while (!this.driver.getDealerMessage()) {
-      await this.driver.sleep(1500)
+    const { config, strategies } = await this.getConfig()
+
+    const driver = await this.getDriver(config.driverName)
+
+    while (!driver.getDealerMessage()) {
+      await driver.sleep(1500)
     }
 
-    const { config, strategies } = await this.getConfig()
-    const balance = await this.driver.getBalance()
-
-    if (!config.dryRun && config.minBalance > balance) {
+    if (!config.dryRun && config.minBalance > driver.getBalance()) {
       throw new Error('balance too low')
     }
 
-    if (this.running) {
-      throw new Error('already started')
-    }
-
-    this.running = true
-
-    const betManager = new RouletteBetManager(this.driver, config, strategies)
+    const betManager = new RouletteBetManager(driver, config, strategies)
 
     betManager.logMessage(config.dryRun ? 'DEVELOPMENT' : 'PRODUCTION')
 
     while (this.running) {
       await betManager.start()
-      await this.driver.sleep(1500)
+      await driver.sleep(1500)
     }
   }
 

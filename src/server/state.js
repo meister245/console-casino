@@ -33,18 +33,16 @@ const updateGameState = (betSize) => {
   gameState.betSize = betSize
 
   logger.info('updated game state')
-  logger.info(gameState)
 }
 
-const suspendGameState = (betSize) => {
+const suspendGameState = (betSize, betStrategy) => {
   gameState.active = false
   gameState.suspended = true
   gameState.betSize = betSize
-  gameState.betStrategy = undefined
+  gameState.betStrategy = betStrategy
   gameState.tableName = undefined
 
   logger.info('suspended game state')
-  logger.info(gameState)
 }
 
 const resumeSuspendedGameState = (strategyName, tableName) => {
@@ -54,7 +52,6 @@ const resumeSuspendedGameState = (strategyName, tableName) => {
   gameState.tableName = tableName
 
   logger.info('resumed suspended game state')
-  logger.info(gameState)
 }
 
 module.exports = {
