@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "build": "gulp",
-    "server": "node src/server/app"
+    "server": "node src/server/app",
+    "start": "gulp && node src/server/app"
   },
   "repository": {
     "type": "git",
