@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const { rouletteConfig } = require('./config')
+const { getConfig, getClient } = require('./config')
 const { logger, logRequest, logRequestError } = require('./logger')
 
 const {
@@ -25,8 +25,15 @@ app.use(express.urlencoded({ extended: true }))
 app.use(logRequest)
 app.use(logRequestError)
 
+const config = getConfig()
+const clientSource = getClient()
+
+app.get('/client/', (req, res) => {
+  res.send(clientSource)
+})
+
 app.get('/config/', (req, res) => {
-  res.send(JSON.stringify(rouletteConfig, null, 2))
+  res.send(JSON.stringify(config))
 })
 
 app.get('/state/', (req, res) => {

@@ -24,14 +24,24 @@ using state machines in the browser developer console
 
 **Loading Script**
 
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
+    const loadScript = (url) => {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script')
+            const headElement = document.getElementsByTagName('head')[0]
 
-    fetch('https://raw.githubusercontent.com/meister245/console-casino/master/dist/console-casino.min.js')
-        .then(response => response.text())
-        .then(text => script.textContent = text)
+            script.onload = resolve
+            script.onerror = reject
+            script.src = url
 
-    document.body.appendChild(script);
+            headElement.appendChild(script)
+        })
+    }
+
+    loadScript('http://localhost:8080/client/')
+        .then(() => {
+            const casino = new ConsoleCasino()
+            casino.roulette.start()
+        })
 
 **Parameters**
 
