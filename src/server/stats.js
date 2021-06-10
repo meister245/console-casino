@@ -1,5 +1,3 @@
-const { getConfig } = require('./util')
-
 const gameStats = {
   gamesWin: 0,
   gamesLose: 0,
@@ -7,10 +5,7 @@ const gameStats = {
 }
 
 const multiplierStats = {}
-const { strategies } = getConfig()
-
-const strategyStats = Object.keys(strategies).reduce(
-  (obj, item) => Object.assign(obj, { [item]: {} }), {})
+const strategyMultiplierStats = {}
 
 const updateGameStats = (result) => {
   switch (result) {
@@ -26,9 +21,8 @@ const updateGameStats = (result) => {
   }
 }
 
-const updateStrategyStats = (strategy, multiplier) => {
+const updateMultiplierStats = (multiplier) => {
   const totalGames = Object.values(gameStats).reduce((obj, item) => obj + item, 0)
-  const strategyMultiplierStats = strategyStats[strategy]?.multiplier ?? {}
 
   if (!(multiplier in multiplierStats)) {
     multiplierStats[multiplier] = { count: 0, percent: 0 }
@@ -40,13 +34,34 @@ const updateStrategyStats = (strategy, multiplier) => {
     multiplierStats[key].percent =
       Math.floor(multiplierStats[key].count / totalGames * 100)
   })
+}
 
-  if (!(multiplier in strategyMultiplierStats)) {
-    strategyMultiplierStats[multiplier] = 0
+const updateStrategyMultiplierStats = (strategy, multiplier) => {
+  const totalGames = Object.values(gameStats).reduce((obj, item) => obj + item, 0)
+
+  if (!(strategy in strategyMultiplierStats)) {
+    strategyMultiplierStats[strategy] = {
+      count: 0, percent: 0, multiplier: {} }
   }
 
-  strategyMultiplierStats[multiplier] += 1
-  strategyStats[strategy].multiplier = strategyMultiplierStats
+  strategyMultiplierStats[strategy].count += 1
+
+  if (!(multiplierStats in strategyMultiplierStats[strategy])) {
+    strategyMultiplierStats[strategy].multiplier[multiplier] = {
+      count: 0, percent: 0 }
+  }
+
+  strategyMultiplierStats[strategy].multiplier[multiplier].count += 1
+
+  Object.keys(strategyMultiplierStats).forEach(strategy => {
+    const item = strategyMultiplierStats[strategy]
+    item.percent = Math.floor(item.count / totalGames * 100)
+
+    Object.keys(item.multiplier).forEach(key => {
+      const multiplierItem = item.multiplier[key]
+      multiplierItem.percent = Math.floor(multiplierItem.count / totalGames * 100)
+    })
+  })
 }
 
 module.exports = {
@@ -54,12 +69,13 @@ module.exports = {
   getStats: () => {
     return {
       gameStats,
-      strategyStats,
-      multiplierStats
+      multiplierStats,
+      strategyMultiplierStats
     }
   },
   updateStats: (result, strategy, multiplier) => {
     updateGameStats(result)
-    // updateStrategyStats(strategy, multiplier)
+    updateMultiplierStats(multiplier)
+    updateStrategyMultiplierStats(strategy, multiplier)
   }
 }
