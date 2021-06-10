@@ -43,30 +43,6 @@ using state machines in the browser developer console
             casino.roulette.start()
         })
 
-**Parameters**
-
-- `driverName` - string, driver name
-- `strategyName` - string, strategy name
-- `bagSize` - number, reserve money amount from total balance for strategy
-- `dryRun` - boolean, simulation or live run
-- `chipSize` - number, base bet amount for strategies
-
-**Demo**
-
-    // instantiate script
-    var driverName = 'playtech'; 
-    const casino = new ConsoleCasino(driverName);
-
-    // strategy parameters
-    var bagSize = 5.0, dryRun = true, chipSize = 0.2;
-    var options = {dryRun: dryRun, chipSize: chipSize}
-
-    // run roulette strategy
-    casino.roulette.start(strategyName, bagSize, options);
-
-    // get submitted tasks
-    casino.roulette.tasks;
-
 **Supported Casinos**
 
 - Any casino using Playtech gaming software

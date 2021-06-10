@@ -14,9 +14,6 @@ const resetGameState = () => {
   gameState.betSize = undefined
   gameState.betStrategy = undefined
   gameState.tableName = undefined
-
-  logger.info('reset game state')
-  logger.info(gameState)
 }
 
 const initGameState = (strategyName, tableName) => {
@@ -24,15 +21,10 @@ const initGameState = (strategyName, tableName) => {
   gameState.suspended = false
   gameState.betStrategy = strategyName
   gameState.tableName = tableName
-
-  logger.info('initialized game state')
-  logger.info(gameState)
 }
 
 const updateGameState = (betSize) => {
   gameState.betSize = betSize
-
-  logger.info('updated game state')
 }
 
 const suspendGameState = (betSize, betStrategy) => {
@@ -41,8 +33,6 @@ const suspendGameState = (betSize, betStrategy) => {
   gameState.betSize = betSize
   gameState.betStrategy = betStrategy
   gameState.tableName = undefined
-
-  logger.info('suspended game state')
 }
 
 const resumeSuspendedGameState = (strategyName, tableName) => {
@@ -50,8 +40,6 @@ const resumeSuspendedGameState = (strategyName, tableName) => {
   gameState.suspended = true
   gameState.betStrategy = strategyName
   gameState.tableName = tableName
-
-  logger.info('resumed suspended game state')
 }
 
 module.exports = {

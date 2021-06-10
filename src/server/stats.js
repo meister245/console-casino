@@ -1,4 +1,4 @@
-const { getConfig } = require('./config')
+const { getConfig } = require('./util')
 
 const gameStats = {
   gamesWin: 0,
@@ -60,6 +60,6 @@ module.exports = {
   },
   updateStats: (result, strategy, multiplier) => {
     updateGameStats(result)
-    updateStrategyStats(strategy, multiplier)
+    // updateStrategyStats(strategy, multiplier)
   }
 }

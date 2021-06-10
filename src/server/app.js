@@ -2,8 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
-const { getConfig, getClient } = require('./config')
-const { logger, logRequest, logRequestError } = require('./logger')
+const { getConfig, getClient } = require('./util')
 
 const {
   getStats,
@@ -22,50 +21,63 @@ const {
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(logRequest)
-app.use(logRequestError)
 
 const config = getConfig()
 const clientSource = getClient()
 
 app.get('/client/', (req, res) => {
+  res.set('Content-Type', 'application/javascript')
   res.send(clientSource)
 })
 
 app.get('/config/', (req, res) => {
+  res.set('Content-Type', 'application/json')
   res.send(JSON.stringify(config))
 })
 
 app.get('/state/', (req, res) => {
+  res.set('Content-Type', 'application/json')
   res.send(JSON.stringify(gameState, null, 2))
 })
 
 app.get('/stats/', (req, res) => {
+  res.set('Content-Type', 'application/json')
   res.send(JSON.stringify(getStats(), null, 2))
 })
 
 app.post('/bet/', (req, res) => {
-  const action = req.body.action
-  const isTableMatching = req.body.tableName === gameState.tableName
-
   let success = true
+
+  const {
+    action, betStrategy, betSize, betResult, betMultiplier, tableName
+  } = {
+    action: req.body?.action ?? undefined,
+    betStrategy: req.body?.betStrategy ?? undefined,
+    betSize: req.body?.betSize ?? undefined,
+    betResult: req.body?.betResult ?? undefined,
+    betMultiplier: req.body?.betMultiplier ?? undefined,
+    tableName: req.body?.tableName ?? undefined
+  }
+
+  const isTableMatching = tableName === gameState.tableName
 
   if (action === 'init' && !gameState.active) {
     gameState.suspended
-      ? resumeSuspendedGameState(req.body.strategyName, req.body.tableName)
-      : initGameState(req.body.strategyName, req.body.tableName)
+      ? resumeSuspendedGameState(betStrategy, tableName)
+      : initGameState(betStrategy, tableName)
   } else if (action === 'update' && gameState.active && isTableMatching) {
-    updateGameState(req.body.betSize)
+    updateGameState(betSize)
   } else if (action === 'suspend' && gameState.active && isTableMatching) {
-    suspendGameState(req.body.betSize, req.body.betStrategy)
+    suspendGameState(betSize, betStrategy)
   } else if (action === 'reset' && gameState.active && isTableMatching) {
     resetGameState()
-    updateStats(req.body.result, req.body.strategy, req.body.multiplier)
+    updateStats(betResult, betStrategy, betMultiplier)
   } else {
     success = false
   }
 
+  res.set('Content-Type', 'application/json')
   res.send(JSON.stringify({ success: success, serverState: gameState }))
 })
 
-app.listen(8080, () => logger.info('console-casino server is running'))
+module.exports = app
