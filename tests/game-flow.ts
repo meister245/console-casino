@@ -1,14 +1,12 @@
-/* eslint-disable no-undef */
+import assert from 'assert'
+import request from 'supertest'
+import { Server } from 'http';
 
-const assert = require('assert')
-const request = require('supertest')
-
-const app = require('../src/server/app')
-
-const { dataInit, dataUpdate, dataSuspend, dataReset } = require('./constants')
+import { app } from '../src/server/app'
+import { dataInit, dataUpdate, dataSuspend, dataReset } from './constants'
 
 describe('Game state workflow', () => {
-  let server
+  let server: Server
 
   before((done) => {
     server = app.listen(3000, () => {
