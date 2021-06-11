@@ -1,23 +1,20 @@
-const express = require('express')
-const cors = require('cors')
-const app = module.exports = express()
+import express = require('express')
+import cors = require('cors')
 
-const { getConfig, getClient } = require('./util')
-const { logger, logRequest, logRequestError } = require('./logger')
+import { getConfig, getClient } from './util'
+import { logger, logRequest, logRequestError } from './logger'
+import { getStats, updateStats } from './stats'
 
-const {
-  getStats,
-  updateStats
-} = require('./stats')
-
-const {
+import {
   gameState,
   initGameState,
   updateGameState,
   suspendGameState,
   resumeSuspendedGameState,
   resetGameState
-} = require('./state')
+} from './state'
+
+export const app = express()
 
 app.use(cors())
 app.use(express.json())
@@ -31,7 +28,7 @@ if (require.main === module) {
 const config = getConfig()
 const clientSource = getClient()
 
-app.get('/client/', (req, res) => {
+app.get('/client/', (req, res, next) => {
   res.set('Content-Type', 'application/javascript')
   res.send(clientSource)
 })
@@ -83,7 +80,7 @@ app.post('/bet/', (req, res) => {
   }
 
   res.set('Content-Type', 'application/json')
-  res.send(JSON.stringify({ success: success, serverState: gameState }))
+  res.send(JSON.stringify({ success, serverState: gameState }))
 })
 
 if (require.main === module) {

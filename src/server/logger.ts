@@ -1,6 +1,6 @@
-const winston = require('winston')
+import winston = require('winston')
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
   defaultMeta: { service: 'user-service' },
@@ -10,7 +10,7 @@ const logger = winston.createLogger({
   ]
 })
 
-const logRequest = (req, res, next) => {
+export const logRequest = ({req, next}: any) => {
   logger.info(`${req.method} ${req.url}`)
 
   if (Object.keys(req.body).length > 0) {
@@ -20,13 +20,7 @@ const logRequest = (req, res, next) => {
   next()
 }
 
-const logRequestError = (err, req, res, next) => {
+export const logRequestError = ({err, next}: any) => {
   logger.error(err)
   next()
-}
-
-module.exports = {
-  logger,
-  logRequest,
-  logRequestError
 }

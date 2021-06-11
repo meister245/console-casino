@@ -1,6 +1,12 @@
-const { logger } = require('./logger')
+interface GameState {
+  active: boolean
+  suspended: boolean
+  betSize?: number
+  betStrategy?: string
+  tableName?: string
+}
 
-const gameState = {
+export const gameState: GameState = {
   active: false,
   suspended: false,
   betSize: undefined,
@@ -8,7 +14,7 @@ const gameState = {
   tableName: undefined
 }
 
-const resetGameState = () => {
+export const resetGameState = () => {
   gameState.active = false
   gameState.suspended = false
   gameState.betSize = undefined
@@ -16,18 +22,18 @@ const resetGameState = () => {
   gameState.tableName = undefined
 }
 
-const initGameState = (strategyName, tableName) => {
+export const initGameState = (strategyName: string, tableName: string) => {
   gameState.active = true
   gameState.suspended = false
   gameState.betStrategy = strategyName
   gameState.tableName = tableName
 }
 
-const updateGameState = (betSize) => {
+export const updateGameState = (betSize: number) => {
   gameState.betSize = betSize
 }
 
-const suspendGameState = (betSize, betStrategy) => {
+export const suspendGameState = (betSize: number, betStrategy: string) => {
   gameState.active = false
   gameState.suspended = true
   gameState.betSize = betSize
@@ -35,18 +41,9 @@ const suspendGameState = (betSize, betStrategy) => {
   gameState.tableName = undefined
 }
 
-const resumeSuspendedGameState = (strategyName, tableName) => {
+export const resumeSuspendedGameState = (strategyName: string, tableName: string) => {
   gameState.active = true
   gameState.suspended = true
   gameState.betStrategy = strategyName
   gameState.tableName = tableName
-}
-
-module.exports = {
-  gameState,
-  initGameState,
-  updateGameState,
-  resetGameState,
-  resumeSuspendedGameState,
-  suspendGameState
 }
