@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "build": "gulp",
-    "server": "node src/casino",
-    "start": "gulp && node src/casino",
+    "server": "node src/server/app",
+    "start": "gulp && node src/server/app",
     "test": "mocha"
   },
   "repository": {

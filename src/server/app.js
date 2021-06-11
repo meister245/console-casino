@@ -1,8 +1,9 @@
 const express = require('express')
 const cors = require('cors')
-const app = express()
+const app = module.exports = express()
 
 const { getConfig, getClient } = require('./util')
+const { logger, logRequest, logRequestError } = require('./logger')
 
 const {
   getStats,
@@ -21,6 +22,11 @@ const {
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+if (require.main === module) {
+  app.use(logRequest)
+  app.use(logRequestError)
+}
 
 const config = getConfig()
 const clientSource = getClient()
@@ -80,4 +86,6 @@ app.post('/bet/', (req, res) => {
   res.send(JSON.stringify({ success: success, serverState: gameState }))
 })
 
-module.exports = app
+if (require.main === module) {
+  app.listen(8080, () => logger.info('console-casino server is running'))
+}

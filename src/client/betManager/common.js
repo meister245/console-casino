@@ -32,9 +32,9 @@ export class BetManager {
     )
   }
 
-  async betInit (strategyName, tableName) {
+  async betInit (betStrategy, tableName) {
     return await this.betRequest({
-      action: 'init', strategyName, tableName
+      action: 'init', betStrategy, tableName
     })
   }
 
