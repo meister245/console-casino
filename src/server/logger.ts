@@ -1,26 +1,49 @@
-import winston = require('winston')
+import winston from 'winston'
+
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
+  debug: 4,
+}
+
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'cyan',
+  http: 'magenta',
+  debug: 'white',
+}
+
+const transports = [
+  new winston.transports.Console(),
+  new winston.transports.File({ filename: '/var/tmp/console-casino.log' })
+]
+
+const format = winston.format.combine(
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
+  winston.format.colorize({ all: true }),
+  winston.format.printf(
+    (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+  ),
+)
+
+winston.addColors(colors)
 
 export const logger = winston.createLogger({
   level: 'info',
-  format: winston.format.json(),
-  defaultMeta: { service: 'user-service' },
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: '/var/tmp/console-casino.log' })
-  ]
+  levels,
+  format,
+  transports,
 })
 
-export const logRequest = ({req, next}: any) => {
+export const logRequest = (req: any, res: any, done: any) => {
   logger.info(`${req.method} ${req.url}`)
 
   if (Object.keys(req.body).length > 0) {
     logger.info(JSON.stringify(req.body))
   }
 
-  next()
-}
-
-export const logRequestError = ({err, next}: any) => {
-  logger.error(err)
-  next()
+  done()
 }

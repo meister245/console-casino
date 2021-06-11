@@ -2,7 +2,7 @@ import express = require('express')
 import cors = require('cors')
 
 import { getConfig, getClient } from './util'
-import { logger, logRequest, logRequestError } from './logger'
+import { logger, logRequest } from './logger'
 import { getStats, updateStats } from './stats'
 
 import {
@@ -22,7 +22,6 @@ app.use(express.urlencoded({ extended: true }))
 
 if (require.main === module) {
   app.use(logRequest)
-  app.use(logRequestError)
 }
 
 const config = getConfig()
