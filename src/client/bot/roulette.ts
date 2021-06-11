@@ -29,3 +29,5 @@ export class RouletteBot extends CommonBot {
     this.running = false
   }
 }
+
+new RouletteBot().start()

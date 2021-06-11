@@ -1,13 +1,12 @@
-
 export const serverPort = 8080
 export const serverHostname = 'localhost'
 export const serverUrl = `http://${serverHostname}:${serverPort}`
 
-export const gameState = {
-  stageBet: 'stage-bet',
-  stageSpin: 'stage-spin',
-  stageWait: 'stage-wait',
-  stageResults: 'stage-results'
+export enum GameStage {
+  BET = 'stage-bet',
+  SPIN = 'stage-spin',
+  WAIT = 'stage-wait',
+  RESULTS = 'stage-results'
 }
 
 export const rouletteNumbers = {

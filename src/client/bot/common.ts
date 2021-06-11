@@ -2,12 +2,15 @@ import { serverUrl } from '../constants'
 import { Playtech } from '../driver/playtech'
 
 export class CommonBot {
+  running: boolean
+  timeStarted: number
+
   constructor () {
     this.running = true
     this.timeStarted = Math.floor(Date.now() / 1000)
   }
 
-  async getDriver (driverName) {
+  async getDriver (driverName: string) {
     switch (driverName) {
       case 'playtech':
         return new Playtech()

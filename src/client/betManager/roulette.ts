@@ -1,17 +1,39 @@
-import { rouletteNumbers, gameState } from '../constants'
-import { BetManager } from './common'
+import { rouletteNumbers, GameStage } from '../constants'
+import { BetManager, GameResult, GameState } from './common'
 
 const lostGameUrl =
   'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'
 
-const messages = {
-  waitForNextRound: 'wait for the next round',
-  placeYourBets: 'place your bets',
-  lastBets: 'last bets'
+const modalMessageRegex =
+  /(inactive|disconnected|restart|unavailable|table.will.be.closed)/
+
+enum TableMessage {
+  WAIT = 'wait for the next round',
+  BETS = 'place your bets',
+  LAST_BETS = 'last bets',
+  EMPTY = ''
+}
+
+interface RouletteConfig {
+  dryRun: boolean
+  chipSize: number
+  driverName: string
+  minBalance: number
+}
+
+interface RouletteState {
+  gameCount: number
+  gameState: GameState | null
+  gameStage: GameStage
 }
 
 export class RouletteBetManager extends BetManager {
-  constructor (driver, config, strategies) {
+  config: RouletteConfig
+  strategies: any
+  lastLogMessage: null | string
+  state: RouletteState
+
+  constructor (driver: any, config: RouletteConfig, strategies: any) {
     super(driver)
 
     this.config = config
@@ -20,54 +42,51 @@ export class RouletteBetManager extends BetManager {
 
     this.state = {
       gameCount: 0,
-      pendingGame: null,
-      gameStage: gameState.stageSpin
+      gameState: null,
+      gameStage: GameStage.SPIN
     }
   }
 
   async start () {
     const modalMessage = this.driver.getModalMessage().toLowerCase()
 
-    if (modalMessage && modalMessage.match(/(inactive|disconnected|restart|unavailable)/g)) {
-      this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
+    if (modalMessage && modalMessage.match(modalMessageRegex)) {
+      const tableName = this.driver.getTableName()
+      await this.betReset(GameResult.ABORT, this.state.gameState, tableName)
       window.location.reload()
-      return
-    } else if (modalMessage && modalMessage.match(/table.will.be.closed/g)) {
-      this.state.pendingGame && await this.reportResult('abort', this.state.pendingGame)
-      return
     }
 
-    const dealerMessage = this.driver.getDealerMessage().toLowerCase()
+    const dealerMessage = this.driver.getDealerMessage().toLowerCase() as TableMessage
 
     switch (this.state.gameStage) {
-      case gameState.stageSpin:
+      case GameStage.SPIN:
         this.runStageSpin(dealerMessage)
         break
-      case gameState.stageBet:
+      case GameStage.BET:
         await this.runStageBet(dealerMessage)
         break
-      case gameState.stageWait:
+      case GameStage.WAIT:
         this.runStageWait(dealerMessage)
         break
-      case gameState.stageResults:
+      case GameStage.RESULTS:
         await this.runStageResult(dealerMessage)
         break
     }
   }
 
-  runStageSpin (dealerMessage) {
+  runStageSpin (dealerMessage: TableMessage) {
     this.logMessage('waiting for next spin')
 
-    if (dealerMessage === messages.waitForNextRound) {
-      this.state.gameStage = gameState.stageBet
+    if (dealerMessage === TableMessage.WAIT) {
+      this.state.gameStage = GameStage.BET
     }
   }
 
-  async runStageBet (dealerMessage) {
+  async runStageBet (dealerMessage: TableMessage) {
     this.logMessage('waiting to be able to place bets')
 
-    if ([messages.placeYourBets, messages.lastBets].includes(dealerMessage)) {
-      if (this.state.pendingGame === null) {
+    if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
+      if (this.state.gameState === null) {
         const numberHistory = this.driver.getNumberHistory()
 
         const {
@@ -75,6 +94,7 @@ export class RouletteBetManager extends BetManager {
           betStrategy: lastBetStrategy
         } = await this.getServerState()
 
+        // tslint:disable-next-line: forin
         for (const strategyName in this.strategies) {
           const strategy = this.strategies[strategyName]
 
@@ -103,15 +123,15 @@ export class RouletteBetManager extends BetManager {
           }
         }
       } else {
-        this.logMessage(`continue betting - ${this.state.pendingGame.strategy}`)
+        this.logMessage(`continue betting - ${this.state.gameState.betStrategy}`)
         await this.submitBets()
       }
 
-      this.state.gameStage = gameState.stageWait
+      this.state.gameStage = GameStage.WAIT
     }
   }
 
-  async registerBet (strategyName, strategy) {
+  async registerBet (strategyName: string, strategy: any) {
     this.logMessage(`strategy matched - ${strategyName}`)
 
     const tableName = this.driver.getTableName()
@@ -119,7 +139,7 @@ export class RouletteBetManager extends BetManager {
 
     if (success) {
       this.logMessage('server accepted bet')
-      this.setupGameState(strategy, serverState)
+      this.state.gameState = this.setupGameState(strategy, serverState)
 
       await this.submitBets()
     } else {
@@ -127,84 +147,84 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  runStageWait (dealerMessage) {
+  runStageWait (dealerMessage: TableMessage) {
     this.logMessage('waiting for next round')
 
-    const expectedMessage = this.config.dryRun || this.state.pendingGame === null
-      ? messages.waitForNextRound
-      : ''
+    const expectedMessage = this.config.dryRun || this.state.gameState === null
+      ? TableMessage.WAIT
+      : TableMessage.EMPTY
 
     if (dealerMessage === expectedMessage) {
-      if (this.state.pendingGame) {
-        this.state.gameStage = gameState.stageResults
+      if (this.state.gameState) {
+        this.state.gameStage = GameStage.RESULTS
       } else {
-        this.state.gameStage = gameState.stageBet
+        this.state.gameStage = GameStage.BET
       }
     }
   }
 
-  async runStageResult (dealerMessage) {
+  async runStageResult (dealerMessage: TableMessage) {
     this.logMessage('waiting for result')
 
-    if ([messages.placeYourBets, messages.lastBets].includes(dealerMessage)) {
+    if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
       this.logMessage('processing results')
 
       const lastNumber = this.driver.getLastNumber()
 
-      if (this.state.pendingGame) {
+      if (this.state.gameState) {
         const tableName = this.driver.getTableName()
         const winTypes = this.getWinTypes(lastNumber)
-        const strategy = this.strategies[this.state.pendingGame.strategy]
+        const strategy = this.strategies[this.state.gameState.betStrategy]
 
         const isSuspendLossReached =
-          this.state.pendingGame.suspendLossLimit !== 0 &&
-          this.state.pendingGame.progressionCount === this.state.pendingGame.suspendLossLimit
+          this.state.gameState.suspendLossLimit !== 0 &&
+          this.state.gameState.progressionCount === this.state.gameState.suspendLossLimit
 
         const isStopLossReached =
-          this.state.pendingGame.stopLossLimit !== 0 &&
-          this.state.pendingGame.progressionCount === this.state.pendingGame.stopLosslimit
+          this.state.gameState.stopLossLimit !== 0 &&
+          this.state.gameState.progressionCount === this.state.gameState.stopLossLimit
 
         let isWin = false
 
-        strategy.bets.forEach(betName => {
+        strategy.bets.forEach((betName: string) => {
           isWin = isWin || winTypes.includes(betName)
         })
 
         if (isWin) {
-          const { success } = await this.betReset('win', this.state.pendingGame, tableName)
+          const { success } = await this.betReset(GameResult.WIN, this.state.gameState, tableName)
           success && this.logMessage('registered win, reset server state')
 
           this.state.gameCount += 1
-          this.state.pendingGame = null
-        } else if (this.state.pendingGame.suspendLossLimit > 0) {
-          this.state.pendingGame.betSize = this.state.pendingGame.betSize * this.state.pendingGame.progressionMultiplier
+          this.state.gameState = null
+        } else if (this.state.gameState.suspendLossLimit > 0) {
+          this.state.gameState.betSize = this.state.gameState.betSize * this.state.gameState.progressionMultiplier
 
           if (!isSuspendLossReached) {
-            const { success } = await this.betUpdate(this.state.pendingGame.betSize, tableName)
+            const { success } = await this.betUpdate(this.state.gameState.betSize, tableName)
             success && this.logMessage('updated bet size, updated server state')
-            this.state.pendingGame.progressionCount += 1
+            this.state.gameState.progressionCount += 1
           } else if (isSuspendLossReached) {
-            const { success } = await this.betSuspend(this.state.pendingGame.betSize, this.state.pendingGame.betStrategy, tableName)
+            const { success } = await this.betSuspend(this.state.gameState.betSize, this.state.gameState.betStrategy, tableName)
             success && this.logMessage('suspend limit reached, reset server state')
-            this.state.pendingGame = null
+            this.state.gameState = null
           }
-        } else if (this.state.pendingGame.stopLossLimit > 0) {
-          this.state.pendingGame.betSize = this.state.pendingGame.betSize * this.state.pendingGame.progressionMultiplier
+        } else if (this.state.gameState.stopLossLimit > 0) {
+          this.state.gameState.betSize = this.state.gameState.betSize * this.state.gameState.progressionMultiplier
 
           if (!isStopLossReached) {
-            const { success } = await this.betUpdate(this.state.pendingGame.betSize, tableName)
+            const { success } = await this.betUpdate(this.state.gameState.betSize, tableName)
             success && this.logMessage('updated bet size, updated server state')
-            this.state.pendingGame.progressionCount += 1
+            this.state.gameState.progressionCount += 1
           } else if (isStopLossReached) {
-            const { success } = await this.betReset('lose', this.state.pendingGame, tableName)
+            const { success } = await this.betReset(GameResult.LOSE, this.state.gameState, tableName)
             success && this.logMessage('registered loss, reset server state')
-            this.state.pendingGame = null
+            this.state.gameState = null
             window.location.href = lostGameUrl
           }
         }
       }
 
-      this.state.gameStage = gameState.stageBet
+      this.state.gameStage = GameStage.BET
     }
   }
 
@@ -213,30 +233,30 @@ export class RouletteBetManager extends BetManager {
 
     await this.driver.sleep(2000)
 
-    !this.config.dryRun && await this.driver.setChipSize(this.config.chipSize)
+    !this.config.dryRun && this.driver.setChipSize(this.config.chipSize)
 
-    for (const betName of this.state.pendingGame.bets) {
+    for (const betName of this.state.gameState.bets) {
       const clickTimes = Math.floor(
-        this.state.pendingGame.betSize / this.config.chipSize)
+        this.state.gameState.betSize / this.config.chipSize)
 
       for (let step = 0; step < clickTimes; step++) {
-        !this.config.dryRun && await this.driver.setBet(betName)
+        !this.config.dryRun && this.driver.setBet(betName)
         totalBetSize += this.config.chipSize.valueOf()
         this.logMessage(`click ${betName} ${step + 1}`)
       }
     }
 
-    this.logMessage(`bets: ${this.state.pendingGame.bets}`)
+    this.logMessage(`bets: ${this.state.gameState.bets}`)
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`)
   }
 
-  isPercentageMatching (config, numberHistory) {
-    const sampleBet = config[0]
-    const sampleSize = config[1]
-    const percentageTarget = config[2]
-    const percentageOperator = config[3]
+  isPercentageMatching (config: any[], numberHistory: number[]) {
+    const sampleBet = config[0] as string
+    const sampleSize = config[1] as number
+    const percentageTarget = config[2] as number
+    const percentageOperator = config[3] as string
 
-    const betNumbers = rouletteNumbers[sampleBet]
+    const betNumbers = rouletteNumbers[sampleBet as keyof typeof rouletteNumbers]
     const sampleNumberSet = numberHistory.slice(0, sampleSize)
 
     let occurrence = 0
@@ -261,7 +281,8 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  isPatternMatching (pattern, lastNumbers) {
+  isPatternMatching (pattern: string[], lastNumbers: number[]) {
+    // tslint:disable-next-line: forin
     for (const i in pattern) {
       const betPattern = pattern[i]
       const resultNumber = lastNumbers[i]
@@ -275,27 +296,27 @@ export class RouletteBetManager extends BetManager {
     return true
   }
 
-  setupGameState (strategy, serverState) {
-    this.state.pendingGame = {
+  setupGameState (strategy: any, serverState: any): GameState {
+    return {
       bets: strategy.bets,
       betSize: serverState.betSize
         ? serverState.betSize
         : this.config.chipSize.valueOf(),
-      strategy: serverState.betStrategy,
+      betStrategy: serverState.betStrategy,
       suspended: serverState.suspended,
       progressionCount: 1,
       progressionMultiplier: strategy.progressionMultiplier,
       stopWinLimit: strategy.limits?.stopWin ?? 0,
-      stopLosslimit: strategy.limits?.stopLoss ?? 0,
+      stopLossLimit: strategy.limits?.stopLoss ?? 0,
       suspendLossLimit: strategy.limits?.suspendLoss ?? 0
     }
   }
 
-  getWinTypes (lastNumber) {
+  getWinTypes (lastNumber: number) {
     const winTypes = []
 
     for (const betType in rouletteNumbers) {
-      if (rouletteNumbers[betType].includes(lastNumber)) {
+      if (rouletteNumbers[betType as keyof typeof rouletteNumbers].includes(lastNumber)) {
         winTypes.push(betType)
       }
     }
@@ -303,7 +324,7 @@ export class RouletteBetManager extends BetManager {
     return winTypes
   }
 
-  logMessage (msg) {
+  logMessage (msg: string) {
     const logMessage = [
       'console-casino', this.state.gameStage, this.state.gameCount, msg]
 

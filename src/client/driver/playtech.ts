@@ -1,8 +1,24 @@
 import { DriverCommon } from './common'
 
+interface ChipSelectors {
+  [item: number]: string
+}
+
+interface RouletteSelectors {
+  [item: string]: string
+}
+
+interface DriverSelectors {
+  chip: ChipSelectors
+  roulette: RouletteSelectors
+}
+
 export class Playtech extends DriverCommon {
+  selectors: DriverSelectors
+
   constructor () {
     super()
+
     this.selectors = {
       chip: {
         0.10: 'chipsPanel.chip10',
@@ -56,11 +72,11 @@ export class Playtech extends DriverCommon {
     return document.querySelector('[data-automation-locator="field.dealerNickname"]')?.textContent ?? ''
   }
 
-  getNumberHistory () {
+  getNumberHistory (): number[] {
     try {
       const numberHistoryParentElement = document.querySelector('[class^="roulette-history-extended__items"]')
       const numberHistoryElements = numberHistoryParentElement.querySelectorAll('[class^=roulette-history-item__value-text]')
-      return [...numberHistoryElements].map(elem => parseInt(elem.textContent))
+      return [...numberHistoryElements].map(elem => parseInt(elem.textContent, 10))
     } catch {
       this.toggleExtendedHistory()
       return this.getNumberHistory()
@@ -68,15 +84,15 @@ export class Playtech extends DriverCommon {
   }
 
   getLastNumber () {
-    const elem = document.querySelector('[data-automation-locator="field.lastHistoryItem"]')
-    return parseInt(elem.textContent)
+    const elem = document.querySelector('[data-automation-locator="field.lastHistoryItem"]') as HTMLElement
+    return parseInt(elem.textContent, 10)
   }
 
   getLastNumbers () {
     const historyLineElement = document.querySelector('.roulette-game-area__history-line')
     const historyNumbersParentElement = historyLineElement.children[0]
 
-    return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent))
+    return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent, 10))
   }
 
   getTableName () {
@@ -89,7 +105,7 @@ export class Playtech extends DriverCommon {
     return parseFloat(elem.textContent.match(/[0-9]+(?:\.[0-9]+)*/g)[0])
   }
 
-  setBet (type) {
+  setBet (type: string) {
     this.simulatedClick(document.querySelector(`[data-automation-locator="${this.selectors.roulette[type]}"]`))
   }
 
@@ -101,7 +117,7 @@ export class Playtech extends DriverCommon {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.Undo"]'))
   }
 
-  setChipSize (size) {
+  setChipSize (size: number) {
     this.simulatedClick(document.querySelector(`[data-automation-locator="${this.selectors.chip[size]}"]`))
   }
 
