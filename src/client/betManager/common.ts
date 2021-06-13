@@ -8,7 +8,7 @@ import {
   BetRequestResponse,
   GameResult,
   GameState,
-} from "./types";
+} from "../types";
 
 export class BetManager {
   driver: Playtech;

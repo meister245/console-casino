@@ -1,7 +1,7 @@
 import { serverUrl } from "../constants";
 import { Playtech } from "../driver/playtech";
 
-import { Driver, RouletteBotConfig } from "./types";
+import { Driver, RouletteBotConfig } from "../types";
 
 export class CommonBot {
   running: boolean;

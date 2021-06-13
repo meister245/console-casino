@@ -1,6 +1,6 @@
 import { DriverCommon } from "./common";
 
-import { DriverSelectors } from "./types";
+import { DriverSelectors } from "../types";
 
 export class Playtech extends DriverCommon {
   selectors: DriverSelectors;

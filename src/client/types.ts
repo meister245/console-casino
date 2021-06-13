@@ -1,11 +1,35 @@
 import {
   ServerState,
+  RouletteBotConfig,
   RouletteConfig,
   RouletteStrategy,
   RouletteStrategies,
-} from "./../../server/types";
+} from "../server/types";
 
-export { ServerState, RouletteConfig, RouletteStrategies, RouletteStrategy };
+export {
+  ServerState,
+  RouletteBotConfig,
+  RouletteConfig,
+  RouletteStrategy,
+  RouletteStrategies,
+};
+
+export interface DriverSelectors {
+  chip: ChipSelectors;
+  roulette: RouletteSelectors;
+}
+
+interface ChipSelectors {
+  [item: number]: string;
+}
+
+interface RouletteSelectors {
+  [item: string]: string;
+}
+
+export enum Driver {
+  PLAYTECH = "playtech",
+}
 
 export enum TableMessage {
   WAIT = "wait for the next round",

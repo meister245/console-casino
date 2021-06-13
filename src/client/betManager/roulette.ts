@@ -12,7 +12,7 @@ import {
   RouletteStrategy,
   ServerState,
   GameState,
-} from "./types";
+} from "../types";
 
 const lostGameUrl =
   "https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg";
@@ -49,11 +49,12 @@ export class RouletteBetManager extends BetManager {
 
     if (modalMessage && modalMessage.match(modalMessageRegex)) {
       const tableName = this.driver.getTableName();
-
-      if (this.state.gameState) {
-        await this.betReset(GameResult.ABORT, this.state.gameState, tableName);
-      }
-
+      this.state.gameState &&
+        (await this.betReset(
+          GameResult.ABORT,
+          this.state.gameState,
+          tableName
+        ));
       window.location.reload();
     }
 
