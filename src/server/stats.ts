@@ -1,30 +1,6 @@
-enum GameResult {
-  WIN = 'win',
-  LOSE = 'lose',
-  ABORT = 'abort'
-}
+import { ResultStats, MultiplierStats, StrategyMultiplierStats, GameStats, GameResult } from "./stats.d"
 
-interface ResultCountPercent {
-  count: number
-  percent: number
-}
-
-interface GameStats {
-  gamesWin: number
-  gamesLose: number
-  gamesAborted: number
-}
-
-interface MultiplierStats {
-  [entry: string]: ResultCountPercent
-}
-
-interface StrategyMultiplierStats {
-  [strategy: string]: ResultCountPercent & { multiplier: MultiplierStats}
-}
-
-
-export const gameStats: GameStats = {
+export const resultStats: ResultStats = {
   gamesWin: 0,
   gamesLose: 0,
   gamesAborted: 0
@@ -33,36 +9,36 @@ export const gameStats: GameStats = {
 const multiplierStats: MultiplierStats = {}
 const strategyMultiplierStats: StrategyMultiplierStats = {}
 
-export const getStats = () => {
+export const getStats = (): GameStats => {
   return {
-    gameStats,
+    resultStats,
     multiplierStats,
     strategyMultiplierStats
   }
 }
 
-export const updateStats = (result: GameResult, strategy: string, multiplier: number) => {
+export const updateStats = (result: GameResult, strategy: string, multiplier: number): void => {
   updateGameStats(result)
   updateMultiplierStats(multiplier)
   updateStrategyMultiplierStats(strategy, multiplier)
 }
 
-const updateGameStats = (result: GameResult) => {
+const updateGameStats = (result: GameResult): void => {
   switch (result) {
-    case 'win':
-      gameStats.gamesWin += 1
+    case GameResult.WIN:
+      resultStats.gamesWin += 1
       break
-    case 'lose':
-      gameStats.gamesLose += 1
+    case GameResult.LOSE:
+      resultStats.gamesLose += 1
       break
-    case 'abort':
-      gameStats.gamesAborted += 1
+    case GameResult.ABORT:
+      resultStats.gamesAborted += 1
       break
   }
 }
 
 const updateMultiplierStats = (multiplier: number) => {
-  const totalGames = Object.values(gameStats).reduce((obj, item) => obj + item, 0)
+  const totalGames = Object.values(resultStats).reduce((obj, item) => obj + item, 0)
 
   if (!(multiplier in multiplierStats)) {
     multiplierStats[multiplier] = { count: 0, percent: 0 }
@@ -77,18 +53,20 @@ const updateMultiplierStats = (multiplier: number) => {
 }
 
 const updateStrategyMultiplierStats = (strategy: string, multiplier: number) => {
-  const totalGames = Object.values(gameStats).reduce((obj, item) => obj + item, 0)
+  const totalGames = Object.values(resultStats).reduce((obj, item) => obj + item, 0)
 
   if (!(strategy in strategyMultiplierStats)) {
     strategyMultiplierStats[strategy] = {
-      count: 0, percent: 0, multiplier: {} }
+      count: 0, percent: 0, multiplier: {}
+    }
   }
 
   strategyMultiplierStats[strategy].count += 1
 
   if (!(multiplier in strategyMultiplierStats[strategy].multiplier)) {
     strategyMultiplierStats[strategy].multiplier[multiplier] = {
-      count: 0, percent: 0 }
+      count: 0, percent: 0
+    }
   }
 
   strategyMultiplierStats[strategy].multiplier[multiplier].count += 1

@@ -1,10 +1,4 @@
-interface GameState {
-  active: boolean
-  suspended: boolean
-  betSize?: number
-  betStrategy?: string
-  tableName?: string
-}
+import { GameState } from "./state.d"
 
 export const gameState: GameState = {
   active: false,
@@ -14,7 +8,7 @@ export const gameState: GameState = {
   tableName: undefined
 }
 
-export const resetGameState = () => {
+export const resetGameState = (): void => {
   gameState.active = false
   gameState.suspended = false
   gameState.betSize = undefined
@@ -22,18 +16,18 @@ export const resetGameState = () => {
   gameState.tableName = undefined
 }
 
-export const initGameState = (strategyName: string, tableName: string) => {
+export const initGameState = (strategyName: string, tableName: string): void => {
   gameState.active = true
   gameState.suspended = false
   gameState.betStrategy = strategyName
   gameState.tableName = tableName
 }
 
-export const updateGameState = (betSize: number) => {
+export const updateGameState = (betSize: number): void => {
   gameState.betSize = betSize
 }
 
-export const suspendGameState = (betSize: number, betStrategy: string) => {
+export const suspendGameState = (betSize: number, betStrategy: string): void => {
   gameState.active = false
   gameState.suspended = true
   gameState.betSize = betSize
@@ -41,7 +35,7 @@ export const suspendGameState = (betSize: number, betStrategy: string) => {
   gameState.tableName = undefined
 }
 
-export const resumeSuspendedGameState = (strategyName: string, tableName: string) => {
+export const resumeSuspendedGameState = (strategyName: string, tableName: string): void => {
   gameState.active = true
   gameState.suspended = true
   gameState.betStrategy = strategyName

@@ -1,7 +1,7 @@
 import express = require('express')
 import cors = require('cors')
 
-import { getConfig, getClient } from './util'
+import { getConfig, getClient } from './config'
 import { logger, logRequest } from './logger'
 import { getStats, updateStats } from './stats'
 
@@ -27,7 +27,7 @@ if (require.main === module) {
 const config = getConfig()
 const clientSource = getClient()
 
-app.get('/client/', (req, res, next) => {
+app.get('/client/', (req, res) => {
   res.set('Content-Type', 'application/javascript')
   res.send(clientSource)
 })

@@ -1,7 +1,9 @@
 import fs = require('fs')
 import path = require('path')
 
-export const getConfig = (name: string = 'roulette') => {
+import { RouletteBotConfig } from './config.d'
+
+export const getConfig = (name = 'roulette'): RouletteBotConfig => {
   const filePath = path.resolve(
     __dirname, '..', '..', 'resources', 'config', `${name}.json`)
 
@@ -9,7 +11,7 @@ export const getConfig = (name: string = 'roulette') => {
   return JSON.parse(content)
 }
 
-export const getClient = () => {
+export const getClient = (): unknown => {
   const filePath = path.resolve(
     __dirname, '..', '..', 'dist', 'client.min.js')
 

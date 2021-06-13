@@ -1,5 +1,8 @@
 import winston from 'winston'
 
+import { NextFunction } from 'connect';
+import { Request, Response } from 'express';
+
 const levels = {
   error: 0,
   warn: 1,
@@ -38,7 +41,7 @@ export const logger = winston.createLogger({
   transports,
 })
 
-export const logRequest = (req: any, res: any, done: any) => {
+export const logRequest = (req: Request, res: Response, done: NextFunction): void => {
   logger.info(`${req.method} ${req.url}`)
 
   if (Object.keys(req.body).length > 0) {
