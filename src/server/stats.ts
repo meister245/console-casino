@@ -1,4 +1,4 @@
-import { ResultStats, MultiplierStats, StrategyMultiplierStats, GameStats, GameResult } from "./stats.d"
+import { ResultStats, MultiplierStats, StrategyMultiplierStats, GameStats, GameResult } from "./types"
 
 export const resultStats: ResultStats = {
   gamesWin: 0,

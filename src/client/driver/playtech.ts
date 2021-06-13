@@ -1,22 +1,11 @@
 import { DriverCommon } from './common'
 
-interface ChipSelectors {
-  [item: number]: string
-}
-
-interface RouletteSelectors {
-  [item: string]: string
-}
-
-interface DriverSelectors {
-  chip: ChipSelectors
-  roulette: RouletteSelectors
-}
+import { DriverSelectors } from './types'
 
 export class Playtech extends DriverCommon {
   selectors: DriverSelectors
 
-  constructor () {
+  constructor() {
     super()
 
     this.selectors = {
@@ -50,29 +39,29 @@ export class Playtech extends DriverCommon {
     }
   }
 
-  getModalMessage () {
+  getModalMessage(): string {
     return document.querySelector('.modal-confirm_desktop')?.textContent ?? ''
   }
 
-  getBalance () {
+  getBalance(): number {
     const text = document.querySelector('[data-automation-locator="footer.balance"]')?.textContent ?? ''
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0])
   }
 
-  getBetAmount () {
+  getBetAmount(): number {
     const text = document.querySelector('[data-automation-locator="footer.betAmount"]')?.textContent ?? ''
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0])
   }
 
-  getDealerMessage () {
+  getDealerMessage(): string {
     return document.querySelector('.dealer-message-text')?.textContent ?? ''
   }
 
-  getDealerName () {
+  getDealerName(): string {
     return document.querySelector('[data-automation-locator="field.dealerNickname"]')?.textContent ?? ''
   }
 
-  getNumberHistory (): number[] {
+  getNumberHistory(): number[] {
     try {
       const numberHistoryParentElement = document.querySelector('[class^="roulette-history-extended__items"]')
       const numberHistoryElements = numberHistoryParentElement.querySelectorAll('[class^=roulette-history-item__value-text]')
@@ -83,57 +72,57 @@ export class Playtech extends DriverCommon {
     }
   }
 
-  getLastNumber () {
+  getLastNumber(): number {
     const elem = document.querySelector('[data-automation-locator="field.lastHistoryItem"]') as HTMLElement
     return parseInt(elem.textContent, 10)
   }
 
-  getLastNumbers () {
+  getLastNumbers(): number[] {
     const historyLineElement = document.querySelector('.roulette-game-area__history-line')
     const historyNumbersParentElement = historyLineElement.children[0]
 
     return [...historyNumbersParentElement.children].map(elem => parseInt(elem.textContent, 10))
   }
 
-  getTableName () {
+  getTableName(): string {
     const tableName = document.querySelector('.table-info__name')?.textContent ?? ''
     return tableName.replace(/\s/g, '-').toLowerCase()
   }
 
-  getWinAmount () {
+  getWinAmount(): number {
     const elem = document.querySelector('[data-automation-locator="footer.winAmount"]')
     return parseFloat(elem.textContent.match(/[0-9]+(?:\.[0-9]+)*/g)[0])
   }
 
-  setBet (type: string) {
+  setBet(type: string): void {
     this.simulatedClick(document.querySelector(`[data-automation-locator="${this.selectors.roulette[type]}"]`))
   }
 
-  setBetDouble () {
+  setBetDouble(): void {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.Double"]'))
   }
 
-  setBetUndo () {
+  setBetUndo(): void {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.Undo"]'))
   }
 
-  setChipSize (size: number) {
+  setChipSize(size: number): void {
     this.simulatedClick(document.querySelector(`[data-automation-locator="${this.selectors.chip[size]}"]`))
   }
 
-  toggleTableLimits () {
+  toggleTableLimits(): void {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.limits"]'))
   }
 
-  toggleExtendedHistory () {
+  toggleExtendedHistory(): void {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.extenededHistory"]'))
   }
 
-  toggleStatistics () {
+  toggleStatistics(): void {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.statistic"]'))
   }
 
-  toggleStatisticsChart () {
+  toggleStatisticsChart(): void {
     this.simulatedClick(document.querySelector('[data-automation-locator="button.StatisticChart"]'))
   }
 }

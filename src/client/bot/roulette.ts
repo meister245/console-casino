@@ -1,11 +1,13 @@
 import { CommonBot } from './common'
 import { RouletteBetManager } from '../betManager/roulette'
 
+import { Driver } from './types'
+
 export class RouletteBot extends CommonBot {
-  async start () {
+  async start (): Promise<void> {
     const { config, strategies } = await this.getConfig()
 
-    const driver = await this.getDriver(config.driverName)
+    const driver = this.getDriver(config.driverName as Driver)
 
     while (!driver.getDealerMessage()) {
       await driver.sleep(1500)
@@ -25,7 +27,7 @@ export class RouletteBot extends CommonBot {
     }
   }
 
-  async stop () {
+  async stop (): Promise<void> {
     this.running = false
   }
 }

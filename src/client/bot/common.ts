@@ -1,16 +1,18 @@
 import { serverUrl } from '../constants'
 import { Playtech } from '../driver/playtech'
 
+import { Driver, RouletteBotConfig } from './types'
+
 export class CommonBot {
   running: boolean
   timeStarted: number
 
-  constructor () {
+  constructor() {
     this.running = true
     this.timeStarted = Math.floor(Date.now() / 1000)
   }
 
-  async getDriver (driverName: string) {
+  getDriver(driverName: Driver): Playtech {
     switch (driverName) {
       case 'playtech':
         return new Playtech()
@@ -19,7 +21,7 @@ export class CommonBot {
     }
   }
 
-  async getConfig () {
+  async getConfig(): Promise<RouletteBotConfig> {
     return fetch(`${serverUrl}/config/`)
       .then(
         resp => resp.json()

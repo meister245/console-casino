@@ -1,6 +1,6 @@
 
 export class DriverCommon {
-  simulatedClick (target: HTMLElement) {
+  simulatedClick (target: HTMLElement): void {
     const event = target.ownerDocument.createEvent('MouseEvents')
     const opts = {
       type: 'click',
@@ -17,7 +17,7 @@ export class DriverCommon {
       shiftKey: false,
       metaKey: false,
       button: 0,
-      relatedTarget: null as any
+      relatedTarget: null as EventTarget | null
     }
 
     event.initMouseEvent(
@@ -41,7 +41,7 @@ export class DriverCommon {
     target.dispatchEvent(event)
   }
 
-  sleep (ms: number) {
+  sleep (ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 }

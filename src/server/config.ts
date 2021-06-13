@@ -1,7 +1,7 @@
 import fs = require('fs')
 import path = require('path')
 
-import { RouletteBotConfig } from './config.d'
+import { RouletteBotConfig } from './types'
 
 export const getConfig = (name = 'roulette'): RouletteBotConfig => {
   const filePath = path.resolve(

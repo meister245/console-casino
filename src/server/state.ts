@@ -1,6 +1,6 @@
-import { GameState } from "./state.d"
+import { ServerState } from "./types"
 
-export const gameState: GameState = {
+export const gameState: ServerState = {
   active: false,
   suspended: false,
   betSize: undefined,

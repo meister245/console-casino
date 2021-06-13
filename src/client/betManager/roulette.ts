@@ -1,5 +1,8 @@
-import { rouletteNumbers, GameStage } from '../constants'
-import { BetManager, GameResult, GameState } from './common'
+import { BetManager } from './common'
+import { Playtech } from '../driver/playtech'
+import { rouletteNumbers } from '../constants'
+
+import { TableMessage, RouletteConfig, RouletteStrategies, GameStage, ClientState, GameResult, RouletteStrategy, ServerState, GameState } from './types'
 
 const lostGameUrl =
   'https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg'
@@ -7,33 +10,14 @@ const lostGameUrl =
 const modalMessageRegex =
   /(inactive|disconnected|restart|unavailable|table.will.be.closed)/
 
-enum TableMessage {
-  WAIT = 'wait for the next round',
-  BETS = 'place your bets',
-  LAST_BETS = 'last bets',
-  EMPTY = ''
-}
-
-interface RouletteConfig {
-  dryRun: boolean
-  chipSize: number
-  driverName: string
-  minBalance: number
-}
-
-interface RouletteState {
-  gameCount: number
-  gameState: GameState | null
-  gameStage: GameStage
-}
 
 export class RouletteBetManager extends BetManager {
   config: RouletteConfig
-  strategies: any
+  strategies: RouletteStrategies
   lastLogMessage: null | string
-  state: RouletteState
+  state: ClientState
 
-  constructor (driver: any, config: RouletteConfig, strategies: any) {
+  constructor (driver: Playtech, config: RouletteConfig, strategies: RouletteStrategies) {
     super(driver)
 
     this.config = config
@@ -47,12 +31,16 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  async start () {
+  async start (): Promise<void> {
     const modalMessage = this.driver.getModalMessage().toLowerCase()
 
     if (modalMessage && modalMessage.match(modalMessageRegex)) {
       const tableName = this.driver.getTableName()
-      await this.betReset(GameResult.ABORT, this.state.gameState, tableName)
+
+      if (this.state.gameState) {
+        await this.betReset(GameResult.ABORT, this.state.gameState, tableName)
+      }
+
       window.location.reload()
     }
 
@@ -74,7 +62,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  runStageSpin (dealerMessage: TableMessage) {
+  runStageSpin (dealerMessage: TableMessage): void {
     this.logMessage('waiting for next spin')
 
     if (dealerMessage === TableMessage.WAIT) {
@@ -82,7 +70,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  async runStageBet (dealerMessage: TableMessage) {
+  async runStageBet (dealerMessage: TableMessage): Promise<void> {
     this.logMessage('waiting to be able to place bets')
 
     if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
@@ -131,7 +119,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  async registerBet (strategyName: string, strategy: any) {
+  async registerBet (strategyName: string, strategy: RouletteStrategy): Promise<void> {
     this.logMessage(`strategy matched - ${strategyName}`)
 
     const tableName = this.driver.getTableName()
@@ -147,7 +135,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  runStageWait (dealerMessage: TableMessage) {
+  runStageWait (dealerMessage: TableMessage): void {
     this.logMessage('waiting for next round')
 
     const expectedMessage = this.config.dryRun || this.state.gameState === null
@@ -163,7 +151,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  async runStageResult (dealerMessage: TableMessage) {
+  async runStageResult (dealerMessage: TableMessage): Promise<void> {
     this.logMessage('waiting for result')
 
     if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
@@ -228,7 +216,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  async submitBets () {
+  async submitBets (): Promise<void> {
     let totalBetSize = 0
 
     await this.driver.sleep(2000)
@@ -250,7 +238,7 @@ export class RouletteBetManager extends BetManager {
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`)
   }
 
-  isPercentageMatching (config: any[], numberHistory: number[]) {
+  isPercentageMatching (config: (string | number)[], numberHistory: number[]): boolean {
     const sampleBet = config[0] as string
     const sampleSize = config[1] as number
     const percentageTarget = config[2] as number
@@ -281,7 +269,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  isPatternMatching (pattern: string[], lastNumbers: number[]) {
+  isPatternMatching (pattern: string[], lastNumbers: number[]): boolean {
     // tslint:disable-next-line: forin
     for (const i in pattern) {
       const betPattern = pattern[i]
@@ -296,7 +284,7 @@ export class RouletteBetManager extends BetManager {
     return true
   }
 
-  setupGameState (strategy: any, serverState: any): GameState {
+  setupGameState (strategy: RouletteStrategy, serverState: ServerState): GameState {
     return {
       bets: strategy.bets,
       betSize: serverState.betSize
@@ -312,7 +300,7 @@ export class RouletteBetManager extends BetManager {
     }
   }
 
-  getWinTypes (lastNumber: number) {
+  getWinTypes (lastNumber: number): string[] {
     const winTypes = []
 
     for (const betType in rouletteNumbers) {
@@ -324,7 +312,7 @@ export class RouletteBetManager extends BetManager {
     return winTypes
   }
 
-  logMessage (msg: string) {
+  logMessage (msg: string): void {
     const logMessage = [
       'console-casino', this.state.gameStage, this.state.gameCount, msg]
 
