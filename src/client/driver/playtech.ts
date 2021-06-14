@@ -39,6 +39,26 @@ export class Playtech extends DriverCommon {
     };
   }
 
+  getLobbyTables(): NodeListOf<HTMLElement> {
+    return document.querySelectorAll(".lobby-table__container");
+  }
+
+  navigateLobbyTable(name: string): boolean {
+    const lobbyTables = this.getLobbyTables();
+
+    for (const table of lobbyTables) {
+      const tableTitle =
+        table.querySelector(".lobby-table__name-container")?.textContent ?? "";
+
+      if (tableTitle === name) {
+        this.simulatedClick(table);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   getModalMessage(): string {
     return document.querySelector(".modal-confirm_desktop")?.textContent ?? "";
   }

@@ -1,7 +1,6 @@
-import { serverUrl } from "../constants";
 import { Playtech } from "../driver/playtech";
 
-import { Driver, RouletteBotConfig } from "../types";
+import { Driver } from "../types";
 
 export class CommonBot {
   running: boolean;
@@ -19,11 +18,5 @@ export class CommonBot {
       default:
         throw new Error(`invalid driver name ${driverName}`);
     }
-  }
-
-  async getConfig(): Promise<RouletteBotConfig> {
-    return fetch(`${serverUrl}/config/`)
-      .then((resp) => resp.json())
-      .catch((err) => console.error(err));
   }
 }

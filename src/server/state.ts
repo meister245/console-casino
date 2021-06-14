@@ -1,6 +1,10 @@
-import { ServerState } from "./types";
+import { getConfig } from "./config";
 
-export const gameState: ServerState = {
+import { ServerState, GameState } from "./types";
+
+let tables: string[] = [];
+
+const serverState: ServerState = {
   active: false,
   suspended: false,
   betSize: undefined,
@@ -8,45 +12,71 @@ export const gameState: ServerState = {
   tableName: undefined,
 };
 
-export const resetGameState = (): void => {
-  gameState.active = false;
-  gameState.suspended = false;
-  gameState.betSize = undefined;
-  gameState.betStrategy = undefined;
-  gameState.tableName = undefined;
+export const getState = (): GameState => {
+  return {
+    tables,
+    serverState,
+  };
 };
 
-export const initGameState = (
+export const assignTable = (): string | null => {
+  const { config } = getConfig();
+
+  for (const tableName of config.tables) {
+    if (!tables.includes(tableName)) {
+      tables.push(tableName);
+      return tableName;
+    }
+  }
+
+  return null;
+};
+
+export const removeTable = (tableName: string): void => {
+  if (tables.includes(tableName)) {
+    tables = tables.filter((item) => item !== tableName);
+  }
+};
+
+export const resetServerState = (): void => {
+  serverState.active = false;
+  serverState.suspended = false;
+  serverState.betSize = undefined;
+  serverState.betStrategy = undefined;
+  serverState.tableName = undefined;
+};
+
+export const initServerState = (
   strategyName: string,
   tableName: string
 ): void => {
-  gameState.active = true;
-  gameState.suspended = false;
-  gameState.betStrategy = strategyName;
-  gameState.tableName = tableName;
+  serverState.active = true;
+  serverState.suspended = false;
+  serverState.betStrategy = strategyName;
+  serverState.tableName = tableName;
 };
 
-export const updateGameState = (betSize: number): void => {
-  gameState.betSize = betSize;
+export const updateServerState = (betSize: number): void => {
+  serverState.betSize = betSize;
 };
 
-export const suspendGameState = (
+export const suspendServerState = (
   betSize: number,
   betStrategy: string
 ): void => {
-  gameState.active = false;
-  gameState.suspended = true;
-  gameState.betSize = betSize;
-  gameState.betStrategy = betStrategy;
-  gameState.tableName = undefined;
+  serverState.active = false;
+  serverState.suspended = true;
+  serverState.betSize = betSize;
+  serverState.betStrategy = betStrategy;
+  serverState.tableName = undefined;
 };
 
-export const resumeSuspendedGameState = (
+export const resumeSuspendedServerState = (
   strategyName: string,
   tableName: string
 ): void => {
-  gameState.active = true;
-  gameState.suspended = true;
-  gameState.betStrategy = strategyName;
-  gameState.tableName = tableName;
+  serverState.active = true;
+  serverState.suspended = true;
+  serverState.betStrategy = strategyName;
+  serverState.tableName = tableName;
 };

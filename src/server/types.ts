@@ -4,6 +4,11 @@ export enum GameResult {
   ABORT = "abort",
 }
 
+export type GameState = {
+  tables: string[];
+  serverState: ServerState;
+};
+
 export type GameStats = {
   resultStats: ResultStats;
   multiplierStats: MultiplierStats;
@@ -47,6 +52,8 @@ export interface RouletteConfig {
   dryRun: boolean;
   driverName: string;
   minBalance: number;
+  lobbyUrl: string;
+  tables: string[];
 }
 
 export interface RouletteStrategies {

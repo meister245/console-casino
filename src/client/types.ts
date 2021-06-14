@@ -89,3 +89,23 @@ export interface BetRequestResponse {
   success: boolean;
   serverState: ServerState;
 }
+
+export interface TableRequestResponse {
+  success: boolean;
+  tableName: string | null;
+}
+
+export type RouletteNumbers = {
+  red: number[];
+  black: number[];
+  low: number[];
+  high: number[];
+  odd: number[];
+  even: number[];
+  dozenFirst: number[];
+  dozenSecond: number[];
+  dozenThird: number[];
+  columnTop: number[];
+  columnMiddle: number[];
+  columnBottom: number[];
+};

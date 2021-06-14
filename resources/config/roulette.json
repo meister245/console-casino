@@ -4,7 +4,14 @@
         "dryRun": true,
         "driverName": "playtech",
         "minBalance": 26.0,
-        "strategy": "martingale"
+        "lobbyUrl": "https://launcher.betfair.com/?gameId=live-roulette-cptl&channel=casino&returnURL=https%3A%2F%2Fcasino.betfair.com%2Fp%2Flive-casino&launchProduct=gaming&RPBucket=gaming&mode=real&dataContext=web&dataChannel=ecasino&switchedToPopup=true",
+        "tables": [
+            "Betfair Roulette",
+            "Slingshot",
+            "Roleta Brasileira",
+            "Quantum Roulette Live",
+            "Quantum Auto Roulette"
+        ]
     },
     "strategies": {
         "redLowOccurrence": {

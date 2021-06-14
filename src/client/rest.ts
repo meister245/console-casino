@@ -1,24 +1,44 @@
-import { serverUrl } from "../constants";
-import { Playtech } from "../driver/playtech";
+import { serverUrl } from "./constants";
 
 import {
-  BetRequestProps,
   BetRequestAction,
-  ServerState,
+  BetRequestProps,
   BetRequestResponse,
   GameResult,
   GameState,
-} from "../types";
+  RouletteBotConfig,
+  ServerState,
+  TableRequestResponse,
+} from "./types";
 
-export class BetManager {
-  driver: Playtech;
-
-  constructor(driver: Playtech) {
-    this.driver = driver;
+export class RESTClient {
+  async getConfig(): Promise<RouletteBotConfig> {
+    return fetch(`${serverUrl}/config/`)
+      .then((resp) => resp.json())
+      .catch((err) => console.error(err));
   }
 
-  async getServerState(): Promise<ServerState> {
-    const tableName = this.driver.getTableName();
+  async getTableName(): Promise<TableRequestResponse> {
+    return fetch(`${serverUrl}/table/`, {
+      method: "POST",
+      mode: "cors",
+    })
+      .then((resp) => resp.json())
+      .catch((err) => console.error(err));
+  }
+
+  async resetTable(tableName: string): Promise<TableRequestResponse> {
+    return fetch(`${serverUrl}/table/`, {
+      method: "DELETE",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tableName }),
+    })
+      .then((resp) => resp.json())
+      .catch((err) => console.error(err));
+  }
+
+  async getServerState(tableName: string): Promise<ServerState> {
     const source = tableName.replace(/\s/, "-").toLowerCase();
 
     return fetch(`${serverUrl}/state/?tableName=${source}`)
@@ -26,9 +46,10 @@ export class BetManager {
       .catch((err) => console.error(err));
   }
 
-  async betRequest(data: BetRequestProps): Promise<BetRequestResponse> {
-    const tableName = this.driver.getTableName();
-
+  async betRequest(
+    tableName: string,
+    data: BetRequestProps
+  ): Promise<BetRequestResponse> {
     return fetch(`${serverUrl}/bet/?tableName=${tableName}`, {
       method: "POST",
       mode: "cors",
@@ -43,7 +64,7 @@ export class BetManager {
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest({
+    return await this.betRequest(tableName, {
       action: BetRequestAction.INIT,
       betStrategy,
       tableName,
@@ -54,7 +75,7 @@ export class BetManager {
     betSize: number,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest({
+    return await this.betRequest(tableName, {
       action: BetRequestAction.UPDATE,
       betSize,
       tableName,
@@ -66,7 +87,7 @@ export class BetManager {
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest({
+    return await this.betRequest(tableName, {
       action: BetRequestAction.SUSPEND,
       betSize,
       betStrategy,
@@ -79,7 +100,7 @@ export class BetManager {
     gameState: GameState,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest({
+    return await this.betRequest(tableName, {
       action: BetRequestAction.RESET,
       tableName,
       betResult: gameResult,

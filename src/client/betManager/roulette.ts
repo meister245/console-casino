@@ -1,6 +1,6 @@
-import { BetManager } from "./common";
 import { Playtech } from "../driver/playtech";
-import { rouletteNumbers } from "../constants";
+import { RESTClient } from "../rest";
+import { rouletteNumbers, lostGameUrl } from "../constants";
 
 import {
   TableMessage,
@@ -12,15 +12,15 @@ import {
   RouletteStrategy,
   ServerState,
   GameState,
+  RouletteNumbers,
 } from "../types";
-
-const lostGameUrl =
-  "https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg";
 
 const modalMessageRegex =
   /(inactive|disconnected|restart|unavailable|table.will.be.closed)/;
 
-export class RouletteBetManager extends BetManager {
+export class RouletteBetManager {
+  driver: Playtech;
+  restClient: RESTClient;
   config: RouletteConfig;
   strategies: RouletteStrategies;
   lastLogMessage: null | string;
@@ -28,12 +28,13 @@ export class RouletteBetManager extends BetManager {
 
   constructor(
     driver: Playtech,
+    restClient: RESTClient,
     config: RouletteConfig,
     strategies: RouletteStrategies
   ) {
-    super(driver);
-
     this.config = config;
+    this.driver = driver;
+    this.restClient = restClient;
     this.strategies = strategies;
     this.lastLogMessage = null;
 
@@ -49,13 +50,17 @@ export class RouletteBetManager extends BetManager {
 
     if (modalMessage && modalMessage.match(modalMessageRegex)) {
       const tableName = this.driver.getTableName();
-      this.state.gameState &&
-        (await this.betReset(
+
+      if (this.state.gameState) {
+        await this.restClient.betReset(
           GameResult.ABORT,
           this.state.gameState,
           tableName
-        ));
-      window.location.reload();
+        );
+      }
+
+      await this.restClient.resetTable(tableName);
+      window.location.href = this.config.lobbyUrl;
     }
 
     const dealerMessage = this.driver
@@ -91,10 +96,11 @@ export class RouletteBetManager extends BetManager {
 
     if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
       if (this.state.gameState === null) {
+        const tableName = this.driver.getTableName();
         const numberHistory = this.driver.getNumberHistory();
 
         const { suspended: lastGameSuspended, betStrategy: lastBetStrategy } =
-          await this.getServerState();
+          await this.restClient.getServerState(tableName);
 
         for (const strategyName in this.strategies) {
           const strategy = this.strategies[strategyName];
@@ -151,7 +157,7 @@ export class RouletteBetManager extends BetManager {
     this.logMessage(`strategy matched - ${strategyName}`);
 
     const tableName = this.driver.getTableName();
-    const { success, serverState } = await this.betInit(
+    const { success, serverState } = await this.restClient.betInit(
       strategyName,
       tableName
     );
@@ -213,7 +219,7 @@ export class RouletteBetManager extends BetManager {
         });
 
         if (isWin) {
-          const { success } = await this.betReset(
+          const { success } = await this.restClient.betReset(
             GameResult.WIN,
             this.state.gameState,
             tableName
@@ -228,7 +234,7 @@ export class RouletteBetManager extends BetManager {
             this.state.gameState.progressionMultiplier;
 
           if (!isSuspendLossReached) {
-            const { success } = await this.betUpdate(
+            const { success } = await this.restClient.betUpdate(
               this.state.gameState.betSize,
               tableName
             );
@@ -236,7 +242,7 @@ export class RouletteBetManager extends BetManager {
               this.logMessage("updated bet size, updated server state");
             this.state.gameState.progressionCount += 1;
           } else if (isSuspendLossReached) {
-            const { success } = await this.betSuspend(
+            const { success } = await this.restClient.betSuspend(
               this.state.gameState.betSize,
               this.state.gameState.betStrategy,
               tableName
@@ -251,7 +257,7 @@ export class RouletteBetManager extends BetManager {
             this.state.gameState.progressionMultiplier;
 
           if (!isStopLossReached) {
-            const { success } = await this.betUpdate(
+            const { success } = await this.restClient.betUpdate(
               this.state.gameState.betSize,
               tableName
             );
@@ -259,7 +265,7 @@ export class RouletteBetManager extends BetManager {
               this.logMessage("updated bet size, updated server state");
             this.state.gameState.progressionCount += 1;
           } else if (isStopLossReached) {
-            const { success } = await this.betReset(
+            const { success } = await this.restClient.betReset(
               GameResult.LOSE,
               this.state.gameState,
               tableName
@@ -307,8 +313,7 @@ export class RouletteBetManager extends BetManager {
     const percentageTarget = config[2] as number;
     const percentageOperator = config[3] as string;
 
-    const betNumbers =
-      rouletteNumbers[sampleBet as keyof typeof rouletteNumbers];
+    const betNumbers = rouletteNumbers[sampleBet as keyof RouletteNumbers];
     const sampleNumberSet = numberHistory.slice(0, sampleSize);
 
     let occurrence = 0;
@@ -370,11 +375,9 @@ export class RouletteBetManager extends BetManager {
     const winTypes = [];
 
     for (const betType in rouletteNumbers) {
-      if (
-        rouletteNumbers[betType as keyof typeof rouletteNumbers].includes(
-          lastNumber
-        )
-      ) {
+      const winType = rouletteNumbers[betType as keyof RouletteNumbers];
+
+      if (winType.includes(lastNumber)) {
         winTypes.push(betType);
       }
     }
