@@ -88,7 +88,7 @@ app.post("/bet/", (req, res) => {
     suspendServerState(betSize, betStrategy);
   } else if (action === "reset" && serverState.active && isTableMatching) {
     resetServerState();
-    updateStats(betResult, betStrategy, betMultiplier);
+    updateStats(betResult, betStrategy, betMultiplier, tableName);
   } else {
     success = false;
   }

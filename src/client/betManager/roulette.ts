@@ -39,7 +39,6 @@ export class RouletteBetManager {
     this.lastLogMessage = null;
 
     this.state = {
-      gameCount: 0,
       gameState: null,
       gameStage: GameStage.SPIN,
     };
@@ -226,7 +225,6 @@ export class RouletteBetManager {
           );
           success && this.logMessage("registered win, reset server state");
 
-          this.state.gameCount += 1;
           this.state.gameState = null;
         } else if (this.state.gameState.suspendLossLimit > 0) {
           this.state.gameState.betSize =
@@ -386,12 +384,7 @@ export class RouletteBetManager {
   }
 
   logMessage(msg: string): void {
-    const logMessage = [
-      "console-casino",
-      this.state.gameStage,
-      this.state.gameCount,
-      msg,
-    ];
+    const logMessage = ["console-casino", this.state.gameStage, msg];
 
     if (logMessage.toString() !== this.lastLogMessage) {
       this.lastLogMessage = logMessage.toString();

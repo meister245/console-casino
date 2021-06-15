@@ -59,7 +59,6 @@ export enum BetRequestAction {
 }
 
 export interface ClientState {
-  gameCount: number;
   gameState: GameState | null;
   gameStage: GameStage;
 }

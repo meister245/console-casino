@@ -10,28 +10,32 @@ export type GameState = {
 };
 
 export type GameStats = {
-  resultStats: ResultStats;
+  totalGames: number;
+  tableStats: TableStats;
   multiplierStats: MultiplierStats;
   strategyMultiplierStats: StrategyMultiplierStats;
 };
 
-export interface ResultStats {
-  gamesWin: number;
-  gamesLose: number;
-  gamesAborted: number;
+export interface TableStats {
+  [result: string]: {
+    gamesWin: number;
+    gamesLose: number;
+    gamesAbort: number;
+  };
 }
-
 export interface MultiplierStats {
-  [entry: string]: ResultCountPercent;
+  [multiplier: string]: {
+    count: number;
+    percent: number;
+  };
 }
 
 export interface StrategyMultiplierStats {
-  [strategy: string]: ResultCountPercent & { multiplier: MultiplierStats };
-}
-
-interface ResultCountPercent {
-  count: number;
-  percent: number;
+  [strategy: string]: {
+    count: number;
+    percent: number;
+    multiplier: MultiplierStats;
+  };
 }
 
 export interface ServerState {

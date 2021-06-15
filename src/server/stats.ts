@@ -1,23 +1,21 @@
 import {
-  ResultStats,
+  TableStats,
   MultiplierStats,
   StrategyMultiplierStats,
   GameStats,
   GameResult,
 } from "./types";
 
-export const resultStats: ResultStats = {
-  gamesWin: 0,
-  gamesLose: 0,
-  gamesAborted: 0,
-};
+let totalGames = 0;
 
+const tableStats: TableStats = {};
 const multiplierStats: MultiplierStats = {};
 const strategyMultiplierStats: StrategyMultiplierStats = {};
 
 export const getStats = (): GameStats => {
   return {
-    resultStats,
+    totalGames,
+    tableStats,
     multiplierStats,
     strategyMultiplierStats,
   };
@@ -26,33 +24,36 @@ export const getStats = (): GameStats => {
 export const updateStats = (
   result: GameResult,
   strategy: string,
-  multiplier: number
+  multiplier: number,
+  tableName: string
 ): void => {
-  updateGameStats(result);
+  totalGames += 1;
+  updateGameStats(result, tableName);
   updateMultiplierStats(multiplier);
   updateStrategyMultiplierStats(strategy, multiplier);
 };
 
-const updateGameStats = (result: GameResult): void => {
+const updateGameStats = (result: GameResult, tableName: string): void => {
+  if (!(tableName in tableStats)) {
+    tableStats[tableName] = { gamesWin: 0, gamesLose: 0, gamesAbort: 0 };
+  }
+
+  const tableResultStats = tableStats[tableName];
+
   switch (result) {
     case GameResult.WIN:
-      resultStats.gamesWin += 1;
+      tableResultStats.gamesWin += 1;
       break;
     case GameResult.LOSE:
-      resultStats.gamesLose += 1;
+      tableResultStats.gamesLose += 1;
       break;
     case GameResult.ABORT:
-      resultStats.gamesAborted += 1;
+      tableResultStats.gamesAbort += 1;
       break;
   }
 };
 
 const updateMultiplierStats = (multiplier: number) => {
-  const totalGames = Object.values(resultStats).reduce(
-    (obj, item) => obj + item,
-    0
-  );
-
   if (!(multiplier in multiplierStats)) {
     multiplierStats[multiplier] = { count: 0, percent: 0 };
   }
@@ -70,11 +71,6 @@ const updateStrategyMultiplierStats = (
   strategy: string,
   multiplier: number
 ) => {
-  const totalGames = Object.values(resultStats).reduce(
-    (obj, item) => obj + item,
-    0
-  );
-
   if (!(strategy in strategyMultiplierStats)) {
     strategyMultiplierStats[strategy] = {
       count: 0,
