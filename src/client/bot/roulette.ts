@@ -45,7 +45,13 @@ export class RouletteBot extends CommonBot {
       throw Error("no free tables");
     }
 
-    driver.navigateLobbyTable(tableName);
+    const success = driver.navigateLobbyTable(tableName);
+
+    if (!success) {
+      restClient.resetTable(tableName);
+      await driver.sleep(6000 * 10 * 10);
+      window.location.href = config.lobbyUrl;
+    }
 
     while (!driver.getDealerMessage()) {
       await driver.sleep(1500);
