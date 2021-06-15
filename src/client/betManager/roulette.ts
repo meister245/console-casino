@@ -1,4 +1,8 @@
-import { lostGameUrl, rouletteNumbers } from "../constants";
+import {
+  lostGameUrl,
+  rouletteNumbers,
+  tableInactiveMessageRegex,
+} from "../constants";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
 import {
@@ -15,14 +19,12 @@ import {
   TableMessage,
 } from "../types";
 
-const modalMessageRegex =
-  /(inactive|disconnected|restart|unavailable|table.will.be.closed)/;
-
 export class RouletteBetManager {
   driver: Playtech;
   restClient: RESTClient;
   config: RouletteConfig;
   strategies: RouletteStrategies;
+  running: boolean;
   lastLogMessage: null | string;
   state: ClientState;
 
@@ -36,6 +38,8 @@ export class RouletteBetManager {
     this.driver = driver;
     this.restClient = restClient;
     this.strategies = strategies;
+
+    this.running = true;
     this.lastLogMessage = null;
 
     this.state = {
@@ -47,7 +51,8 @@ export class RouletteBetManager {
   async start(): Promise<void> {
     const modalMessage = this.driver.getModalMessage().toLowerCase();
 
-    if (modalMessage && modalMessage.match(modalMessageRegex)) {
+    if (modalMessage && modalMessage.match(tableInactiveMessageRegex)) {
+      this.running = false;
       const tableName = this.driver.getTableName();
 
       if (this.state.gameState) {
@@ -62,23 +67,25 @@ export class RouletteBetManager {
       window.location.href = this.config.lobbyUrl;
     }
 
-    const dealerMessage = this.driver
-      .getDealerMessage()
-      .toLowerCase() as TableMessage;
+    if (this.running) {
+      const dealerMessage = this.driver
+        .getDealerMessage()
+        .toLowerCase() as TableMessage;
 
-    switch (this.state.gameStage) {
-      case GameStage.SPIN:
-        this.runStageSpin(dealerMessage);
-        break;
-      case GameStage.BET:
-        await this.runStageBet(dealerMessage);
-        break;
-      case GameStage.WAIT:
-        this.runStageWait(dealerMessage);
-        break;
-      case GameStage.RESULTS:
-        await this.runStageResult(dealerMessage);
-        break;
+      switch (this.state.gameStage) {
+        case GameStage.SPIN:
+          this.runStageSpin(dealerMessage);
+          break;
+        case GameStage.BET:
+          await this.runStageBet(dealerMessage);
+          break;
+        case GameStage.WAIT:
+          this.runStageWait(dealerMessage);
+          break;
+        case GameStage.RESULTS:
+          await this.runStageResult(dealerMessage);
+          break;
+      }
     }
   }
 
