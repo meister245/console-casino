@@ -43,14 +43,18 @@ export class Playtech extends DriverCommon {
     return document.querySelectorAll(".lobby-table__container");
   }
 
-  navigateLobbyTable(name: string): boolean {
+  navigateLobbyTable(tableName: string): boolean {
     const lobbyTables = this.getLobbyTables();
 
     for (const table of lobbyTables) {
-      const tableTitle =
+      const transformedTableName = tableName.replace(/\s/g, "-").toLowerCase();
+
+      let lobbyTableName =
         table.querySelector(".lobby-table__name-container")?.textContent ?? "";
 
-      if (tableTitle === name) {
+      lobbyTableName = lobbyTableName.replace(/\s/g, "-").toLowerCase();
+
+      if (lobbyTableName === transformedTableName) {
         this.simulatedClick(table);
         return true;
       }
