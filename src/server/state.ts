@@ -1,6 +1,5 @@
 import { getConfig } from "./config";
-
-import { ServerState, GameState } from "./types";
+import { GameState, ServerState } from "./types";
 
 let tables: string[] = [];
 

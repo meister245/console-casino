@@ -1,5 +1,4 @@
 import { serverUrl } from "./constants";
-
 import {
   BetRequestAction,
   BetRequestProps,

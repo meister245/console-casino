@@ -1,18 +1,17 @@
+import { lostGameUrl, rouletteNumbers } from "../constants";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
-import { rouletteNumbers, lostGameUrl } from "../constants";
-
 import {
-  TableMessage,
-  RouletteConfig,
-  RouletteStrategies,
-  GameStage,
   ClientState,
   GameResult,
+  GameStage,
+  GameState,
+  RouletteConfig,
+  RouletteNumbers,
+  RouletteStrategies,
   RouletteStrategy,
   ServerState,
-  GameState,
-  RouletteNumbers,
+  TableMessage,
 } from "../types";
 
 const modalMessageRegex =

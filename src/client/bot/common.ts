@@ -1,5 +1,4 @@
 import { Playtech } from "../driver/playtech";
-
 import { Driver } from "../types";
 
 export class CommonBot {

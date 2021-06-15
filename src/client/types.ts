@@ -1,17 +1,17 @@
 import {
-  ServerState,
   RouletteBotConfig,
   RouletteConfig,
-  RouletteStrategy,
   RouletteStrategies,
+  RouletteStrategy,
+  ServerState,
 } from "../server/types";
 
 export {
-  ServerState,
   RouletteBotConfig,
   RouletteConfig,
-  RouletteStrategy,
   RouletteStrategies,
+  RouletteStrategy,
+  ServerState,
 };
 
 export interface DriverSelectors {

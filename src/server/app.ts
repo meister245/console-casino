@@ -1,20 +1,19 @@
 import express = require("express");
 import cors = require("cors");
 
-import { getConfig, getClient } from "./config";
+import { getClient, getConfig } from "./config";
 import { logger, logRequest } from "./logger";
-import { getStats, updateStats } from "./stats";
-
 import {
-  getState,
   assignTable,
-  removeTable,
+  getState,
   initServerState,
-  updateServerState,
-  suspendServerState,
-  resumeSuspendedServerState,
+  removeTable,
   resetServerState,
+  resumeSuspendedServerState,
+  suspendServerState,
+  updateServerState,
 } from "./state";
+import { getStats, updateStats } from "./stats";
 
 export const app = express();
 

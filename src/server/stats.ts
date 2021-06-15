@@ -1,9 +1,9 @@
 import {
-  TableStats,
+  GameResult,
+  GameStats,
   MultiplierStats,
   StrategyMultiplierStats,
-  GameStats,
-  GameResult,
+  TableStats,
 } from "./types";
 
 let totalGames = 0;
