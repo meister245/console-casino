@@ -3,6 +3,7 @@ import {
   RouletteConfig,
   RouletteStrategies,
   RouletteStrategy,
+  RouletteTriggers,
   ServerState,
 } from "../server/types";
 
@@ -11,6 +12,7 @@ export {
   RouletteConfig,
   RouletteStrategies,
   RouletteStrategy,
+  RouletteTriggers,
   ServerState,
 };
 

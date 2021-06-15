@@ -1,9 +1,8 @@
 import { getConfig } from "./config";
-import { GameState, ServerState } from "./types";
+import { ServerState } from "./types";
 
-let tables: string[] = [];
-
-const serverState: ServerState = {
+export const serverState: ServerState = {
+  tables: [],
   active: false,
   suspended: false,
   betSize: undefined,
@@ -11,19 +10,12 @@ const serverState: ServerState = {
   tableName: undefined,
 };
 
-export const getState = (): GameState => {
-  return {
-    tables,
-    serverState,
-  };
-};
-
 export const assignTable = (): string | null => {
   const { config } = getConfig();
 
   for (const tableName of config.tables) {
-    if (!tables.includes(tableName)) {
-      tables.push(tableName);
+    if (!serverState.tables.includes(tableName)) {
+      serverState.tables.push(tableName);
       return tableName;
     }
   }
@@ -32,8 +24,10 @@ export const assignTable = (): string | null => {
 };
 
 export const removeTable = (tableName: string): void => {
-  if (tables.includes(tableName)) {
-    tables = tables.filter((item) => item !== tableName);
+  if (serverState.tables.includes(tableName)) {
+    serverState.tables = serverState.tables.filter(
+      (item) => item !== tableName
+    );
   }
 };
 

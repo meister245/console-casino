@@ -4,10 +4,14 @@ export enum GameResult {
   ABORT = "abort",
 }
 
-export type GameState = {
+export interface ServerState {
   tables: string[];
-  serverState: ServerState;
-};
+  active: boolean;
+  suspended: boolean;
+  betSize?: number;
+  betStrategy?: string;
+  tableName?: string;
+}
 
 export type GameStats = {
   totalGames: number;
@@ -36,14 +40,6 @@ export interface StrategyMultiplierStats {
     percent: number;
     multiplier: MultiplierStats;
   };
-}
-
-export interface ServerState {
-  active: boolean;
-  suspended: boolean;
-  betSize?: number;
-  betStrategy?: string;
-  tableName?: string;
 }
 
 export type RouletteBotConfig = {
@@ -77,7 +73,7 @@ interface RouletteLimits {
   suspendLoss?: number;
 }
 
-interface RouletteTriggers {
+export interface RouletteTriggers {
   parent?: string[];
   pattern?: string[];
   distribution?: (string | number)[];

@@ -5,11 +5,11 @@ import { getClient, getConfig } from "./config";
 import { logger, logRequest } from "./logger";
 import {
   assignTable,
-  getState,
   initServerState,
   removeTable,
   resetServerState,
   resumeSuspendedServerState,
+  serverState,
   suspendServerState,
   updateServerState,
 } from "./state";
@@ -40,7 +40,7 @@ app.get("/config/", (req, res) => {
 
 app.get("/state/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify(getState(), null, 2));
+  res.send(JSON.stringify(serverState, null, 2));
 });
 
 app.get("/stats/", (req, res) => {
@@ -62,8 +62,6 @@ app.delete("/table/", (req, res) => {
 
 app.post("/bet/", (req, res) => {
   let success = true;
-
-  const { serverState } = getState();
 
   const { action, betStrategy, betSize, betResult, betMultiplier, tableName } =
     {
@@ -93,7 +91,7 @@ app.post("/bet/", (req, res) => {
   }
 
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success, serverState: serverState }));
+  res.send(JSON.stringify({ success, serverState }));
 });
 
 if (require.main === module) {

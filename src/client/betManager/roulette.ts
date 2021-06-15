@@ -10,6 +10,7 @@ import {
   RouletteNumbers,
   RouletteStrategies,
   RouletteStrategy,
+  RouletteTriggers,
   ServerState,
   TableMessage,
 } from "../types";
@@ -103,34 +104,12 @@ export class RouletteBetManager {
         for (const strategyName in this.strategies) {
           const strategy = this.strategies[strategyName];
 
-          let patternMatching = false;
-          let percentageMatching = false;
-          let suspendedMatching = false;
-
-          if (
-            strategy.trigger.parent &&
-            strategy.trigger.parent.includes(lastBetStrategy)
-          ) {
-            suspendedMatching = true;
-          }
-
-          if (this.isPatternMatching(strategy.trigger.pattern, numberHistory)) {
-            patternMatching = true;
-          }
-
-          if (
-            this.isPercentageMatching(
-              strategy.trigger.distribution,
-              numberHistory
-            )
-          ) {
-            percentageMatching = true;
-          }
-
-          const isStrategyMatching =
-            patternMatching &&
-            percentageMatching &&
-            lastGameSuspended === suspendedMatching;
+          const isStrategyMatching = this.isMatchingStrategy(
+            strategy.trigger,
+            numberHistory,
+            lastBetStrategy,
+            lastGameSuspended
+          );
 
           if (isStrategyMatching) {
             await this.registerBet(strategyName, strategy);
@@ -146,6 +125,35 @@ export class RouletteBetManager {
 
       this.state.gameStage = GameStage.WAIT;
     }
+  }
+
+  isMatchingStrategy(
+    triggers: RouletteTriggers,
+    numberHistory: number[],
+    lastBetStrategy: string,
+    lastGameSuspended: boolean
+  ): boolean {
+    let patternMatching = false;
+    let percentageMatching = false;
+    let suspendedMatching = false;
+
+    if (triggers.parent && triggers.parent.includes(lastBetStrategy)) {
+      suspendedMatching = true;
+    }
+
+    if (lastGameSuspended !== suspendedMatching) {
+      return false;
+    }
+
+    if (this.isPatternMatching(triggers.pattern, numberHistory)) {
+      patternMatching = true;
+    }
+
+    if (this.isPercentageMatching(triggers.distribution, numberHistory)) {
+      percentageMatching = true;
+    }
+
+    return patternMatching && percentageMatching;
   }
 
   async registerBet(
