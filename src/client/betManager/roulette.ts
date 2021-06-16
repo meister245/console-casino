@@ -15,7 +15,7 @@ import {
   RouletteStrategies,
   RouletteStrategy,
   RouletteTriggers,
-  ServerState,
+  ServerGameState,
   TableMessage,
 } from "../types";
 
@@ -168,14 +168,11 @@ export class RouletteBetManager extends RESTClient {
     this.logMessage(`strategy matched - ${strategyName}`);
 
     const tableName = this.driver.getTableName();
-    const { success, serverState } = await this.postBetInit(
-      strategyName,
-      tableName
-    );
+    const { success, state } = await this.postBetInit(strategyName, tableName);
 
     if (success) {
       this.logMessage("server accepted bet");
-      this.state.gameState = this.setupGameState(strategy, serverState);
+      this.state.gameState = this.setupGameState(strategy, state);
 
       await this.submitBets();
     } else {
@@ -363,7 +360,7 @@ export class RouletteBetManager extends RESTClient {
 
   setupGameState(
     strategy: RouletteStrategy,
-    serverState: ServerState
+    serverState: ServerGameState
   ): GameState {
     return {
       bets: strategy.bets,

@@ -1,75 +1,91 @@
 import { getConfig } from "./config";
-import { ServerState } from "./types";
 
-export const serverState: ServerState = {
-  tables: [],
-  active: false,
-  suspended: false,
-  betSize: undefined,
-  betStrategy: undefined,
-  tableName: undefined,
+export interface ServerGameState {
+  active: boolean;
+  suspended: boolean;
+  betSize?: number;
+  betStrategy?: string;
+  tableName?: string;
+}
+
+export type ServerState = ServerGameState & {
+  tables: string[];
 };
 
-export const assignTable = (): string | null => {
-  const { config } = getConfig();
+class State {
+  tables: string[];
+  gameState: ServerGameState;
 
-  for (const tableName of config.tables) {
-    if (!serverState.tables.includes(tableName)) {
-      serverState.tables.push(tableName);
-      return tableName;
+  constructor() {
+    this.tables = [];
+
+    this.gameState = {
+      active: false,
+      suspended: false,
+    };
+  }
+
+  getServerState(): ServerState {
+    return {
+      ...this.gameState,
+      tables: this.tables,
+    };
+  }
+
+  getGameState(): ServerGameState {
+    return this.gameState;
+  }
+
+  assignTable(): string | null {
+    const { config } = getConfig();
+
+    for (const tableName of config.tables) {
+      if (!this.tables.includes(tableName)) {
+        this.tables.push(tableName);
+        return tableName;
+      }
     }
+
+    return null;
   }
 
-  return null;
-};
-
-export const removeTable = (tableName: string): void => {
-  if (serverState.tables.includes(tableName)) {
-    serverState.tables = serverState.tables.filter(
-      (item) => item !== tableName
-    );
+  removeTable(tableName: string): void {
+    this.tables = this.tables.filter((item) => item !== tableName);
   }
-};
 
-export const resetServerState = (): void => {
-  serverState.active = false;
-  serverState.suspended = false;
-  serverState.betSize = undefined;
-  serverState.betStrategy = undefined;
-  serverState.tableName = undefined;
-};
+  resetGameState(): void {
+    this.gameState.active = false;
+    this.gameState.suspended = false;
+    this.gameState.betSize = undefined;
+    this.gameState.betStrategy = undefined;
+    this.gameState.tableName = undefined;
+  }
 
-export const initServerState = (
-  strategyName: string,
-  tableName: string
-): void => {
-  serverState.active = true;
-  serverState.suspended = false;
-  serverState.betStrategy = strategyName;
-  serverState.tableName = tableName;
-};
+  initGameState(strategyName: string, tableName: string): void {
+    this.gameState.active = true;
+    this.gameState.suspended = false;
+    this.gameState.betStrategy = strategyName;
+    this.gameState.tableName = tableName;
+  }
 
-export const updateServerState = (betSize: number): void => {
-  serverState.betSize = betSize;
-};
+  updateGameState(betSize: number): void {
+    this.gameState.betSize = betSize;
+  }
 
-export const suspendServerState = (
-  betSize: number,
-  betStrategy: string
-): void => {
-  serverState.active = false;
-  serverState.suspended = true;
-  serverState.betSize = betSize;
-  serverState.betStrategy = betStrategy;
-  serverState.tableName = undefined;
-};
+  suspendGameState(betSize: number, betStrategy: string): void {
+    this.gameState.active = false;
+    this.gameState.suspended = true;
+    this.gameState.betSize = betSize;
+    this.gameState.betStrategy = betStrategy;
+    this.gameState.tableName = undefined;
+  }
 
-export const resumeSuspendedServerState = (
-  strategyName: string,
-  tableName: string
-): void => {
-  serverState.active = true;
-  serverState.suspended = true;
-  serverState.betStrategy = strategyName;
-  serverState.tableName = tableName;
-};
+  resumeSuspendedGameState(strategyName: string, tableName: string): void {
+    this.gameState.active = true;
+    this.gameState.suspended = true;
+    this.gameState.betStrategy = strategyName;
+    this.gameState.tableName = tableName;
+  }
+}
+
+export default State;

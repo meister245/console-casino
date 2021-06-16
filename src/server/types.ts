@@ -1,16 +1,11 @@
+import { ServerGameState, ServerState } from "./state";
+
+export { ServerGameState, ServerState };
+
 export enum GameResult {
   WIN = "win",
   LOSE = "lose",
   ABORT = "abort",
-}
-
-export interface ServerState {
-  tables: string[];
-  active: boolean;
-  suspended: boolean;
-  betSize?: number;
-  betStrategy?: string;
-  tableName?: string;
 }
 
 export type GameStats = {

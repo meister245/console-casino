@@ -4,6 +4,7 @@ import {
   RouletteStrategies,
   RouletteStrategy,
   RouletteTriggers,
+  ServerGameState,
   ServerState,
 } from "../server/types";
 
@@ -13,6 +14,7 @@ export {
   RouletteStrategies,
   RouletteStrategy,
   RouletteTriggers,
+  ServerGameState,
   ServerState,
 };
 
@@ -88,7 +90,7 @@ export interface GameState {
 
 export interface BetRequestResponse {
   success: boolean;
-  serverState: ServerState;
+  state: ServerGameState;
 }
 
 export interface TableRequestResponse {

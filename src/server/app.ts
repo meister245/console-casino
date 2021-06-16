@@ -3,19 +3,11 @@ import cors = require("cors");
 
 import { getClient, getConfig } from "./config";
 import { logger, logRequest } from "./logger";
-import {
-  assignTable,
-  initServerState,
-  removeTable,
-  resetServerState,
-  resumeSuspendedServerState,
-  serverState,
-  suspendServerState,
-  updateServerState,
-} from "./state";
+import State from "./state";
 import { getStats, updateStats } from "./stats";
 
 export const app = express();
+export const state = new State();
 
 app.use(cors());
 app.use(express.json());
@@ -40,7 +32,7 @@ app.get("/config/", (req, res) => {
 
 app.get("/state/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify(serverState, null, 2));
+  res.send(JSON.stringify(state.getServerState(), null, 2));
 });
 
 app.get("/stats/", (req, res) => {
@@ -50,18 +42,20 @@ app.get("/stats/", (req, res) => {
 
 app.post("/table/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success: true, tableName: assignTable() }));
+  res.send(JSON.stringify({ success: true, tableName: state.assignTable() }));
 });
 
 app.delete("/table/", (req, res) => {
   const tableName = req.body?.tableName ?? "";
-  removeTable(tableName);
+  state.removeTable(tableName);
   res.set("Content-Type", "application/json");
   res.send(JSON.stringify({ success: true, tableName: tableName }));
 });
 
 app.post("/bet/", (req, res) => {
   let success = true;
+
+  const gameState = state.getGameState();
 
   const { action, betStrategy, betSize, betResult, betMultiplier, tableName } =
     {
@@ -73,25 +67,25 @@ app.post("/bet/", (req, res) => {
       tableName: req.body?.tableName ?? undefined,
     };
 
-  const isTableMatching = tableName === serverState.tableName;
+  const isTableMatching = tableName === gameState.tableName;
 
-  if (action === "init" && !serverState.active) {
-    serverState.suspended
-      ? resumeSuspendedServerState(betStrategy, tableName)
-      : initServerState(betStrategy, tableName);
-  } else if (action === "update" && serverState.active && isTableMatching) {
-    updateServerState(betSize);
-  } else if (action === "suspend" && serverState.active && isTableMatching) {
-    suspendServerState(betSize, betStrategy);
-  } else if (action === "reset" && serverState.active && isTableMatching) {
-    resetServerState();
+  if (action === "init" && !gameState.active) {
+    gameState.suspended
+      ? state.resumeSuspendedGameState(betStrategy, tableName)
+      : state.initGameState(betStrategy, tableName);
+  } else if (action === "update" && gameState.active && isTableMatching) {
+    state.updateGameState(betSize);
+  } else if (action === "suspend" && gameState.active && isTableMatching) {
+    state.suspendGameState(betSize, betStrategy);
+  } else if (action === "reset" && gameState.active && isTableMatching) {
+    state.resetGameState();
     updateStats(betResult, betStrategy, betMultiplier, tableName);
   } else {
     success = false;
   }
 
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success, serverState }));
+  res.send(JSON.stringify({ success, state: gameState }));
 });
 
 if (require.main === module) {
