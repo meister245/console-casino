@@ -6,12 +6,12 @@ import { Driver } from "../types";
 
 export class RouletteBot extends RESTClient {
   running: boolean;
-  timeStarted: number;
+  tableName: string;
 
   constructor() {
     super();
+
     this.running = true;
-    this.timeStarted = Math.floor(Date.now() / 1000);
   }
 
   async start(): Promise<void> {
@@ -21,13 +21,26 @@ export class RouletteBot extends RESTClient {
 
     await this.setupTable(driver, config);
 
-    const betManager = new RouletteBetManager(driver, config, strategies);
+    if (this.running) {
+      const betManager = new RouletteBetManager(driver, config, strategies);
 
-    betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
+      betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
-    while (this.running) {
-      await betManager.start();
-      await driver.sleep(1500);
+      while (this.running) {
+        await betManager.start();
+        await driver.sleep(1500);
+
+        if (!betManager.state.gameState) {
+          const timeDiff =
+            Math.floor(Date.now() / 1000) - betManager.lastBetTime;
+
+          if (timeDiff > 60 * 20) {
+            this.stop();
+            this.deleteTable(this.tableName);
+            window.location.href = config.lobbyUrl;
+          }
+        }
+      }
     }
   }
 
@@ -54,10 +67,15 @@ export class RouletteBot extends RESTClient {
     const success = driver.navigateLobbyTable(tableName);
 
     if (!success) {
+      this.stop();
       this.deleteTable(tableName);
+
       await driver.sleep(6000 * 10 * 10);
       window.location.href = config.lobbyUrl;
+      return;
     }
+
+    this.tableName = tableName;
 
     while (!driver.getDealerMessage()) {
       await driver.sleep(1500);
@@ -68,7 +86,7 @@ export class RouletteBot extends RESTClient {
     }
   }
 
-  async stop(): Promise<void> {
+  stop(): void {
     this.running = false;
   }
 }

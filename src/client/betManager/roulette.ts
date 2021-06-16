@@ -24,6 +24,7 @@ export class RouletteBetManager extends RESTClient {
   config: RouletteConfig;
   strategies: RouletteStrategies;
   running: boolean;
+  lastBetTime: number;
   lastLogMessage: null | string;
   state: ClientState;
 
@@ -33,11 +34,14 @@ export class RouletteBetManager extends RESTClient {
     strategies: RouletteStrategies
   ) {
     super();
+
     this.config = config;
     this.driver = driver;
     this.strategies = strategies;
 
     this.running = true;
+
+    this.lastBetTime = Math.floor(Date.now() / 1000);
     this.lastLogMessage = null;
 
     this.state = {
@@ -304,6 +308,10 @@ export class RouletteBetManager extends RESTClient {
         !this.config.dryRun && this.driver.setBet(betName);
         totalBetSize += this.config.chipSize.valueOf();
       }
+    }
+
+    if (!this.config.dryRun) {
+      this.lastBetTime = Math.floor(Date.now() / 1000);
     }
 
     this.logMessage(`bets: ${this.state.gameState.bets}`);
