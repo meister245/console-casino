@@ -1,104 +1,134 @@
-import {
-  GameResult,
-  GameStats,
-  MultiplierStats,
-  StrategyMultiplierStats,
-  TableStats,
-} from "./types";
+import { GameResult } from "./types";
 
-let totalGames = 0;
+type ServerStats = {
+  totalGames: number;
+  tableStats: TableStats;
+  multiplierStats: MultiplierStats;
+  strategyMultiplierStats: StrategyMultiplierStats;
+};
 
-const tableStats: TableStats = {};
-const multiplierStats: MultiplierStats = {};
-const strategyMultiplierStats: StrategyMultiplierStats = {};
-
-export const getStats = (): GameStats => {
-  return {
-    totalGames,
-    tableStats,
-    multiplierStats,
-    strategyMultiplierStats,
+interface TableStats {
+  [result: string]: {
+    gamesWin: number;
+    gamesLose: number;
+    gamesAbort: number;
   };
-};
+}
+interface MultiplierStats {
+  [multiplier: string]: {
+    count: number;
+    percent: number;
+  };
+}
 
-export const updateStats = (
-  result: GameResult,
-  strategy: string,
-  multiplier: number,
-  tableName: string
-): void => {
-  totalGames += 1;
-  updateGameStats(result, tableName);
-  updateMultiplierStats(multiplier);
-  updateStrategyMultiplierStats(strategy, multiplier);
-};
+interface StrategyMultiplierStats {
+  [strategy: string]: {
+    count: number;
+    percent: number;
+    multiplier: MultiplierStats;
+  };
+}
 
-const updateGameStats = (result: GameResult, tableName: string): void => {
-  if (!(tableName in tableStats)) {
-    tableStats[tableName] = { gamesWin: 0, gamesLose: 0, gamesAbort: 0 };
+class Stats {
+  private totalGames: number;
+  private tableStats: TableStats;
+  private multiplierStats: MultiplierStats;
+  private strategyMultiplierStats: StrategyMultiplierStats;
+
+  constructor() {
+    this.totalGames = 0;
+    this.tableStats = {};
+    this.multiplierStats = {};
+    this.strategyMultiplierStats = {};
   }
 
-  const tableResultStats = tableStats[tableName];
-
-  switch (result) {
-    case GameResult.WIN:
-      tableResultStats.gamesWin += 1;
-      break;
-    case GameResult.LOSE:
-      tableResultStats.gamesLose += 1;
-      break;
-    case GameResult.ABORT:
-      tableResultStats.gamesAbort += 1;
-      break;
-  }
-};
-
-const updateMultiplierStats = (multiplier: number) => {
-  if (!(multiplier in multiplierStats)) {
-    multiplierStats[multiplier] = { count: 0, percent: 0 };
-  }
-
-  multiplierStats[multiplier].count += 1;
-
-  Object.keys(multiplierStats).forEach((key) => {
-    multiplierStats[key].percent = Math.floor(
-      (multiplierStats[key].count / totalGames) * 100
-    );
-  });
-};
-
-const updateStrategyMultiplierStats = (
-  strategy: string,
-  multiplier: number
-) => {
-  if (!(strategy in strategyMultiplierStats)) {
-    strategyMultiplierStats[strategy] = {
-      count: 0,
-      percent: 0,
-      multiplier: {},
+  getServerStats(): ServerStats {
+    return {
+      totalGames: this.totalGames,
+      tableStats: this.tableStats,
+      multiplierStats: this.multiplierStats,
+      strategyMultiplierStats: this.strategyMultiplierStats,
     };
   }
 
-  strategyMultiplierStats[strategy].count += 1;
-
-  if (!(multiplier in strategyMultiplierStats[strategy].multiplier)) {
-    strategyMultiplierStats[strategy].multiplier[multiplier] = {
-      count: 0,
-      percent: 0,
-    };
+  updateStats(
+    result: GameResult,
+    strategy: string,
+    multiplier: number,
+    tableName: string
+  ): void {
+    this.totalGames += 1;
+    this.updateGameStats(result, tableName);
+    this.updateMultiplierStats(multiplier);
+    this.updateStrategyMultiplierStats(strategy, multiplier);
   }
 
-  strategyMultiplierStats[strategy].multiplier[multiplier].count += 1;
+  updateGameStats(result: GameResult, tableName: string): void {
+    if (!(tableName in this.tableStats)) {
+      this.tableStats[tableName] = { gamesWin: 0, gamesLose: 0, gamesAbort: 0 };
+    }
 
-  Object.keys(strategyMultiplierStats).forEach((strategyKey) => {
-    const item = strategyMultiplierStats[strategyKey];
-    item.percent = Math.floor((item.count / totalGames) * 100);
+    const tableResultStats = this.tableStats[tableName];
 
-    Object.keys(item.multiplier).forEach((multiplierKey) => {
-      const multiplierItem = item.multiplier[multiplierKey];
-      multiplierItem.percent = Math.floor(
-        (multiplierItem.count / totalGames) * 100
+    switch (result) {
+      case GameResult.WIN:
+        tableResultStats.gamesWin += 1;
+        break;
+      case GameResult.LOSE:
+        tableResultStats.gamesLose += 1;
+        break;
+      case GameResult.ABORT:
+        tableResultStats.gamesAbort += 1;
+        break;
+    }
+  }
+
+  updateMultiplierStats(multiplier: number): void {
+    if (!(multiplier in this.multiplierStats)) {
+      this.multiplierStats[multiplier] = { count: 0, percent: 0 };
+    }
+
+    this.multiplierStats[multiplier].count += 1;
+
+    Object.keys(this.multiplierStats).forEach((key) => {
+      this.multiplierStats[key].percent = Math.floor(
+        (this.multiplierStats[key].count / this.totalGames) * 100
       );
     });
-  });
-};
+  }
+
+  updateStrategyMultiplierStats(strategy: string, multiplier: number): void {
+    if (!(strategy in this.strategyMultiplierStats)) {
+      this.strategyMultiplierStats[strategy] = {
+        count: 0,
+        percent: 0,
+        multiplier: {},
+      };
+    }
+
+    this.strategyMultiplierStats[strategy].count += 1;
+
+    if (!(multiplier in this.strategyMultiplierStats[strategy].multiplier)) {
+      this.strategyMultiplierStats[strategy].multiplier[multiplier] = {
+        count: 0,
+        percent: 0,
+      };
+    }
+
+    this.strategyMultiplierStats[strategy].multiplier[multiplier].count += 1;
+
+    Object.keys(this.strategyMultiplierStats).forEach((strategyKey) => {
+      const item = this.strategyMultiplierStats[strategyKey];
+      item.percent = Math.floor((item.count / this.totalGames) * 100);
+
+      Object.keys(item.multiplier).forEach((multiplierKey) => {
+        const multiplierItem = item.multiplier[multiplierKey];
+        multiplierItem.percent = Math.floor(
+          (multiplierItem.count / this.totalGames) * 100
+        );
+      });
+    });
+  }
+}
+
+export default Stats;

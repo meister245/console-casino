@@ -8,35 +8,6 @@ export enum GameResult {
   ABORT = "abort",
 }
 
-export type GameStats = {
-  totalGames: number;
-  tableStats: TableStats;
-  multiplierStats: MultiplierStats;
-  strategyMultiplierStats: StrategyMultiplierStats;
-};
-
-export interface TableStats {
-  [result: string]: {
-    gamesWin: number;
-    gamesLose: number;
-    gamesAbort: number;
-  };
-}
-export interface MultiplierStats {
-  [multiplier: string]: {
-    count: number;
-    percent: number;
-  };
-}
-
-export interface StrategyMultiplierStats {
-  [strategy: string]: {
-    count: number;
-    percent: number;
-    multiplier: MultiplierStats;
-  };
-}
-
 export type RouletteBotConfig = {
   config: RouletteConfig;
   strategies: RouletteStrategies;

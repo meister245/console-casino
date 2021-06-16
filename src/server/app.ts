@@ -4,10 +4,11 @@ import cors = require("cors");
 import { getClient, getConfig } from "./config";
 import { logger, logRequest } from "./logger";
 import State from "./state";
-import { getStats, updateStats } from "./stats";
+import Stats from "./stats";
 
 export const app = express();
 export const state = new State();
+export const stats = new Stats();
 
 app.use(cors());
 app.use(express.json());
@@ -37,7 +38,7 @@ app.get("/state/", (req, res) => {
 
 app.get("/stats/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify(getStats(), null, 2));
+  res.send(JSON.stringify(stats.getServerStats(), null, 2));
 });
 
 app.post("/table/", (req, res) => {
@@ -79,7 +80,7 @@ app.post("/bet/", (req, res) => {
     state.suspendGameState(betSize, betStrategy);
   } else if (action === "reset" && gameState.active && isTableMatching) {
     state.resetGameState();
-    updateStats(betResult, betStrategy, betMultiplier, tableName);
+    stats.updateStats(betResult, betStrategy, betMultiplier, tableName);
   } else {
     success = false;
   }
