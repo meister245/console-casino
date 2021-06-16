@@ -19,9 +19,8 @@ import {
   TableMessage,
 } from "../types";
 
-export class RouletteBetManager {
+export class RouletteBetManager extends RESTClient {
   driver: Playtech;
-  restClient: RESTClient;
   config: RouletteConfig;
   strategies: RouletteStrategies;
   running: boolean;
@@ -30,13 +29,12 @@ export class RouletteBetManager {
 
   constructor(
     driver: Playtech,
-    restClient: RESTClient,
     config: RouletteConfig,
     strategies: RouletteStrategies
   ) {
+    super();
     this.config = config;
     this.driver = driver;
-    this.restClient = restClient;
     this.strategies = strategies;
 
     this.running = true;
@@ -56,14 +54,14 @@ export class RouletteBetManager {
       const tableName = this.driver.getTableName();
 
       if (this.state.gameState) {
-        await this.restClient.betReset(
+        await this.postBetReset(
           GameResult.ABORT,
           this.state.gameState,
           tableName
         );
       }
 
-      await this.restClient.resetTable(tableName);
+      await this.deleteTable(tableName);
       window.location.href = this.config.lobbyUrl;
     }
 
@@ -106,7 +104,7 @@ export class RouletteBetManager {
         const numberHistory = this.driver.getNumberHistory();
 
         const { suspended: lastGameSuspended, betStrategy: lastBetStrategy } =
-          await this.restClient.getServerState(tableName);
+          await this.getServerState(tableName);
 
         for (const strategyName in this.strategies) {
           const strategy = this.strategies[strategyName];
@@ -170,7 +168,7 @@ export class RouletteBetManager {
     this.logMessage(`strategy matched - ${strategyName}`);
 
     const tableName = this.driver.getTableName();
-    const { success, serverState } = await this.restClient.betInit(
+    const { success, serverState } = await this.postBetInit(
       strategyName,
       tableName
     );
@@ -232,7 +230,7 @@ export class RouletteBetManager {
         });
 
         if (isWin) {
-          const { success } = await this.restClient.betReset(
+          const { success } = await this.postBetReset(
             GameResult.WIN,
             this.state.gameState,
             tableName
@@ -246,7 +244,7 @@ export class RouletteBetManager {
             this.state.gameState.progressionMultiplier;
 
           if (!isSuspendLossReached) {
-            const { success } = await this.restClient.betUpdate(
+            const { success } = await this.postBetUpdate(
               this.state.gameState.betSize,
               tableName
             );
@@ -254,7 +252,7 @@ export class RouletteBetManager {
               this.logMessage("updated bet size, updated server state");
             this.state.gameState.progressionCount += 1;
           } else if (isSuspendLossReached) {
-            const { success } = await this.restClient.betSuspend(
+            const { success } = await this.postBetSuspend(
               this.state.gameState.betSize,
               this.state.gameState.betStrategy,
               tableName
@@ -269,7 +267,7 @@ export class RouletteBetManager {
             this.state.gameState.progressionMultiplier;
 
           if (!isStopLossReached) {
-            const { success } = await this.restClient.betUpdate(
+            const { success } = await this.postBetUpdate(
               this.state.gameState.betSize,
               tableName
             );
@@ -277,7 +275,7 @@ export class RouletteBetManager {
               this.logMessage("updated bet size, updated server state");
             this.state.gameState.progressionCount += 1;
           } else if (isStopLossReached) {
-            const { success } = await this.restClient.betReset(
+            const { success } = await this.postBetReset(
               GameResult.LOSE,
               this.state.gameState,
               tableName
@@ -308,7 +306,6 @@ export class RouletteBetManager {
       for (let step = 0; step < clickTimes; step++) {
         !this.config.dryRun && this.driver.setBet(betName);
         totalBetSize += this.config.chipSize.valueOf();
-        this.logMessage(`click ${betName} ${step + 1}`);
       }
     }
 

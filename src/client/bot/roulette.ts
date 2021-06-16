@@ -3,24 +3,25 @@ import { RouletteBetManager } from "../betManager/roulette";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
 import { Driver } from "../types";
-import { CommonBot } from "./common";
 
-export class RouletteBot extends CommonBot {
+export class RouletteBot extends RESTClient {
+  running: boolean;
+  timeStarted: number;
+
+  constructor() {
+    super();
+    this.running = true;
+    this.timeStarted = Math.floor(Date.now() / 1000);
+  }
+
   async start(): Promise<void> {
-    const restClient = new RESTClient();
-
-    const { config, strategies } = await restClient.getConfig();
+    const { config, strategies } = await this.getConfig();
 
     const driver = this.getDriver(config.driverName as Driver);
 
-    await this.setupTable(driver, restClient, config);
+    await this.setupTable(driver, config);
 
-    const betManager = new RouletteBetManager(
-      driver,
-      restClient,
-      config,
-      strategies
-    );
+    const betManager = new RouletteBetManager(driver, config, strategies);
 
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
@@ -30,16 +31,21 @@ export class RouletteBot extends CommonBot {
     }
   }
 
-  async setupTable(
-    driver: Playtech,
-    restClient: RESTClient,
-    config: RouletteConfig
-  ): Promise<void> {
+  getDriver(driverName: Driver): Playtech {
+    switch (driverName) {
+      case "playtech":
+        return new Playtech();
+      default:
+        throw new Error(`invalid driver name ${driverName}`);
+    }
+  }
+
+  async setupTable(driver: Playtech, config: RouletteConfig): Promise<void> {
     while (driver.getLobbyTables().length === 0) {
       await driver.sleep(1500);
     }
 
-    const { tableName } = await restClient.getTableName();
+    const { tableName } = await this.postTable();
 
     if (tableName === null) {
       throw Error("no free tables");
@@ -48,7 +54,7 @@ export class RouletteBot extends CommonBot {
     const success = driver.navigateLobbyTable(tableName);
 
     if (!success) {
-      restClient.resetTable(tableName);
+      this.deleteTable(tableName);
       await driver.sleep(6000 * 10 * 10);
       window.location.href = config.lobbyUrl;
     }

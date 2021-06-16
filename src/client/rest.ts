@@ -17,7 +17,7 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 
-  async getTableName(): Promise<TableRequestResponse> {
+  async postTable(): Promise<TableRequestResponse> {
     return fetch(`${serverUrl}/table/`, {
       method: "POST",
       mode: "cors",
@@ -26,7 +26,7 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 
-  async resetTable(tableName: string): Promise<TableRequestResponse> {
+  async deleteTable(tableName: string): Promise<TableRequestResponse> {
     return fetch(`${serverUrl}/table/`, {
       method: "DELETE",
       mode: "cors",
@@ -45,7 +45,7 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 
-  async betRequest(
+  async postBet(
     tableName: string,
     data: BetRequestProps
   ): Promise<BetRequestResponse> {
@@ -59,34 +59,34 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 
-  async betInit(
+  async postBetInit(
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest(tableName, {
+    return await this.postBet(tableName, {
       action: BetRequestAction.INIT,
       betStrategy,
       tableName,
     });
   }
 
-  async betUpdate(
+  async postBetUpdate(
     betSize: number,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest(tableName, {
+    return await this.postBet(tableName, {
       action: BetRequestAction.UPDATE,
       betSize,
       tableName,
     });
   }
 
-  async betSuspend(
+  async postBetSuspend(
     betSize: number,
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest(tableName, {
+    return await this.postBet(tableName, {
       action: BetRequestAction.SUSPEND,
       betSize,
       betStrategy,
@@ -94,12 +94,12 @@ export class RESTClient {
     });
   }
 
-  async betReset(
+  async postBetReset(
     gameResult: GameResult,
     gameState: GameState,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.betRequest(tableName, {
+    return await this.postBet(tableName, {
       action: BetRequestAction.RESET,
       tableName,
       betResult: gameResult,
