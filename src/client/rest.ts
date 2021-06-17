@@ -1,14 +1,47 @@
 import { serverUrl } from "./constants";
 import {
-  BetRequestAction,
-  BetRequestProps,
-  BetRequestResponse,
   GameResult,
   GameState,
   RouletteBotConfig,
+  ServerGameState,
   ServerState,
-  TableRequestResponse,
 } from "./types";
+
+enum TableRequestAction {
+  ASSIGN = "assign",
+  DELETE = "delete",
+}
+
+interface TableRequestProps {
+  action: TableRequestAction;
+  tableName?: string;
+}
+
+interface TableRequestResponse {
+  success: boolean;
+  tableName: string | null;
+}
+
+enum BetRequestAction {
+  INIT = "init",
+  UPDATE = "update",
+  SUSPEND = "suspend",
+  RESET = "reset",
+}
+
+interface BetRequestProps {
+  action: BetRequestAction;
+  betStrategy?: string;
+  betMultiplier?: number;
+  betResult?: GameResult;
+  betSize?: number;
+  tableName?: string;
+}
+
+interface BetRequestResponse {
+  success: boolean;
+  state: ServerGameState;
+}
 
 export class RESTClient {
   async getConfig(): Promise<RouletteBotConfig> {
@@ -17,24 +50,26 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 
-  async postTable(): Promise<TableRequestResponse> {
+  async postTable(data: TableRequestProps): Promise<TableRequestResponse> {
     return fetch(`${serverUrl}/table/`, {
       method: "POST",
       mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     })
       .then((resp) => resp.json())
       .catch((err) => console.error(err));
   }
 
-  async deleteTable(tableName: string): Promise<TableRequestResponse> {
-    return fetch(`${serverUrl}/table/`, {
-      method: "DELETE",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tableName }),
-    })
-      .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+  async postTableAssign(): Promise<TableRequestResponse> {
+    return await this.postTable({ action: TableRequestAction.ASSIGN });
+  }
+
+  async postTableDelete(tableName: string): Promise<TableRequestResponse> {
+    return await this.postTable({
+      action: TableRequestAction.DELETE,
+      tableName: tableName,
+    });
   }
 
   async getServerState(tableName: string): Promise<ServerState> {

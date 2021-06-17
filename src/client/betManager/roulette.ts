@@ -58,20 +58,24 @@ export class RouletteBetManager extends RESTClient {
     this.lastBetTime = Math.floor(Date.now() / 1000);
   }
 
-  disable(): void {
+  async reload(tableName: string): Promise<void> {
     this.running = false;
+    await this.postTableDelete(tableName);
+    window.location.href = this.config.lobbyUrl;
   }
 
-  isNoBetActivity(tableName: string, resetUrl: string): void {
+  validateBetActivity(): boolean {
+    let result = true;
+
     if (!this.state.gameState) {
       const timeDiff = Math.floor(Date.now() / 1000) - this.lastBetTime;
 
       if (timeDiff > 60 * 20) {
-        this.disable();
-        this.deleteTable(tableName);
-        window.location.href = resetUrl;
+        result = false;
       }
     }
+
+    return result;
   }
 
   async runStage(): Promise<void> {
@@ -88,9 +92,7 @@ export class RouletteBetManager extends RESTClient {
         );
       }
 
-      this.disable();
-      await this.deleteTable(tableName);
-      window.location.href = this.config.lobbyUrl;
+      await this.reload(tableName);
     }
 
     if (this.isActive()) {

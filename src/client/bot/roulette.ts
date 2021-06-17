@@ -23,7 +23,11 @@ export class RouletteBot extends RESTClient {
 
     while (betManager.isActive()) {
       await betManager.runStage();
-      betManager.isNoBetActivity(this.tableName, config.lobbyUrl);
+
+      if (!betManager.validateBetActivity()) {
+        await betManager.reload(this.tableName);
+      }
+
       await driver.sleep(1500);
     }
   }
@@ -46,7 +50,7 @@ export class RouletteBot extends RESTClient {
       await driver.sleep(1500);
     }
 
-    const { tableName } = await this.postTable();
+    const { tableName } = await this.postTableAssign();
 
     if (!tableName) {
       throw Error("no free tables");
@@ -63,11 +67,8 @@ export class RouletteBot extends RESTClient {
         throw new Error("balance too low");
       }
     } else if (tableName && !isTableFound) {
-      betManager.disable();
-      this.deleteTable(tableName);
-
       await driver.sleep(6000 * 10 * 10);
-      window.location.href = config.lobbyUrl;
+      await betManager.reload(tableName);
     }
 
     this.tableName = tableName;

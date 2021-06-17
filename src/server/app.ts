@@ -42,15 +42,23 @@ app.get("/stats/", (req, res) => {
 });
 
 app.post("/table/", (req, res) => {
-  res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ tableName: state.assignTable() }));
-});
+  const { action, tableName } = {
+    action: req.body?.action ?? undefined,
+    tableName: req.body?.tableName ?? undefined,
+  };
 
-app.delete("/table/", (req, res) => {
-  const tableName = req.body?.tableName ?? "";
-  state.removeTable(tableName);
+  const response = { success: true, tableName: tableName };
+
+  if (action === "assign") {
+    response.tableName = state.assignTable();
+  } else if (action === "delete") {
+    state.removeTable(tableName);
+  } else {
+    response.success = false;
+  }
+
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success: true, tableName: tableName }));
+  res.send(JSON.stringify(response));
 });
 
 app.post("/bet/", (req, res) => {

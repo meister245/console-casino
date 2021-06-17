@@ -55,25 +55,9 @@ export enum GameResult {
   ABORT = "abort",
 }
 
-export enum BetRequestAction {
-  INIT = "init",
-  UPDATE = "update",
-  SUSPEND = "suspend",
-  RESET = "reset",
-}
-
 export interface ClientState {
   gameState: GameState | null;
   gameStage: GameStage;
-}
-
-export interface BetRequestProps {
-  action: BetRequestAction;
-  betStrategy?: string;
-  betMultiplier?: number;
-  betResult?: GameResult;
-  betSize?: number;
-  tableName?: string;
 }
 
 export interface GameState {
@@ -86,16 +70,6 @@ export interface GameState {
   stopWinLimit: number;
   stopLossLimit: number;
   suspendLossLimit: number;
-}
-
-export interface BetRequestResponse {
-  success: boolean;
-  state: ServerGameState;
-}
-
-export interface TableRequestResponse {
-  success: boolean;
-  tableName: string | null;
 }
 
 export type RouletteNumbers = {
