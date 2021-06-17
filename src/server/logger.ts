@@ -33,18 +33,14 @@ const format = winston.format.combine(
 
 winston.addColors(colors);
 
-export const logger = winston.createLogger({
+const logger = winston.createLogger({
   level: "info",
   levels,
   format,
   transports,
 });
 
-export const logRequest = (
-  req: Request,
-  res: Response,
-  done: NextFunction
-): void => {
+const logRequest = (req: Request, res: Response, done: NextFunction): void => {
   logger.info(`${req.method} ${req.url}`);
 
   if (Object.keys(req.body).length > 0) {
@@ -53,3 +49,5 @@ export const logRequest = (
 
   done();
 };
+
+export { logger, logRequest };

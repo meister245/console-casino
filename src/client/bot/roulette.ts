@@ -5,42 +5,26 @@ import { RESTClient } from "../rest";
 import { Driver } from "../types";
 
 export class RouletteBot extends RESTClient {
-  running: boolean;
-  tableName: string;
+  private tableName: string;
 
   constructor() {
     super();
-
-    this.running = true;
   }
 
   async start(): Promise<void> {
     const { config, strategies } = await this.getConfig();
 
     const driver = this.getDriver(config.driverName as Driver);
+    const betManager = new RouletteBetManager(driver, config, strategies);
 
-    await this.setupTable(driver, config);
+    await this.setupTable(driver, config, betManager);
 
-    if (this.running) {
-      const betManager = new RouletteBetManager(driver, config, strategies);
+    betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
-      betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
-
-      while (this.running) {
-        await betManager.start();
-        await driver.sleep(1500);
-
-        if (!betManager.state.gameState) {
-          const timeDiff =
-            Math.floor(Date.now() / 1000) - betManager.lastBetTime;
-
-          if (timeDiff > 60 * 20) {
-            this.stop();
-            this.deleteTable(this.tableName);
-            window.location.href = config.lobbyUrl;
-          }
-        }
-      }
+    while (betManager.isActive()) {
+      await betManager.runStage();
+      betManager.isNoBetActivity(this.tableName, config.lobbyUrl);
+      await driver.sleep(1500);
     }
   }
 
@@ -53,41 +37,40 @@ export class RouletteBot extends RESTClient {
     }
   }
 
-  async setupTable(driver: Playtech, config: RouletteConfig): Promise<void> {
+  async setupTable(
+    driver: Playtech,
+    config: RouletteConfig,
+    betManager: RouletteBetManager
+  ): Promise<void> {
     while (driver.getLobbyTables().length === 0) {
       await driver.sleep(1500);
     }
 
     const { tableName } = await this.postTable();
 
-    if (tableName === null) {
+    if (!tableName) {
       throw Error("no free tables");
     }
 
-    const success = driver.navigateLobbyTable(tableName);
+    const isTableFound = driver.navigateLobbyTable(tableName);
 
-    if (!success) {
-      this.stop();
+    if (tableName && isTableFound) {
+      while (!driver.getDealerMessage()) {
+        await driver.sleep(1500);
+      }
+
+      if (!config.dryRun && config.minBalance > driver.getBalance()) {
+        throw new Error("balance too low");
+      }
+    } else if (tableName && !isTableFound) {
+      betManager.disable();
       this.deleteTable(tableName);
 
       await driver.sleep(6000 * 10 * 10);
       window.location.href = config.lobbyUrl;
-      return;
     }
 
     this.tableName = tableName;
-
-    while (!driver.getDealerMessage()) {
-      await driver.sleep(1500);
-    }
-
-    if (!config.dryRun && config.minBalance > driver.getBalance()) {
-      throw new Error("balance too low");
-    }
-  }
-
-  stop(): void {
-    this.running = false;
   }
 }
 

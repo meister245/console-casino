@@ -80,6 +80,14 @@ export class Playtech extends DriverCommon {
     return parseFloat(text.match(/\d+(?:\.\d+)*/g)[0]);
   }
 
+  getChipSizes(): number[] {
+    return [...document.querySelectorAll(".chip-svg")]
+      .map((item: Element) =>
+        parseFloat(item.textContent.replace(/[Kk]/, "000"))
+      )
+      .sort();
+  }
+
   getDealerMessage(): string {
     return document.querySelector(".dealer-message-text")?.textContent ?? "";
   }

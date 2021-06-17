@@ -20,13 +20,13 @@ import {
 } from "../types";
 
 export class RouletteBetManager extends RESTClient {
-  driver: Playtech;
-  config: RouletteConfig;
-  strategies: RouletteStrategies;
-  running: boolean;
-  lastBetTime: number;
-  lastLogMessage: null | string;
-  state: ClientState;
+  private driver: Playtech;
+  private config: RouletteConfig;
+  private lastBetTime: number;
+  private lastLogMessage: null | string;
+  private running: boolean;
+  private state: ClientState;
+  private strategies: RouletteStrategies;
 
   constructor(
     driver: Playtech,
@@ -50,11 +50,34 @@ export class RouletteBetManager extends RESTClient {
     };
   }
 
-  async start(): Promise<void> {
+  isActive(): boolean {
+    return this.running;
+  }
+
+  updateLastBetTime(): void {
+    this.lastBetTime = Math.floor(Date.now() / 1000);
+  }
+
+  disable(): void {
+    this.running = false;
+  }
+
+  isNoBetActivity(tableName: string, resetUrl: string): void {
+    if (!this.state.gameState) {
+      const timeDiff = Math.floor(Date.now() / 1000) - this.lastBetTime;
+
+      if (timeDiff > 60 * 20) {
+        this.disable();
+        this.deleteTable(tableName);
+        window.location.href = resetUrl;
+      }
+    }
+  }
+
+  async runStage(): Promise<void> {
     const modalMessage = this.driver.getModalMessage().toLowerCase();
 
     if (modalMessage && modalMessage.match(tableInactiveMessageRegex)) {
-      this.running = false;
       const tableName = this.driver.getTableName();
 
       if (this.state.gameState) {
@@ -65,11 +88,12 @@ export class RouletteBetManager extends RESTClient {
         );
       }
 
+      this.disable();
       await this.deleteTable(tableName);
       window.location.href = this.config.lobbyUrl;
     }
 
-    if (this.running) {
+    if (this.isActive()) {
       const dealerMessage = this.driver
         .getDealerMessage()
         .toLowerCase() as TableMessage;
@@ -102,8 +126,13 @@ export class RouletteBetManager extends RESTClient {
   async runStageBet(dealerMessage: TableMessage): Promise<void> {
     this.logMessage("waiting to be able to place bets");
 
-    if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
-      if (this.state.gameState === null) {
+    const isDealerMessageMatching = [
+      TableMessage.BETS,
+      TableMessage.LAST_BETS,
+    ].includes(dealerMessage);
+
+    if (isDealerMessageMatching) {
+      if (!this.state.gameState && this.validateChipSize()) {
         const tableName = this.driver.getTableName();
         const numberHistory = this.driver.getNumberHistory();
 
@@ -125,10 +154,9 @@ export class RouletteBetManager extends RESTClient {
             break;
           }
         }
-      } else {
-        this.logMessage(
-          `continue betting - ${this.state.gameState.betStrategy}`
-        );
+      }
+
+      if (this.state.gameState && this.validateChipSize()) {
         await this.submitBets();
       }
 
@@ -177,8 +205,6 @@ export class RouletteBetManager extends RESTClient {
     if (success) {
       this.logMessage("server accepted bet");
       this.state.gameState = this.setupGameState(strategy, state);
-
-      await this.submitBets();
     } else {
       this.logMessage("server refused bet");
     }
@@ -293,6 +319,8 @@ export class RouletteBetManager extends RESTClient {
   }
 
   async submitBets(): Promise<void> {
+    this.logMessage(`bet strategy: ${this.state.gameState.betStrategy}`);
+
     let totalBetSize = 0;
 
     await this.driver.sleep(2000);
@@ -310,9 +338,7 @@ export class RouletteBetManager extends RESTClient {
       }
     }
 
-    if (!this.config.dryRun) {
-      this.lastBetTime = Math.floor(Date.now() / 1000);
-    }
+    !this.config.dryRun && this.updateLastBetTime();
 
     this.logMessage(`bets: ${this.state.gameState.bets}`);
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`);
@@ -350,6 +376,12 @@ export class RouletteBetManager extends RESTClient {
       default:
         return false;
     }
+  }
+
+  validateChipSize(): boolean {
+    const smallestChipSize = this.driver.getChipSizes()[0];
+    const betSize = this.state.gameState?.betSize ?? this.config.chipSize;
+    return smallestChipSize <= betSize && betSize % smallestChipSize === 0;
   }
 
   isPatternMatching(pattern: string[], lastNumbers: number[]): boolean {

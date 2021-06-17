@@ -43,7 +43,7 @@ app.get("/stats/", (req, res) => {
 
 app.post("/table/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success: true, tableName: state.assignTable() }));
+  res.send(JSON.stringify({ tableName: state.assignTable() }));
 });
 
 app.delete("/table/", (req, res) => {
