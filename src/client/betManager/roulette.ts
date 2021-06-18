@@ -134,12 +134,11 @@ export class RouletteBetManager extends RESTClient {
     ].includes(dealerMessage);
 
     if (isDealerMessageMatching) {
-      if (!this.state.gameState && this.validateChipSize()) {
-        const tableName = this.driver.getTableName();
-        const numberHistory = this.driver.getNumberHistory();
+      const tableName = this.driver.getTableName();
+      const serverState = await this.getServerState(tableName);
 
-        const { suspended: lastGameSuspended, betStrategy: lastBetStrategy } =
-          await this.getServerState(tableName);
+      if (!this.state.gameState && this.validateChipSize(serverState)) {
+        const numberHistory = this.driver.getNumberHistory();
 
         for (const strategyName in this.strategies) {
           const strategy = this.strategies[strategyName];
@@ -147,8 +146,8 @@ export class RouletteBetManager extends RESTClient {
           const isStrategyMatching = this.isMatchingStrategy(
             strategy.trigger,
             numberHistory,
-            lastBetStrategy,
-            lastGameSuspended
+            serverState.betStrategy,
+            serverState.suspended
           );
 
           if (isStrategyMatching) {
@@ -158,7 +157,7 @@ export class RouletteBetManager extends RESTClient {
         }
       }
 
-      if (this.state.gameState && this.validateChipSize()) {
+      if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
         await this.submitBets();
       }
 
@@ -380,9 +379,9 @@ export class RouletteBetManager extends RESTClient {
     }
   }
 
-  validateChipSize(): boolean {
+  validateChipSize(state: ServerGameState | GameState): boolean {
     const smallestChipSize = this.driver.getChipSizes()[0];
-    const betSize = this.state.gameState?.betSize ?? this.config.chipSize;
+    const betSize = state?.betSize ?? this.config.chipSize;
     return smallestChipSize <= betSize && betSize % smallestChipSize === 0;
   }
 

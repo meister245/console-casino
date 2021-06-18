@@ -67,7 +67,7 @@ export class RouletteBot extends RESTClient {
         throw new Error("balance too low");
       }
     } else if (tableName && !isTableFound) {
-      await driver.sleep(6000 * 10 * 10);
+      await driver.sleep(60 * 15 * 1000);
       await betManager.reload(tableName);
     }
 
