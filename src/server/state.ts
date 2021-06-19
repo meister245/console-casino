@@ -12,28 +12,35 @@ export type ServerState = ServerGameState & {
   tables: string[];
 };
 
-class State {
+class State implements ServerGameState {
   tables: string[];
-  gameState: ServerGameState;
+  active: boolean;
+  suspended: boolean;
+  betSize?: number;
+  betStrategy?: string;
+  tableName?: string;
 
   constructor() {
     this.tables = [];
-
-    this.gameState = {
-      active: false,
-      suspended: false,
-    };
+    this.active = false;
+    this.suspended = false;
   }
 
   getServerState(): ServerState {
     return {
-      ...this.gameState,
+      ...this.getGameState(),
       tables: this.tables,
     };
   }
 
   getGameState(): ServerGameState {
-    return this.gameState;
+    return {
+      active: this.active,
+      suspended: this.suspended,
+      betSize: this.betSize,
+      betStrategy: this.betStrategy,
+      tableName: this.tableName,
+    };
   }
 
   assignTable(): string | null {
@@ -54,37 +61,37 @@ class State {
   }
 
   resetGameState(): void {
-    this.gameState.active = false;
-    this.gameState.suspended = false;
-    this.gameState.betSize = undefined;
-    this.gameState.betStrategy = undefined;
-    this.gameState.tableName = undefined;
+    this.active = false;
+    this.suspended = false;
+    this.betSize = undefined;
+    this.betStrategy = undefined;
+    this.tableName = undefined;
   }
 
   initGameState(strategyName: string, tableName: string): void {
-    this.gameState.active = true;
-    this.gameState.suspended = false;
-    this.gameState.betStrategy = strategyName;
-    this.gameState.tableName = tableName;
+    this.active = true;
+    this.suspended = false;
+    this.betStrategy = strategyName;
+    this.tableName = tableName;
   }
 
   updateGameState(betSize: number): void {
-    this.gameState.betSize = betSize;
+    this.betSize = betSize;
   }
 
   suspendGameState(betSize: number, betStrategy: string): void {
-    this.gameState.active = false;
-    this.gameState.suspended = true;
-    this.gameState.betSize = betSize;
-    this.gameState.betStrategy = betStrategy;
-    this.gameState.tableName = undefined;
+    this.active = false;
+    this.suspended = true;
+    this.betSize = betSize;
+    this.betStrategy = betStrategy;
+    this.tableName = undefined;
   }
 
   resumeSuspendedGameState(strategyName: string, tableName: string): void {
-    this.gameState.active = true;
-    this.gameState.suspended = true;
-    this.gameState.betStrategy = strategyName;
-    this.gameState.tableName = tableName;
+    this.active = true;
+    this.suspended = true;
+    this.betStrategy = strategyName;
+    this.tableName = tableName;
   }
 }
 

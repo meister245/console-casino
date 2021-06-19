@@ -1,6 +1,7 @@
 import { ServerGameState, ServerState } from "./state";
+import { ServerStats } from "./stats";
 
-export { ServerGameState, ServerState };
+export { ServerGameState, ServerState, ServerStats };
 
 export enum GameResult {
   WIN = "win",

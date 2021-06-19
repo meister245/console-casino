@@ -10,10 +10,10 @@ describe("Game suspend state workflow", () => {
 
   before((done) => {
     server = app.listen(3000, () => {
-      state.gameState.active = true;
-      state.gameState.betStrategy = "testStrategy";
-      state.gameState.betSize = 0.1;
-      state.gameState.tableName = "testTable";
+      state.active = true;
+      state.betStrategy = "testStrategy";
+      state.betSize = 0.1;
+      state.tableName = "testTable";
       done();
     });
   });

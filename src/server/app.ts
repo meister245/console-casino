@@ -64,8 +64,6 @@ app.post("/table/", (req, res) => {
 app.post("/bet/", (req, res) => {
   let success = true;
 
-  const gameState = state.getGameState();
-
   const { action, betStrategy, betSize, betResult, betMultiplier, tableName } =
     {
       action: req.body?.action ?? undefined,
@@ -76,17 +74,26 @@ app.post("/bet/", (req, res) => {
       tableName: req.body?.tableName ?? undefined,
     };
 
-  const isTableMatching = tableName === gameState.tableName;
+  const currentGameState = state.getGameState();
+  const isTableMatching = tableName === currentGameState.tableName;
 
-  if (action === "init" && !gameState.active) {
-    gameState.suspended
+  if (action === "init" && !currentGameState.active) {
+    currentGameState.suspended
       ? state.resumeSuspendedGameState(betStrategy, tableName)
       : state.initGameState(betStrategy, tableName);
-  } else if (action === "update" && gameState.active && isTableMatching) {
+  } else if (
+    action === "update" &&
+    currentGameState.active &&
+    isTableMatching
+  ) {
     state.updateGameState(betSize);
-  } else if (action === "suspend" && gameState.active && isTableMatching) {
+  } else if (
+    action === "suspend" &&
+    currentGameState.active &&
+    isTableMatching
+  ) {
     state.suspendGameState(betSize, betStrategy);
-  } else if (action === "reset" && gameState.active && isTableMatching) {
+  } else if (action === "reset" && currentGameState.active && isTableMatching) {
     state.resetGameState();
     stats.updateStats(betResult, betStrategy, betMultiplier, tableName);
   } else {
@@ -94,7 +101,7 @@ app.post("/bet/", (req, res) => {
   }
 
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success, state: gameState }));
+  res.send(JSON.stringify({ success, state: state.getGameState() }));
 });
 
 if (require.main === module) {
