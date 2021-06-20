@@ -4,6 +4,7 @@ import cors = require("cors");
 import { logger, logRequest } from "./logger";
 import State from "./state";
 import Stats from "./stats";
+import { GameResult } from "./types";
 import {
   getClient,
   getConfig,
@@ -28,7 +29,7 @@ if (require.main === module) {
   app.use(logRequest);
 }
 
-const config = getConfig();
+const botConfig = getConfig();
 const clientSource = getClient();
 
 app.get("/client/", (req, res) => {
@@ -38,7 +39,7 @@ app.get("/client/", (req, res) => {
 
 app.get("/config/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify(config));
+  res.send(JSON.stringify(botConfig));
 });
 
 app.get("/state/", (req, res) => {
@@ -78,7 +79,9 @@ app.post("/bet/", (req, res) => {
   const currentGameState = state.getGameState();
   const isTableMatching = tableName === currentGameState.tableName;
 
-  if (action === "init" && !currentGameState.active) {
+  if (!currentGameState.running) {
+    success = false;
+  } else if (action === "init" && !currentGameState.active) {
     currentGameState.suspended
       ? state.resumeSuspendedGameState(betStrategy, tableName)
       : state.initGameState(betStrategy, tableName);
@@ -97,6 +100,10 @@ app.post("/bet/", (req, res) => {
   } else if (action === "reset" && currentGameState.active && isTableMatching) {
     state.resetGameState();
     stats.updateStats(betResult, betStrategy, betMultiplier, tableName);
+
+    betResult === GameResult.LOSE &&
+      botConfig.config.stopOnLoss &&
+      state.stopRunning();
 
     writeGameStats(stats.getServerStats());
   } else {

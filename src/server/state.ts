@@ -1,6 +1,7 @@
 import { getConfig } from "./util";
 
 export interface ServerGameState {
+  running: boolean;
   active: boolean;
   suspended: boolean;
   betSize?: number;
@@ -12,8 +13,9 @@ export type ServerState = ServerGameState & {
   tables: string[];
 };
 
-class State implements ServerGameState {
+class State implements ServerState {
   tables: string[];
+  running: boolean;
   active: boolean;
   suspended: boolean;
   betSize?: number;
@@ -22,6 +24,7 @@ class State implements ServerGameState {
 
   constructor() {
     this.tables = [];
+    this.running = true;
     this.active = false;
     this.suspended = false;
   }
@@ -35,12 +38,17 @@ class State implements ServerGameState {
 
   getGameState(): ServerGameState {
     return {
+      running: this.running,
       active: this.active,
       suspended: this.suspended,
       betSize: this.betSize,
       betStrategy: this.betStrategy,
       tableName: this.tableName,
     };
+  }
+
+  stopRunning(): void {
+    this.running = false;
   }
 
   assignTable(): string | null {

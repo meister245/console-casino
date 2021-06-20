@@ -1,6 +1,6 @@
 import {
-  lostGameUrl,
   rouletteNumbers,
+  serverGameStoppedUrl,
   tableInactiveMessageRegex,
 } from "../constants";
 import { Playtech } from "../driver/playtech";
@@ -136,6 +136,11 @@ export class RouletteBetManager extends RESTClient {
     if (isDealerMessageMatching) {
       const tableName = this.driver.getTableName();
       const serverState = await this.getServerState(tableName);
+
+      if (!serverState.running) {
+        window.location.href = serverGameStoppedUrl;
+        return;
+      }
 
       if (!this.state.gameState && this.validateChipSize(serverState)) {
         const numberHistory = this.driver.getNumberHistory();
@@ -310,7 +315,6 @@ export class RouletteBetManager extends RESTClient {
             );
             success && this.logMessage("registered loss, reset server state");
             this.state.gameState = null;
-            window.location.href = lostGameUrl;
           }
         }
       }

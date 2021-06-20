@@ -17,6 +17,7 @@ export type RouletteBotConfig = {
 export interface RouletteConfig {
   chipSize: number;
   dryRun: boolean;
+  stopOnLoss: boolean;
   driverName: string;
   minBalance: number;
   lobbyUrl: string;

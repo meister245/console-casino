@@ -4,8 +4,8 @@ export const serverPort = 8080;
 export const serverHostname = "localhost";
 export const serverUrl = `http://${serverHostname}:${serverPort}`;
 
-export const lostGameUrl =
-  "https://www.scienceabc.com/wp-content/uploads/ext-www.scienceabc.com/wp-content/uploads/2019/06/bankruptcy-meme.jpg-.jpg";
+export const serverGameStoppedUrl =
+  "https://dinu.ir/wp-content/uploads/2020/07/32123_funny_stop_hammer_time.jpg";
 
 export const tableInactiveMessageRegex =
   /(inactive|disconnected|restart|unavailable|table.will.be.closed)/;
