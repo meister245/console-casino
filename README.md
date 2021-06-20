@@ -38,10 +38,6 @@ using state machines in the browser developer console
     }
 
     loadScript('http://localhost:8080/client/')
-        .then(() => {
-            const casino = new ConsoleCasino()
-            casino.roulette.start()
-        })
 
 **Supported Casinos**
 

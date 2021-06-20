@@ -1,4 +1,4 @@
-import { getConfig } from "./config";
+import { getConfig } from "./util";
 
 export interface ServerGameState {
   active: boolean;

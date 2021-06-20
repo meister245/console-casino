@@ -1,6 +1,6 @@
 import { GameResult } from "./types";
 
-type ServerStats = {
+export type ServerStats = {
   totalGames: number;
   tableStats: TableStats;
   multiplierStats: MultiplierStats;
@@ -29,11 +29,11 @@ interface StrategyMultiplierStats {
   };
 }
 
-class Stats {
-  private totalGames: number;
-  private tableStats: TableStats;
-  private multiplierStats: MultiplierStats;
-  private strategyMultiplierStats: StrategyMultiplierStats;
+class Stats implements ServerStats {
+  totalGames: number;
+  tableStats: TableStats;
+  multiplierStats: MultiplierStats;
+  strategyMultiplierStats: StrategyMultiplierStats;
 
   constructor() {
     this.totalGames = 0;

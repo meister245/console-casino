@@ -1,14 +1,24 @@
 import express = require("express");
 import cors = require("cors");
 
-import { getClient, getConfig } from "./config";
 import { logger, logRequest } from "./logger";
 import State from "./state";
 import Stats from "./stats";
+import {
+  getClient,
+  getConfig,
+  restoreGameState,
+  restoreGameStats,
+  writeGameState,
+  writeGameStats,
+} from "./util";
 
 export const app = express();
 export const state = new State();
 export const stats = new Stats();
+
+restoreGameState(state);
+restoreGameStats(stats);
 
 app.use(cors());
 app.use(express.json());
@@ -96,12 +106,17 @@ app.post("/bet/", (req, res) => {
   } else if (action === "reset" && currentGameState.active && isTableMatching) {
     state.resetGameState();
     stats.updateStats(betResult, betStrategy, betMultiplier, tableName);
+
+    writeGameStats(stats.getServerStats());
   } else {
     success = false;
   }
 
+  const updatedGameState = state.getGameState();
+
+  writeGameState(updatedGameState);
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success, state: state.getGameState() }));
+  res.send(JSON.stringify({ success, state: updatedGameState }));
 });
 
 if (require.main === module) {
