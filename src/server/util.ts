@@ -34,7 +34,7 @@ const restoreGameState = (object: State): void => {
 
 const restoreGameStats = (object: Stats): void => {
   if (fs.existsSync(gameStatsPath)) {
-    const content = fs.readFileSync(gameStatePath, { encoding: "utf8" });
+    const content = fs.readFileSync(gameStatsPath, { encoding: "utf8" });
     const data = JSON.parse(content);
     data && Object.assign(object, data);
   }

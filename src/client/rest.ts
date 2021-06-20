@@ -7,19 +7,9 @@ import {
   ServerState,
 } from "./types";
 
-enum TableRequestAction {
-  ASSIGN = "assign",
-  DELETE = "delete",
-}
-
-interface TableRequestProps {
-  action: TableRequestAction;
-  tableName?: string;
-}
-
 interface TableRequestResponse {
   success: boolean;
-  tableName: string | null;
+  tableName?: string;
 }
 
 enum BetRequestAction {
@@ -50,26 +40,24 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 
-  async postTable(data: TableRequestProps): Promise<TableRequestResponse> {
+  async postTableAssign(): Promise<TableRequestResponse> {
     return fetch(`${serverUrl}/table/`, {
       method: "POST",
       mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
     })
       .then((resp) => resp.json())
       .catch((err) => console.error(err));
   }
 
-  async postTableAssign(): Promise<TableRequestResponse> {
-    return await this.postTable({ action: TableRequestAction.ASSIGN });
-  }
-
-  async postTableDelete(tableName: string): Promise<TableRequestResponse> {
-    return await this.postTable({
-      action: TableRequestAction.DELETE,
-      tableName: tableName,
-    });
+  async deleteTable(tableName: string): Promise<TableRequestResponse> {
+    return fetch(`${serverUrl}/table/`, {
+      method: "DELETE",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tableName }),
+    })
+      .then((resp) => resp.json())
+      .catch((err) => console.error(err));
   }
 
   async getServerState(tableName: string): Promise<ServerState> {

@@ -60,7 +60,7 @@ export class RouletteBetManager extends RESTClient {
 
   async reload(tableName: string): Promise<void> {
     this.running = false;
-    await this.postTableDelete(tableName);
+    await this.deleteTable(tableName);
     window.location.href = this.config.lobbyUrl;
   }
 
