@@ -30,6 +30,7 @@ describe("Game suspend state workflow", () => {
         assert.strictEqual(res.status, 200);
         assert.deepStrictEqual(res.body, {
           active: true,
+          running: true,
           suspended: false,
           betSize: 0.1,
           betStrategy: "testStrategy",
@@ -53,6 +54,7 @@ describe("Game suspend state workflow", () => {
           success: true,
           state: {
             active: false,
+            running: true,
             suspended: true,
             betSize: 0.2,
             betStrategy: "testStrategy",
@@ -75,6 +77,7 @@ describe("Game suspend state workflow", () => {
           success: false,
           state: {
             active: false,
+            running: true,
             suspended: true,
             betSize: 0.2,
             betStrategy: "testStrategy",
@@ -97,6 +100,7 @@ describe("Game suspend state workflow", () => {
           success: false,
           state: {
             active: false,
+            running: true,
             suspended: true,
             betSize: 0.2,
             betStrategy: "testStrategy",
@@ -119,6 +123,7 @@ describe("Game suspend state workflow", () => {
           success: false,
           state: {
             active: false,
+            running: true,
             suspended: true,
             betSize: 0.2,
             betStrategy: "testStrategy",
@@ -141,6 +146,7 @@ describe("Game suspend state workflow", () => {
           success: true,
           state: {
             active: true,
+            running: true,
             suspended: true,
             betSize: 0.2,
             betStrategy: "testStrategy",
@@ -164,6 +170,7 @@ describe("Game suspend state workflow", () => {
           success: true,
           state: {
             active: true,
+            running: true,
             suspended: true,
             betSize: 0.4,
             betStrategy: "testStrategy",
@@ -187,6 +194,7 @@ describe("Game suspend state workflow", () => {
           success: true,
           state: {
             active: false,
+            running: true,
             suspended: false,
           },
         });

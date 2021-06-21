@@ -26,6 +26,7 @@ describe("Game state workflow", () => {
         assert.strictEqual(res.status, 200);
         assert.deepStrictEqual(res.body, {
           active: false,
+          running: true,
           suspended: false,
           tables: [],
         });
@@ -46,6 +47,7 @@ describe("Game state workflow", () => {
           success: false,
           state: {
             active: false,
+            running: true,
             suspended: false,
           },
         });
@@ -66,6 +68,7 @@ describe("Game state workflow", () => {
           success: false,
           state: {
             active: false,
+            running: true,
             suspended: false,
           },
         });
@@ -86,6 +89,7 @@ describe("Game state workflow", () => {
           success: false,
           state: {
             active: false,
+            running: true,
             suspended: false,
           },
         });
@@ -106,6 +110,7 @@ describe("Game state workflow", () => {
           success: true,
           state: {
             active: true,
+            running: true,
             suspended: false,
             betStrategy: "testStrategy",
             tableName: "testTable",
@@ -128,6 +133,7 @@ describe("Game state workflow", () => {
           success: false,
           state: {
             active: true,
+            running: true,
             suspended: false,
             betStrategy: "testStrategy",
             tableName: "testTable",
@@ -150,6 +156,7 @@ describe("Game state workflow", () => {
           success: true,
           state: {
             active: true,
+            running: true,
             suspended: false,
             betSize: 0.1,
             betStrategy: "testStrategy",
@@ -173,6 +180,7 @@ describe("Game state workflow", () => {
           success: false,
           state: {
             active: true,
+            running: true,
             suspended: false,
             betSize: 0.1,
             betStrategy: "testStrategy",
@@ -196,6 +204,7 @@ describe("Game state workflow", () => {
           success: true,
           state: {
             active: false,
+            running: true,
             suspended: false,
           },
         });
