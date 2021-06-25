@@ -1,4 +1,4 @@
-import { getConfig, writeGameBet } from "./util";
+import { utils } from "./app";
 
 export interface ServerGameState {
   running: boolean;
@@ -52,7 +52,7 @@ class State implements ServerState {
   }
 
   assignTable(): string | null {
-    const { config } = getConfig();
+    const { config } = utils.getConfig();
 
     for (const tableName of config.tables) {
       if (!this.tables.includes(tableName)) {
@@ -82,13 +82,13 @@ class State implements ServerState {
     this.betStrategy = strategyName;
     this.tableName = tableName;
 
-    writeGameBet(this.betSize, this.betStrategy, this.tableName);
+    utils.writeGameBet(this.betSize, this.betStrategy, this.tableName);
   }
 
   updateGameState(betSize: number): void {
     this.betSize = betSize;
 
-    writeGameBet(this.betSize, this.betStrategy, this.tableName);
+    utils.writeGameBet(this.betSize, this.betStrategy, this.tableName);
   }
 
   suspendGameState(betSize: number, betStrategy: string): void {
@@ -105,7 +105,7 @@ class State implements ServerState {
     this.betStrategy = strategyName;
     this.tableName = tableName;
 
-    writeGameBet(this.betSize, this.betStrategy, this.tableName);
+    utils.writeGameBet(this.betSize, this.betStrategy, this.tableName);
   }
 }
 

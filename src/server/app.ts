@@ -5,21 +5,16 @@ import { logger, logRequest } from "./logger";
 import State from "./state";
 import Stats from "./stats";
 import { GameResult } from "./types";
-import {
-  getClient,
-  getConfig,
-  restoreGameState,
-  restoreGameStats,
-  writeGameState,
-  writeGameStats,
-} from "./util";
+import Utils from "./util";
 
 export const app = express();
+
 export const state = new State();
 export const stats = new Stats();
+export const utils = new Utils();
 
-restoreGameState(state);
-restoreGameStats(stats);
+utils.restoreGameState(state);
+utils.restoreGameStats(stats);
 
 app.use(cors());
 app.use(express.json());
@@ -29,8 +24,8 @@ if (require.main === module) {
   app.use(logRequest);
 }
 
-const botConfig = getConfig();
-const clientSource = getClient();
+const botConfig = utils.getConfig();
+const clientSource = utils.getClient();
 
 app.get("/client/", (req, res) => {
   res.set("Content-Type", "application/javascript");
@@ -105,14 +100,14 @@ app.post("/bet/", (req, res) => {
       botConfig.config.stopOnLoss &&
       state.stopRunning();
 
-    writeGameStats(stats.getServerStats());
+    utils.writeGameStats(stats.getServerStats());
   } else {
     success = false;
   }
 
   const updatedGameState = state.getGameState();
 
-  writeGameState(updatedGameState);
+  utils.writeGameState(updatedGameState);
   res.set("Content-Type", "application/json");
   res.send(JSON.stringify({ success, state: updatedGameState }));
 });

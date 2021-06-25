@@ -1,14 +1,21 @@
 import assert from "assert";
 import { Server } from "http";
+import sinon from "sinon";
 import request from "supertest";
 
-import { app, state } from "../src/server/app";
+import { app, state, utils } from "../src/server/app";
 import { dataInit, dataReset, dataSuspend, dataUpdate } from "./constants";
 
 describe("Game suspend state workflow", () => {
+  const sandbox = sinon.createSandbox();
+
   let server: Server;
 
   before((done) => {
+    sandbox.stub(utils, "writeGameBet");
+    sandbox.stub(utils, "writeGameState");
+    sandbox.stub(utils, "writeGameStats");
+
     server = app.listen(3000, () => {
       state.active = true;
       state.betStrategy = "testStrategy";
@@ -19,6 +26,7 @@ describe("Game suspend state workflow", () => {
   });
 
   after((done) => {
+    sandbox.restore();
     server.close(done);
   });
 
