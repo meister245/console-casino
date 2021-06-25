@@ -1,0 +1,38 @@
+{
+    "evenPercent": {
+        "bets": [
+            "even"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "even",
+                100,
+                33,
+                "lowerEqual"
+            ]
+        }
+    },
+    "oddPercent": {
+        "bets": [
+            "odd"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "odd",
+                100,
+                33,
+                "lowerEqual"
+            ]
+        }
+    }
+}

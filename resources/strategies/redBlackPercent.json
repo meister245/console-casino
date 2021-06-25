@@ -1,0 +1,38 @@
+{
+    "redPercent": {
+        "bets": [
+            "red"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "red",
+                100,
+                33,
+                "lowerEqual"
+            ]
+        }
+    },
+    "blackPercent": {
+        "bets": [
+            "black"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "black",
+                100,
+                33,
+                "lowerEqual"
+            ]
+        }
+    }
+}

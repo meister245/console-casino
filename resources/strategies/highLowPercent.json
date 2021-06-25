@@ -1,0 +1,38 @@
+{
+    "highPercent": {
+        "bets": [
+            "high"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "high",
+                100,
+                33,
+                "lowerEqual"
+            ]
+        }
+    },
+    "lowPercent": {
+        "bets": [
+            "low"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "low",
+                100,
+                33,
+                "lowerEqual"
+            ]
+        }
+    }
+}
