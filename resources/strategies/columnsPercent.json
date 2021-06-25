@@ -1,0 +1,56 @@
+{
+    "columnTopPercent": {
+        "bets": [
+            "columnTop"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "columnTop",
+                50,
+                10,
+                "lowerEqual"
+            ]
+        }
+    },
+    "columnMiddlePercent": {
+        "bets": [
+            "columnMiddle"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "columnMiddle",
+                50,
+                10,
+                "lowerEqual"
+            ]
+        }
+    },
+    "columnBottomPercent": {
+        "bets": [
+            "columnBottom"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "columnBottom",
+                50,
+                10,
+                "lowerEqual"
+            ]
+        }
+    }
+}

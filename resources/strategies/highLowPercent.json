@@ -11,8 +11,8 @@
         "trigger": {
             "distribution": [
                 "high",
-                100,
-                33,
+                50,
+                26,
                 "lowerEqual"
             ]
         }
@@ -29,8 +29,8 @@
         "trigger": {
             "distribution": [
                 "low",
-                100,
-                33,
+                50,
+                26,
                 "lowerEqual"
             ]
         }

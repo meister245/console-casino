@@ -1,0 +1,56 @@
+{
+    "dozenFirstPercent": {
+        "bets": [
+            "dozenFirst"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "dozenFirst",
+                50,
+                10,
+                "lowerEqual"
+            ]
+        }
+    },
+    "dozenSecondPercent": {
+        "bets": [
+            "dozenSecond"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "dozenSecond",
+                50,
+                10,
+                "lowerEqual"
+            ]
+        }
+    },
+    "dozenThirdPercent": {
+        "bets": [
+            "dozenThird"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progressionMultiplier": 2,
+        "trigger": {
+            "distribution": [
+                "dozenThird",
+                50,
+                10,
+                "lowerEqual"
+            ]
+        }
+    }
+}
