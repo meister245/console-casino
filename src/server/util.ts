@@ -4,7 +4,12 @@ import path = require("path");
 
 import State from "./state";
 import Stats from "./stats";
-import { RouletteBotConfig, ServerGameState, ServerStats } from "./types";
+import {
+  RouletteConfig,
+  RouletteStrategies,
+  ServerGameState,
+  ServerStats,
+} from "./types";
 
 const distDir = path.resolve(__dirname, "..", "..", "dist");
 const userDataDir = path.resolve(os.homedir(), ".console-casino");
@@ -15,10 +20,23 @@ const gameStatePath = path.resolve(userDataDir, "gameState.json");
 const gameStatsPath = path.resolve(userDataDir, "gameStats.json");
 
 class Utils {
-  getConfig(name = "roulette"): RouletteBotConfig {
-    const filePath = path.resolve(resourcesDir, "config", `${name}.json`);
+  getConfig(): RouletteConfig {
+    const filePath = path.resolve(resourcesDir, "config.json");
     const content = fs.readFileSync(filePath, { encoding: "utf8" });
     return JSON.parse(content);
+  }
+
+  getStrategies(): RouletteStrategies {
+    const strategies = {} as RouletteStrategies;
+    const strategiesDir = path.resolve(resourcesDir, "strategies");
+
+    fs.readdirSync(strategiesDir).forEach((file) => {
+      const filePath = path.resolve(strategiesDir, file);
+      const content = fs.readFileSync(filePath, { encoding: "utf8" });
+      Object.assign(strategies, JSON.parse(content));
+    });
+
+    return strategies;
   }
 
   getClient(): unknown {
@@ -69,7 +87,7 @@ class Utils {
     };
 
     if (!data.size) {
-      const { config } = this.getConfig();
+      const config = this.getConfig();
       data.size = config.chipSize;
     }
 

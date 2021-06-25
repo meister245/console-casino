@@ -52,7 +52,7 @@ class State implements ServerState {
   }
 
   assignTable(): string | null {
-    const { config } = utils.getConfig();
+    const config = utils.getConfig();
 
     for (const tableName of config.tables) {
       if (!this.tables.includes(tableName)) {

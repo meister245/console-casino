@@ -24,7 +24,8 @@ if (require.main === module) {
   app.use(logRequest);
 }
 
-const botConfig = utils.getConfig();
+const config = utils.getConfig();
+const strategies = utils.getStrategies();
 const clientSource = utils.getClient();
 
 app.get("/client/", (req, res) => {
@@ -34,7 +35,7 @@ app.get("/client/", (req, res) => {
 
 app.get("/config/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify(botConfig));
+  res.send(JSON.stringify({ config, strategies }));
 });
 
 app.get("/state/", (req, res) => {
@@ -96,9 +97,7 @@ app.post("/bet/", (req, res) => {
     state.resetGameState();
     stats.updateStats(betResult, betStrategy, betMultiplier, tableName);
 
-    betResult === GameResult.LOSE &&
-      botConfig.config.stopOnLoss &&
-      state.stopRunning();
+    betResult === GameResult.LOSE && config.stopOnLoss && state.stopRunning();
 
     utils.writeGameStats(stats.getServerStats());
   } else {
