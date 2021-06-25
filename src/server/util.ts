@@ -10,6 +10,7 @@ const distDir = path.resolve(__dirname, "..", "..", "dist");
 const userDataDir = path.resolve(os.homedir(), ".console-casino");
 const resourcesDir = path.resolve(__dirname, "..", "..", "resources");
 
+const gameBetsPath = path.resolve(userDataDir, "gameBets.log");
 const gameStatePath = path.resolve(userDataDir, "gameState.json");
 const gameStatsPath = path.resolve(userDataDir, "gameStats.json");
 
@@ -56,11 +57,37 @@ const writeGameStats = (data: ServerStats): void => {
   });
 };
 
+const writeGameBet = (
+  size: number,
+  strategy: string,
+  tableName: string
+): void => {
+  !fs.existsSync(userDataDir) && fs.mkdirSync(userDataDir);
+
+  const data = {
+    ts: new Date(),
+    size,
+    strategy,
+    tableName,
+  };
+
+  if (!data.size) {
+    const { config } = getConfig();
+    data.size = config.chipSize;
+  }
+
+  fs.writeFileSync(gameBetsPath, JSON.stringify(data) + os.EOL, {
+    encoding: "utf-8",
+    flag: "a",
+  });
+};
+
 export {
   getClient,
   getConfig,
   restoreGameState,
   restoreGameStats,
+  writeGameBet,
   writeGameState,
   writeGameStats,
 };

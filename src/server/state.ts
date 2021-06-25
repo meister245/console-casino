@@ -1,4 +1,4 @@
-import { getConfig } from "./util";
+import { getConfig, writeGameBet } from "./util";
 
 export interface ServerGameState {
   running: boolean;
@@ -81,10 +81,14 @@ class State implements ServerState {
     this.suspended = false;
     this.betStrategy = strategyName;
     this.tableName = tableName;
+
+    writeGameBet(this.betSize, this.betStrategy, this.tableName);
   }
 
   updateGameState(betSize: number): void {
     this.betSize = betSize;
+
+    writeGameBet(this.betSize, this.betStrategy, this.tableName);
   }
 
   suspendGameState(betSize: number, betStrategy: string): void {
@@ -100,6 +104,8 @@ class State implements ServerState {
     this.suspended = true;
     this.betStrategy = strategyName;
     this.tableName = tableName;
+
+    writeGameBet(this.betSize, this.betStrategy, this.tableName);
   }
 }
 
