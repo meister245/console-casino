@@ -3,7 +3,6 @@ import { GameResult } from "./types";
 export type ServerStats = {
   totalGames: number;
   tableStats: TableStats;
-  multiplierStats: MultiplierStats;
   strategyMultiplierStats: StrategyMultiplierStats;
 };
 
@@ -32,13 +31,11 @@ interface StrategyMultiplierStats {
 class Stats implements ServerStats {
   totalGames: number;
   tableStats: TableStats;
-  multiplierStats: MultiplierStats;
   strategyMultiplierStats: StrategyMultiplierStats;
 
   constructor() {
     this.totalGames = 0;
     this.tableStats = {};
-    this.multiplierStats = {};
     this.strategyMultiplierStats = {};
   }
 
@@ -46,7 +43,6 @@ class Stats implements ServerStats {
     return {
       totalGames: this.totalGames,
       tableStats: this.tableStats,
-      multiplierStats: this.multiplierStats,
       strategyMultiplierStats: this.strategyMultiplierStats,
     };
   }
@@ -59,7 +55,6 @@ class Stats implements ServerStats {
   ): void {
     this.totalGames += 1;
     this.updateGameStats(result, tableName);
-    this.updateMultiplierStats(multiplier);
     this.updateStrategyMultiplierStats(strategy, multiplier);
   }
 
@@ -81,20 +76,6 @@ class Stats implements ServerStats {
         tableResultStats.gamesAbort += 1;
         break;
     }
-  }
-
-  updateMultiplierStats(multiplier: number): void {
-    if (!(multiplier in this.multiplierStats)) {
-      this.multiplierStats[multiplier] = { count: 0, percent: 0 };
-    }
-
-    this.multiplierStats[multiplier].count += 1;
-
-    Object.keys(this.multiplierStats).forEach((key) => {
-      this.multiplierStats[key].percent = Math.floor(
-        (this.multiplierStats[key].count / this.totalGames) * 100
-      );
-    });
   }
 
   updateStrategyMultiplierStats(strategy: string, multiplier: number): void {
