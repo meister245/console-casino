@@ -357,8 +357,10 @@ export class RouletteBetManager extends RESTClient {
     let success = true;
 
     for (const distribution of config) {
-      const betNumbers = rouletteNumbers[distribution.betType];
       const sampleNumberSet = numberHistory.slice(0, distribution.sampleSize);
+
+      const betNumbers =
+        rouletteNumbers[distribution.betType as keyof RouletteNumbers];
 
       let occurrence = 0;
 
