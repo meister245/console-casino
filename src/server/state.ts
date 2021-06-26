@@ -88,10 +88,11 @@ class State implements ServerState {
     this.tableName = tableName;
 
     const strategy = this.strategies[this.betStrategy];
+    const totalSize = this.config.chipSize * strategy.bets.length;
 
     utils.writeGameBet(
       strategy.bets,
-      this.betSize * strategy.bets.length,
+      totalSize,
       this.betStrategy,
       this.tableName
     );
@@ -101,10 +102,11 @@ class State implements ServerState {
     this.betSize = betSize;
 
     const strategy = this.strategies[this.betStrategy];
+    const totalSize = this.betSize * strategy.bets.length;
 
     utils.writeGameBet(
       strategy.bets,
-      this.betSize * strategy.bets.length,
+      totalSize,
       this.betStrategy,
       this.tableName
     );
