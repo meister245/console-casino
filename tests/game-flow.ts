@@ -3,7 +3,7 @@ import { Server } from "http";
 import sinon from "sinon";
 import request from "supertest";
 
-import { app, utils } from "../src/server/app";
+import { app, strategies, utils } from "../src/server/app";
 import { dataInit, dataReset, dataSuspend, dataUpdate } from "./constants";
 
 describe("Game state workflow", () => {
@@ -15,6 +15,13 @@ describe("Game state workflow", () => {
     sandbox.stub(utils, "writeGameBet");
     sandbox.stub(utils, "writeGameState");
     sandbox.stub(utils, "writeGameStats");
+
+    strategies["testStrategy"] = {
+      limits: {},
+      trigger: {},
+      progressionMultiplier: 2,
+      bets: ["testBetType"],
+    };
 
     server = app.listen(3000, () => {
       done();

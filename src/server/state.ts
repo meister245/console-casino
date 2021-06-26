@@ -1,4 +1,5 @@
 import { utils } from "./app";
+import { RouletteConfig, RouletteStrategies } from "./types";
 
 export interface ServerGameState {
   running: boolean;
@@ -14,6 +15,9 @@ export type ServerState = ServerGameState & {
 };
 
 class State implements ServerState {
+  strategies: RouletteStrategies;
+  config: RouletteConfig;
+
   tables: string[];
   running: boolean;
   active: boolean;
@@ -22,7 +26,10 @@ class State implements ServerState {
   betStrategy?: string;
   tableName?: string;
 
-  constructor() {
+  constructor(config: RouletteConfig, strategies: RouletteStrategies) {
+    this.config = config;
+    this.strategies = strategies;
+
     this.tables = [];
     this.running = true;
     this.active = false;
@@ -52,9 +59,7 @@ class State implements ServerState {
   }
 
   assignTable(): string | null {
-    const config = utils.getConfig();
-
-    for (const tableName of config.tables) {
+    for (const tableName of this.config.tables) {
       if (!this.tables.includes(tableName)) {
         this.tables.push(tableName);
         return tableName;
@@ -82,13 +87,27 @@ class State implements ServerState {
     this.betStrategy = strategyName;
     this.tableName = tableName;
 
-    utils.writeGameBet(this.betSize, this.betStrategy, this.tableName);
+    const strategy = this.strategies[this.betStrategy];
+
+    utils.writeGameBet(
+      strategy.bets,
+      this.betSize * strategy.bets.length,
+      this.betStrategy,
+      this.tableName
+    );
   }
 
   updateGameState(betSize: number): void {
     this.betSize = betSize;
 
-    utils.writeGameBet(this.betSize, this.betStrategy, this.tableName);
+    const strategy = this.strategies[this.betStrategy];
+
+    utils.writeGameBet(
+      strategy.bets,
+      this.betSize * strategy.bets.length,
+      this.betStrategy,
+      this.tableName
+    );
   }
 
   suspendGameState(betSize: number, betStrategy: string): void {
@@ -105,7 +124,14 @@ class State implements ServerState {
     this.betStrategy = strategyName;
     this.tableName = tableName;
 
-    utils.writeGameBet(this.betSize, this.betStrategy, this.tableName);
+    const strategy = this.strategies[this.betStrategy];
+
+    utils.writeGameBet(
+      strategy.bets,
+      this.betSize * strategy.bets.length,
+      this.betStrategy,
+      this.tableName
+    );
   }
 }
 

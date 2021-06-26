@@ -8,10 +8,15 @@ import { GameResult } from "./types";
 import Utils from "./util";
 
 export const app = express();
-
-export const state = new State();
-export const stats = new Stats();
 export const utils = new Utils();
+
+const clientSource = utils.getClient();
+
+export const config = utils.getConfig();
+export const strategies = utils.getStrategies();
+
+export const stats = new Stats();
+export const state = new State(config, strategies);
 
 utils.restoreGameState(state);
 utils.restoreGameStats(stats);
@@ -23,10 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 if (require.main === module) {
   app.use(logRequest);
 }
-
-const config = utils.getConfig();
-const strategies = utils.getStrategies();
-const clientSource = utils.getClient();
 
 app.get("/client/", (req, res) => {
   res.set("Content-Type", "application/javascript");

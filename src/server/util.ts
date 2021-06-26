@@ -76,11 +76,17 @@ class Utils {
     });
   }
 
-  writeGameBet(size: number, strategy: string, tableName: string): void {
+  writeGameBet(
+    bets: string[],
+    size: number,
+    strategy: string,
+    tableName: string
+  ): void {
     !fs.existsSync(userDataDir) && fs.mkdirSync(userDataDir);
 
     const data = {
       ts: new Date(),
+      bets,
       size,
       strategy,
       tableName,
