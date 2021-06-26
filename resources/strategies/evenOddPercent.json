@@ -10,10 +10,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "even",
-                50,
-                26,
-                "lowerEqual"
+                {
+                    "betType": "even",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
             ]
         }
     },
@@ -28,10 +30,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "odd",
-                50,
-                26,
-                "lowerEqual"
+                {
+                    "betType": "odd",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
             ]
         }
     }

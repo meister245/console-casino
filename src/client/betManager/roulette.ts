@@ -14,6 +14,7 @@ import {
   RouletteNumbers,
   RouletteStrategies,
   RouletteStrategy,
+  RouletteTriggerDistribution,
   RouletteTriggers,
   ServerGameState,
   TableMessage,
@@ -350,37 +351,43 @@ export class RouletteBetManager extends RESTClient {
   }
 
   isPercentageMatching(
-    config: (string | number)[],
+    config: RouletteTriggerDistribution[],
     numberHistory: number[]
   ): boolean {
-    const sampleBet = config[0] as string;
-    const sampleSize = config[1] as number;
-    const percentageTarget = config[2] as number;
-    const percentageOperator = config[3] as string;
+    let success = true;
 
-    const betNumbers = rouletteNumbers[sampleBet as keyof RouletteNumbers];
-    const sampleNumberSet = numberHistory.slice(0, sampleSize);
+    for (const distribution of config) {
+      const betNumbers = rouletteNumbers[distribution.betType];
+      const sampleNumberSet = numberHistory.slice(0, distribution.sampleSize);
 
-    let occurrence = 0;
+      let occurrence = 0;
 
-    sampleNumberSet.forEach((n) => {
-      if (betNumbers.includes(n)) {
-        occurrence = occurrence + 1;
+      sampleNumberSet.forEach((n) => {
+        if (betNumbers.includes(n)) {
+          occurrence = occurrence + 1;
+        }
+      });
+
+      const percentage = Math.floor(
+        (occurrence / sampleNumberSet.length) * 100
+      );
+
+      switch (distribution.action) {
+        case "lowerEqual":
+          success = success && percentage <= distribution.percentage;
+          break;
+        case "equal":
+          success = success && percentage === distribution.percentage;
+          break;
+        case "higherEqual":
+          success = success && percentage >= distribution.percentage;
+          break;
+        default:
+          success = false;
       }
-    });
-
-    const percentage = Math.floor((occurrence / sampleNumberSet.length) * 100);
-
-    switch (percentageOperator) {
-      case "lowerEqual":
-        return percentage <= percentageTarget;
-      case "equal":
-        return percentage === percentageTarget;
-      case "higherEqual":
-        return percentage >= percentageTarget;
-      default:
-        return false;
     }
+
+    return success;
   }
 
   validateChipSize(state: ServerGameState | GameState): boolean {

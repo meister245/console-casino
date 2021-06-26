@@ -41,8 +41,15 @@ interface RouletteLimits {
   suspendLoss?: number;
 }
 
+export interface RouletteTriggerDistribution {
+  betType: string;
+  percentage: number;
+  sampleSize: number;
+  action: string;
+}
+
 export interface RouletteTriggers {
   parent?: string[];
   pattern?: string[];
-  distribution?: (string | number)[];
+  distribution?: RouletteTriggerDistribution[];
 }

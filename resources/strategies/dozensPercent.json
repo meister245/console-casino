@@ -10,10 +10,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "dozenFirst",
-                50,
-                10,
-                "lowerEqual"
+                {
+                    "betType": "dozenFirst",
+                    "sampleSize": 50,
+                    "percentage": 10,
+                    "action": "lowerEqual"
+                }
             ]
         }
     },
@@ -28,10 +30,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "dozenSecond",
-                50,
-                10,
-                "lowerEqual"
+                {
+                    "betType": "dozenSecond",
+                    "sampleSize": 50,
+                    "percentage": 10,
+                    "action": "lowerEqual"
+                }
             ]
         }
     },
@@ -46,10 +50,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "dozenThird",
-                50,
-                10,
-                "lowerEqual"
+                {
+                    "betType": "dozenThird",
+                    "sampleSize": 50,
+                    "percentage": 10,
+                    "action": "lowerEqual"
+                }
             ]
         }
     }

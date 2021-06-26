@@ -10,10 +10,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "red",
-                50,
-                26,
-                "lowerEqual"
+                {
+                    "betType": "red",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
             ]
         }
     },
@@ -28,10 +30,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "black",
-                50,
-                26,
-                "lowerEqual"
+                {
+                    "betType": "black",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
             ]
         }
     }

@@ -10,10 +10,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "columnTop",
-                50,
-                10,
-                "lowerEqual"
+                {
+                    "betType": "columnTop",
+                    "sampleSize": 50,
+                    "percentage": 10,
+                    "action": "lowerEqual"
+                }
             ]
         }
     },
@@ -28,10 +30,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "columnMiddle",
-                50,
-                10,
-                "lowerEqual"
+                {
+                    "betType": "columnMiddle",
+                    "sampleSize": 50,
+                    "percentage": 10,
+                    "action": "lowerEqual"
+                }
             ]
         }
     },
@@ -46,10 +50,12 @@
         "progressionMultiplier": 2,
         "trigger": {
             "distribution": [
-                "columnBottom",
-                50,
-                10,
-                "lowerEqual"
+                {
+                    "betType": "columnBottom",
+                    "sampleSize": 50,
+                    "percentage": 10,
+                    "action": "lowerEqual"
+                }
             ]
         }
     }
