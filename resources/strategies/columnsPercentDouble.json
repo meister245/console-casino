@@ -1,0 +1,83 @@
+{
+    "columnTopMiddlePercent": {
+        "bets": [
+            "columnTop",
+            "columnMiddle"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "progressionMultiplier": 3,
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "columnTop",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                },
+                {
+                    "betType": "columnMiddle",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "columnMiddleBottomPercent": {
+        "bets": [
+            "columnMiddle",
+            "columnBottom"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "progressionMultiplier": 3,
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "columnMiddle",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                },
+                {
+                    "betType": "columnBottom",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "columnTopBottomPercent": {
+        "bets": [
+            "columnTop",
+            "columnBottom"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "progressionMultiplier": 3,
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "columnTop",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                },
+                {
+                    "betType": "columnBottom",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    }
+}

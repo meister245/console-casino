@@ -1,0 +1,83 @@
+{
+    "dozenFirstSecondPercent": {
+        "bets": [
+            "dozenFirst",
+            "dozenSecond"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "progressionMultiplier": 3,
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "dozenFirst",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                },
+                {
+                    "betType": "dozenSecond",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "dozenSecondThirdPercent": {
+        "bets": [
+            "dozenSecond",
+            "dozenThird"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "progressionMultiplier": 3,
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "dozenSecond",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                },
+                {
+                    "betType": "dozenThird",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "dozenFirstThirdPercent": {
+        "bets": [
+            "dozenFirst",
+            "dozenThird"
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "progressionMultiplier": 3,
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "dozenFirst",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                },
+                {
+                    "betType": "dozenThird",
+                    "sampleSize": 100,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    }
+}
