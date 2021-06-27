@@ -8,7 +8,13 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "progressionMultiplier": 3,
+        "progressionCustom": [
+            0.10,
+            0.30,
+            0.90,
+            2.70,
+            8.5
+        ],
         "trigger": {
             "distribution": [
                 {
@@ -35,7 +41,13 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "progressionMultiplier": 3,
+        "progressionCustom": [
+            0.10,
+            0.30,
+            0.90,
+            2.70,
+            8.5
+        ],
         "trigger": {
             "distribution": [
                 {
@@ -62,7 +74,13 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "progressionMultiplier": 3,
+        "progressionCustom": [
+            0.10,
+            0.30,
+            0.90,
+            2.70,
+            8.5
+        ],
         "trigger": {
             "distribution": [
                 {

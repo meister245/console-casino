@@ -26,7 +26,7 @@
                 {
                     "betType": "dozenFirst",
                     "sampleSize": 50,
-                    "percentage": 10,
+                    "percentage": 12,
                     "action": "lowerEqual"
                 }
             ]
@@ -59,7 +59,7 @@
                 {
                     "betType": "dozenSecond",
                     "sampleSize": 50,
-                    "percentage": 10,
+                    "percentage": 12,
                     "action": "lowerEqual"
                 }
             ]
@@ -92,7 +92,7 @@
                 {
                     "betType": "dozenThird",
                     "sampleSize": 50,
-                    "percentage": 10,
+                    "percentage": 12,
                     "action": "lowerEqual"
                 }
             ]
