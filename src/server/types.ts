@@ -31,7 +31,8 @@ export interface RouletteStrategies {
 export interface RouletteStrategy {
   bets: string[];
   limits: RouletteLimits;
-  progressionMultiplier: number;
+  progressionCustom?: number[];
+  progressionMultiplier?: number;
   trigger: RouletteTriggers;
 }
 

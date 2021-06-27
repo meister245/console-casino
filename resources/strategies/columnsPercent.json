@@ -5,9 +5,22 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 8
+            "stopLoss": 12
         },
-        "progressionMultiplier": 2,
+        "progressionCustom": [
+            0.10,
+            0.10,
+            0.20,
+            0.30,
+            0.50,
+            0.70,
+            1.10,
+            1.60,
+            2.40,
+            3.60,
+            5.40,
+            9.00
+        ],
         "trigger": {
             "distribution": [
                 {
@@ -25,9 +38,22 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 8
+            "stopLoss": 12
         },
-        "progressionMultiplier": 2,
+        "progressionCustom": [
+            0.10,
+            0.10,
+            0.20,
+            0.30,
+            0.50,
+            0.70,
+            1.10,
+            1.60,
+            2.40,
+            3.60,
+            5.40,
+            9.00
+        ],
         "trigger": {
             "distribution": [
                 {
@@ -45,9 +71,22 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 8
+            "stopLoss": 12
         },
-        "progressionMultiplier": 2,
+        "progressionCustom": [
+            0.10,
+            0.10,
+            0.20,
+            0.30,
+            0.50,
+            0.70,
+            1.10,
+            1.60,
+            2.40,
+            3.60,
+            5.40,
+            9.00
+        ],
         "trigger": {
             "distribution": [
                 {

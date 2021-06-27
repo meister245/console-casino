@@ -68,7 +68,6 @@ export interface GameState {
   betStrategy: string;
   suspended: boolean;
   progressionCount: number;
-  progressionMultiplier: number;
   stopWinLimit: number;
   stopLossLimit: number;
   suspendLossLimit: number;

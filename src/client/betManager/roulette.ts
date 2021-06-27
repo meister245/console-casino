@@ -273,9 +273,7 @@ export class RouletteBetManager extends RESTClient {
 
           this.state.gameState = null;
         } else if (this.state.gameState.suspendLossLimit > 0) {
-          this.state.gameState.betSize =
-            this.state.gameState.betSize *
-            this.state.gameState.progressionMultiplier;
+          this.setNextBetSize(strategy);
 
           if (!isSuspendLossReached) {
             const { success } = await this.postBetUpdate(
@@ -296,9 +294,7 @@ export class RouletteBetManager extends RESTClient {
             this.state.gameState = null;
           }
         } else if (this.state.gameState.stopLossLimit > 0) {
-          this.state.gameState.betSize =
-            this.state.gameState.betSize *
-            this.state.gameState.progressionMultiplier;
+          this.setNextBetSize(strategy);
 
           if (!isStopLossReached) {
             const { success } = await this.postBetUpdate(
@@ -321,6 +317,16 @@ export class RouletteBetManager extends RESTClient {
       }
 
       this.state.gameStage = GameStage.BET;
+    }
+  }
+
+  setNextBetSize(strategy: RouletteStrategy): void {
+    if (strategy.progressionMultiplier) {
+      this.state.gameState.betSize =
+        this.state.gameState.betSize * strategy.progressionMultiplier;
+    } else if (strategy.progressionCustom) {
+      this.state.gameState.betSize =
+        strategy.progressionCustom[this.state.gameState.progressionCount - 1];
     }
   }
 
@@ -424,7 +430,6 @@ export class RouletteBetManager extends RESTClient {
       betStrategy: serverState.betStrategy,
       suspended: serverState.suspended,
       progressionCount: 1,
-      progressionMultiplier: strategy.progressionMultiplier,
       stopWinLimit: strategy.limits?.stopWin ?? 0,
       stopLossLimit: strategy.limits?.stopLoss ?? 0,
       suspendLossLimit: strategy.limits?.suspendLoss ?? 0,
