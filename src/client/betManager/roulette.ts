@@ -408,9 +408,18 @@ export class RouletteBetManager extends RESTClient {
   }
 
   validateChipSize(state: ServerGameState | GameState): boolean {
-    const smallestChipSize = this.driver.getChipSizes()[0];
     const betSize = state?.betSize ?? this.config.chipSize;
-    return smallestChipSize <= betSize && betSize % smallestChipSize === 0;
+
+    let betSizeTemp = betSize.valueOf();
+    let smallestChipSize = this.driver.getChipSizes()[0];
+
+    while (smallestChipSize < 0) {
+      betSizeTemp = betSizeTemp * 10;
+      smallestChipSize = smallestChipSize * 10;
+    }
+
+    const remainder = Math.round(betSizeTemp % smallestChipSize);
+    return smallestChipSize <= betSizeTemp && remainder === 0;
   }
 
   isPatternMatching(pattern: string[], lastNumbers: number[]): boolean {
