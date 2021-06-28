@@ -338,6 +338,10 @@ export class RouletteBetManager extends RESTClient {
           this.state.gameState.progressionCount - 1
         ];
     }
+
+    this.state.gameState.betSize = parseFloat(
+      this.state.gameState.betSize.toFixed(2)
+    );
   }
 
   async submitBets(): Promise<void> {
