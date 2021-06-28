@@ -83,4 +83,15 @@ export type RouletteNumbers = {
   columnTop: number[];
   columnMiddle: number[];
   columnBottom: number[];
+  lineOne: number[];
+  lineTwo: number[];
+  lineThree: number[];
+  lineFour: number[];
+  lineFive: number[];
+  lineSix: number[];
+  lineSeven: number[];
+  lineEight: number[];
+  lineNine: number[];
+  lineTen: number[];
+  lineEleven: number[];
 };

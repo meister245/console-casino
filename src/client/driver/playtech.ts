@@ -34,6 +34,17 @@ export class Playtech extends DriverCommon {
         dozenFirst: "betPlace.dozen-1st12",
         dozenSecond: "betPlace.dozen-2nd12",
         dozenThird: "betPlace.dozen-3rd12",
+        lineOne: "betPlace.line-1-2-3-4-5-6",
+        lineTwo: "betPlace.line-4-5-6-7-8-9",
+        lineThree: "betPlace.line-7-8-9-10-11-12",
+        lineFour: "betPlace.line-10-11-12-13-14-15",
+        lineFive: "betPlace.line-13-14-15-16-17-18",
+        lineSix: "betPlace.line-16-17-18-19-20-21",
+        lineSeven: "betPlace.line-19-20-21-22-23-24",
+        lineEight: "betPlace.line-22-23-24-25-26-27",
+        lineNine: "betPlace.line-25-26-27-28-29-30",
+        lineTen: "betPlace.line-28-29-30-31-32-33",
+        lineEleven: "betPlace.line-31-32-33-34-35-36",
       },
     };
   }
