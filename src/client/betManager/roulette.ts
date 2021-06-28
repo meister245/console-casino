@@ -47,6 +47,7 @@ export class RouletteBetManager extends RESTClient {
 
     this.state = {
       gameState: null,
+      gameStrategy: null,
       gameStage: GameStage.SPIN,
     };
   }
@@ -212,7 +213,7 @@ export class RouletteBetManager extends RESTClient {
 
     if (success) {
       this.logMessage("server accepted bet");
-      this.state.gameState = this.setupGameState(strategy, state);
+      this.setupGameState(strategy, state);
     } else {
       this.logMessage("server refused bet");
     }
@@ -246,21 +247,15 @@ export class RouletteBetManager extends RESTClient {
       if (this.state.gameState) {
         const tableName = this.driver.getTableName();
         const winTypes = this.getWinTypes(lastNumber);
-        const strategy = this.strategies[this.state.gameState.betStrategy];
 
-        const isSuspendLossReached =
-          this.state.gameState.suspendLossLimit !== 0 &&
-          this.state.gameState.progressionCount ===
-            this.state.gameState.suspendLossLimit;
+        const stopLossLimit = this.state.gameStrategy?.limits?.stopLoss ?? 0;
 
-        const isStopLossReached =
-          this.state.gameState.stopLossLimit !== 0 &&
-          this.state.gameState.progressionCount ===
-            this.state.gameState.stopLossLimit;
+        const suspendLossLimit =
+          this.state.gameStrategy?.limits?.suspendLoss ?? 0;
 
         let isWin = false;
 
-        strategy.bets.forEach((betName: string) => {
+        this.state.gameStrategy.bets.forEach((betName: string) => {
           isWin = isWin || winTypes.includes(betName);
         });
 
@@ -271,9 +266,11 @@ export class RouletteBetManager extends RESTClient {
             tableName
           );
           success && this.logMessage("registered win, reset server state");
+          this.resetGameState();
+        } else if (suspendLossLimit > 0) {
+          const isSuspendLossReached =
+            this.state.gameState.progressionCount === suspendLossLimit;
 
-          this.state.gameState = null;
-        } else if (this.state.gameState.suspendLossLimit > 0) {
           if (!isSuspendLossReached) {
             const { success } = await this.postBetUpdate(
               this.state.gameState.betSize,
@@ -290,9 +287,12 @@ export class RouletteBetManager extends RESTClient {
             );
             success &&
               this.logMessage("suspend limit reached, reset server state");
-            this.state.gameState = null;
+            this.resetGameState();
           }
-        } else if (this.state.gameState.stopLossLimit > 0) {
+        } else if (stopLossLimit > 0) {
+          const isStopLossReached =
+            this.state.gameState.progressionCount === stopLossLimit;
+
           if (!isStopLossReached) {
             const { success } = await this.postBetUpdate(
               this.state.gameState.betSize,
@@ -308,7 +308,7 @@ export class RouletteBetManager extends RESTClient {
               tableName
             );
             success && this.logMessage("registered loss, reset server state");
-            this.state.gameState = null;
+            this.resetGameState();
           }
         }
       }
@@ -325,16 +325,17 @@ export class RouletteBetManager extends RESTClient {
       return;
     }
 
-    const strategy = this.strategies[this.state.gameState.betStrategy];
-
-    if (strategy.progressionMultiplier) {
+    if (this.state.gameStrategy.progressionMultiplier) {
       this.state.gameState.betSize =
-        this.state.gameState.betSize * strategy.progressionMultiplier;
+        this.state.gameState.betSize *
+        this.state.gameStrategy.progressionMultiplier;
     }
 
-    if (strategy.progressionCustom) {
+    if (this.state.gameStrategy.progressionCustom) {
       this.state.gameState.betSize =
-        strategy.progressionCustom[this.state.gameState.progressionCount - 1];
+        this.state.gameStrategy.progressionCustom[
+          this.state.gameState.progressionCount - 1
+        ];
     }
   }
 
@@ -347,7 +348,7 @@ export class RouletteBetManager extends RESTClient {
 
     !this.config.dryRun && this.driver.setChipSize(this.config.chipSize);
 
-    for (const betName of this.state.gameState.bets) {
+    for (const betName of this.state.gameStrategy.bets) {
       const clickTimes = Math.round(
         this.state.gameState.betSize / this.config.chipSize
       );
@@ -360,7 +361,7 @@ export class RouletteBetManager extends RESTClient {
 
     !this.config.dryRun && this.updateLastBetTime();
 
-    this.logMessage(`bets: ${this.state.gameState.bets}`);
+    this.logMessage(`bets: ${this.state.gameStrategy.bets}`);
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`);
   }
 
@@ -429,19 +430,21 @@ export class RouletteBetManager extends RESTClient {
   setupGameState(
     strategy: RouletteStrategy,
     serverState: ServerGameState
-  ): GameState {
-    return {
-      bets: strategy.bets,
+  ): void {
+    this.state.gameState = {
       betSize: serverState.betSize
         ? serverState.betSize
         : this.config.chipSize.valueOf(),
       betStrategy: serverState.betStrategy,
       suspended: serverState.suspended,
       progressionCount: 1,
-      stopWinLimit: strategy.limits?.stopWin ?? 0,
-      stopLossLimit: strategy.limits?.stopLoss ?? 0,
-      suspendLossLimit: strategy.limits?.suspendLoss ?? 0,
     };
+    this.state.gameStrategy = strategy;
+  }
+
+  resetGameState(): void {
+    this.state.gameState = null;
+    this.state.gameStrategy = null;
   }
 
   getWinTypes(lastNumber: number): string[] {

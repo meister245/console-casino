@@ -58,19 +58,16 @@ export enum GameResult {
 }
 
 export interface ClientState {
-  gameState: GameState | null;
   gameStage: GameStage;
+  gameState: GameState | null;
+  gameStrategy: RouletteStrategy | null;
 }
 
 export interface GameState {
-  bets: string[];
   betSize: number;
   betStrategy: string;
   suspended: boolean;
   progressionCount: number;
-  stopWinLimit: number;
-  stopLossLimit: number;
-  suspendLossLimit: number;
 }
 
 export type RouletteNumbers = {
