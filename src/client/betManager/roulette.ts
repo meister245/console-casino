@@ -348,7 +348,7 @@ export class RouletteBetManager extends RESTClient {
     !this.config.dryRun && this.driver.setChipSize(this.config.chipSize);
 
     for (const betName of this.state.gameState.bets) {
-      const clickTimes = Math.floor(
+      const clickTimes = Math.round(
         this.state.gameState.betSize / this.config.chipSize
       );
 
