@@ -333,6 +333,7 @@ export class RouletteBetManager extends RESTClient {
 
     if (this.state.gameStrategy.progressionCustom) {
       this.state.gameState.betSize =
+        this.config.chipSize *
         this.state.gameStrategy.progressionCustom[
           this.state.gameState.progressionCount - 1
         ];
