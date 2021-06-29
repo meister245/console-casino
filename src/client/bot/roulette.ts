@@ -5,13 +5,22 @@ import { RESTClient } from "../rest";
 import { Driver } from "../types";
 
 export class RouletteBot extends RESTClient {
+  private running: boolean;
   private tableName: string;
 
   constructor() {
     super();
+
+    this.running = false;
   }
 
   async start(): Promise<void> {
+    if (this.running) {
+      throw new Error("already running");
+    }
+
+    this.running = true;
+
     const { config, strategies } = await this.getConfig();
 
     const driver = this.getDriver(config.driverName as Driver);
@@ -21,15 +30,20 @@ export class RouletteBot extends RESTClient {
 
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
-    while (betManager.isActive()) {
-      await betManager.runStage();
+    while (this.running) {
+      await betManager.checkBrowserInactivity();
 
       if (!betManager.validateBetActivity()) {
         await betManager.reload(this.tableName);
       }
 
+      await betManager.runStage();
       await driver.sleep(1500);
     }
+  }
+
+  stop(): void {
+    this.running = false;
   }
 
   getDriver(driverName: Driver): Playtech {

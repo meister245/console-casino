@@ -1,7 +1,7 @@
 import {
+  messageRegexInactive,
   rouletteNumbers,
   serverGameStoppedUrl,
-  tableInactiveMessageRegex,
 } from "../constants";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
@@ -81,22 +81,6 @@ export class RouletteBetManager extends RESTClient {
   }
 
   async runStage(): Promise<void> {
-    const modalMessage = this.driver.getModalMessage().toLowerCase();
-
-    if (modalMessage && modalMessage.match(tableInactiveMessageRegex)) {
-      const tableName = this.driver.getTableName();
-
-      if (this.state.gameState) {
-        await this.postBetReset(
-          GameResult.ABORT,
-          this.state.gameState,
-          tableName
-        );
-      }
-
-      await this.reload(tableName);
-    }
-
     if (this.isActive()) {
       const dealerMessage = this.driver
         .getDealerMessage()
@@ -115,6 +99,25 @@ export class RouletteBetManager extends RESTClient {
         case GameStage.RESULTS:
           await this.runStageResult(dealerMessage);
           break;
+      }
+    }
+  }
+
+  async checkBrowserInactivity(): Promise<void> {
+    for (const message of this.driver.getMessages()) {
+      if (message && message.match(messageRegexInactive)) {
+        const tableName = this.driver.getTableName();
+
+        if (this.state.gameState) {
+          await this.postBetReset(
+            GameResult.ABORT,
+            this.state.gameState,
+            tableName
+          );
+        }
+
+        await this.reload(tableName);
+        break;
       }
     }
   }

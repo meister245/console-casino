@@ -73,8 +73,10 @@ export class Playtech extends DriverCommon {
     return false;
   }
 
-  getModalMessage(): string {
-    return document.querySelector(".modal-confirm_desktop")?.textContent ?? "";
+  getMessages(): string[] {
+    return [...document.querySelectorAll(".modal-confirm_desktop")].map((msg) =>
+      msg.textContent.toLowerCase()
+    );
   }
 
   getBalance(): number {

@@ -7,8 +7,8 @@ export const serverUrl = `http://${serverHostname}:${serverPort}`;
 export const serverGameStoppedUrl =
   "https://dinu.ir/wp-content/uploads/2020/07/32123_funny_stop_hammer_time.jpg";
 
-export const tableInactiveMessageRegex =
-  /(inactive|disconnected|restart|unavailable|table.will.be.closed)/;
+export const messageRegexInactive =
+  /(disconnected|inactivity|restart|unavailable|table.will.be.closed)/;
 
 export const rouletteNumbers: RouletteNumbers = {
   red: [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36],
