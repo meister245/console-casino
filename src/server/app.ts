@@ -7,16 +7,14 @@ import Stats from "./stats";
 import { GameResult } from "./types";
 import Utils from "./util";
 
-export const app = express();
-export const utils = new Utils();
-
+const utils = new Utils();
+const config = utils.getConfig();
+const strategies = utils.getStrategies();
 const clientSource = utils.getClient();
 
-export const config = utils.getConfig();
-export const strategies = utils.getStrategies();
-
+export const app = express();
 export const stats = new Stats();
-export const state = new State(config, strategies);
+export const state = new State();
 
 utils.restoreGameState(state);
 utils.restoreGameStats(stats);
@@ -51,7 +49,9 @@ app.get("/stats/", (req, res) => {
 
 app.post("/table/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success: true, tableName: state.assignTable() }));
+  res.send(
+    JSON.stringify({ success: true, tableName: state.assignTable(config) })
+  );
 });
 
 app.delete("/table/", (req, res) => {
@@ -110,6 +110,20 @@ app.post("/bet/", (req, res) => {
   utils.writeGameState(updatedGameState);
   res.set("Content-Type", "application/json");
   res.send(JSON.stringify({ success, state: updatedGameState }));
+});
+
+app.post("/bet/log/", (req, res) => {
+  const { betStrategy, betSize, tableName } = {
+    betSize: req.body.betSize,
+    betStrategy: req.body.betStrategy,
+    tableName: req.body.tableName,
+  };
+
+  const strategy = strategies[betStrategy];
+  const totalSize = betSize * strategy.bets.length;
+
+  utils.writeGameBet(strategy.bets, totalSize, betStrategy, tableName);
+  res.send(JSON.stringify({ success: true }));
 });
 
 if (require.main === module) {

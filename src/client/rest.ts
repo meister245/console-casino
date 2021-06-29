@@ -19,6 +19,12 @@ enum BetRequestAction {
   RESET = "reset",
 }
 
+interface BetLogRequestProps {
+  betStrategy: string;
+  betSize: number;
+  tableName: string;
+}
+
 interface BetRequestProps {
   action: BetRequestAction;
   betStrategy?: string;
@@ -31,6 +37,10 @@ interface BetRequestProps {
 interface BetRequestResponse {
   success: boolean;
   state: ServerGameState;
+}
+
+interface BetLogRequestResponse {
+  success: boolean;
 }
 
 export class RESTClient {
@@ -129,5 +139,16 @@ export class RESTClient {
       betStrategy: gameState?.betStrategy,
       betMultiplier: gameState?.progressionCount,
     });
+  }
+
+  async postBetLog(data: BetLogRequestProps): Promise<BetLogRequestResponse> {
+    return fetch(`${serverUrl}/bet/log/`, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((resp) => resp.json())
+      .catch((err) => console.error(err));
   }
 }

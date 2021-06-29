@@ -369,6 +369,12 @@ export class RouletteBetManager extends RESTClient {
 
     !this.config.dryRun && this.updateLastBetTime();
 
+    await this.postBetLog({
+      tableName: this.driver.getTableName(),
+      betSize: this.state.gameState.betSize,
+      betStrategy: this.state.gameState.betStrategy,
+    });
+
     this.logMessage(`bets: ${this.state.gameStrategy.bets}`);
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`);
   }

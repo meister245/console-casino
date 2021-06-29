@@ -92,11 +92,6 @@ class Utils {
       tableName,
     };
 
-    if (!data.size) {
-      const config = this.getConfig();
-      data.size = config.chipSize;
-    }
-
     fs.writeFileSync(gameBetsPath, JSON.stringify(data) + os.EOL, {
       encoding: "utf-8",
       flag: "a",
