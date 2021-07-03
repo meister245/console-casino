@@ -1,4 +1,4 @@
-import { RouletteNumbers } from "./types";
+import { RouletteNumbers, RoulettePayout } from "./client/types";
 
 export const serverPort = 8080;
 export const serverHostname = "localhost";
@@ -34,4 +34,30 @@ export const rouletteNumbers: RouletteNumbers = {
   lineNine: [...Array(6).keys()].map((n) => n + 25),
   lineTen: [...Array(6).keys()].map((n) => n + 28),
   lineEleven: [...Array(6).keys()].map((n) => n + 31),
+};
+
+export const roulettePayout: RoulettePayout = {
+  red: 2,
+  black: 2,
+  low: 2,
+  high: 2,
+  odd: 2,
+  even: 2,
+  dozenFirst: 3,
+  dozenSecond: 3,
+  dozenThird: 3,
+  columnTop: 3,
+  columnMiddle: 3,
+  columnBottom: 3,
+  lineOne: 6,
+  lineTwo: 6,
+  lineThree: 6,
+  lineFour: 6,
+  lineFive: 6,
+  lineSix: 6,
+  lineSeven: 6,
+  lineEight: 6,
+  lineNine: 6,
+  lineTen: 6,
+  lineEleven: 6,
 };

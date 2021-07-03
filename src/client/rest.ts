@@ -1,4 +1,4 @@
-import { serverUrl } from "./constants";
+import { serverUrl } from "../constants";
 import {
   GameResult,
   GameState,

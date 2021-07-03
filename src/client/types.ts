@@ -70,28 +70,36 @@ export interface GameState {
   progressionCount: number;
 }
 
+enum RouletteBet {
+  RED = "red",
+  BLACK = "black",
+  LOW = "low",
+  HIGH = "high",
+  ODD = "odd",
+  EVEN = "even",
+  DOZEN_FIRST = "dozenFirst",
+  DOZEN_SECOND = "dozenSecond",
+  DOZEN_THIRD = "dozenThird",
+  COLUMN_TOP = "columnTop",
+  COLUMN_MIDDLE = "columnMiddle",
+  COLUMN_BOTTOM = "columnBottom",
+  LINE_ONE = "lineOne",
+  LINE_TWO = "lineTwo",
+  LINE_THREE = "lineThree",
+  LINE_FOUR = "lineFour",
+  LINE_FIVE = "lineFive",
+  LINE_SIX = "lineSix",
+  LINE_SEVEN = "lineSeven",
+  LINE_EIGHT = "lineEight",
+  LINE_NINE = "lineNine",
+  LINE_TEN = "lineTen",
+  LINE_ELEVEN = "lineEleven",
+}
+
 export type RouletteNumbers = {
-  red: number[];
-  black: number[];
-  low: number[];
-  high: number[];
-  odd: number[];
-  even: number[];
-  dozenFirst: number[];
-  dozenSecond: number[];
-  dozenThird: number[];
-  columnTop: number[];
-  columnMiddle: number[];
-  columnBottom: number[];
-  lineOne: number[];
-  lineTwo: number[];
-  lineThree: number[];
-  lineFour: number[];
-  lineFive: number[];
-  lineSix: number[];
-  lineSeven: number[];
-  lineEight: number[];
-  lineNine: number[];
-  lineTen: number[];
-  lineEleven: number[];
+  [item in RouletteBet]: number[];
+};
+
+export type RoulettePayout = {
+  [item in RouletteBet]: number;
 };

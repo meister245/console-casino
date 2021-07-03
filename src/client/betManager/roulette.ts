@@ -2,7 +2,7 @@ import {
   messageRegexInactive,
   rouletteNumbers,
   serverGameStoppedUrl,
-} from "../constants";
+} from "../../constants";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
 import {
