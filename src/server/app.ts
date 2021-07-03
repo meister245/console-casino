@@ -7,10 +7,10 @@ import Stats from "./stats";
 import { GameResult } from "./types";
 import Utils from "./util";
 
-const utils = new Utils();
-const config = utils.getConfig();
-const strategies = utils.getStrategies();
-const clientSource = utils.getClient();
+export const utils = new Utils();
+export const config = utils.getConfig();
+export const strategies = utils.getStrategies();
+export const clientSource = utils.getClient();
 
 export const app = express();
 export const stats = new Stats();
