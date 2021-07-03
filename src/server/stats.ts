@@ -1,4 +1,4 @@
-import { GameResult } from "./types";
+import { GameResult } from "./../types";
 
 export type ServerStats = {
   totalGames: number;

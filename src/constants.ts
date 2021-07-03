@@ -1,4 +1,4 @@
-import { RouletteNumbers, RoulettePayout } from "./client/types";
+import { RouletteNumbers, RoulettePayout } from "./types";
 
 export const serverPort = 8080;
 export const serverHostname = "localhost";

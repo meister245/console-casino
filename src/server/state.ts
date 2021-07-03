@@ -1,4 +1,4 @@
-import { RouletteConfig } from "./types";
+import { RouletteConfig } from "./../types";
 
 export interface ServerGameState {
   running: boolean;

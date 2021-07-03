@@ -1,8 +1,11 @@
-import { RouletteConfig } from "../../server/types";
+import { RouletteConfig } from "../../types";
 import { RouletteBetManager } from "../betManager/roulette";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
-import { Driver } from "../types";
+
+enum Driver {
+  PLAYTECH = "playtech",
+}
 
 export class RouletteBot extends RESTClient {
   private running: boolean;

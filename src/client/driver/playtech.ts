@@ -1,5 +1,17 @@
-import { DriverSelectors } from "../types";
 import { DriverCommon } from "./common";
+
+interface DriverSelectors {
+  chip: ChipSelectors;
+  roulette: RouletteSelectors;
+}
+
+interface ChipSelectors {
+  [item: number]: string;
+}
+
+interface RouletteSelectors {
+  [item: string]: string;
+}
 
 export class Playtech extends DriverCommon {
   selectors: DriverSelectors;

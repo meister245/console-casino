@@ -4,6 +4,7 @@ import sinon from "sinon";
 import request from "supertest";
 
 import { app, state, strategies, utils } from "../src/server/app";
+import { RouletteBet } from "./../src/types";
 import { dataInit, dataReset, dataSuspend, dataUpdate } from "./constants";
 
 describe("Game suspend state workflow", () => {
@@ -20,7 +21,7 @@ describe("Game suspend state workflow", () => {
       limits: {},
       trigger: {},
       progressionMultiplier: 2,
-      bets: ["testBetType"],
+      bets: [RouletteBet.RED],
     };
 
     server = app.listen(3000, () => {

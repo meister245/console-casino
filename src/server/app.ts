@@ -1,10 +1,10 @@
 import express = require("express");
 import cors = require("cors");
 
+import { BetRequestAction, GameResult } from "./../types";
 import { logger, logRequest } from "./logger";
 import State from "./state";
 import Stats from "./stats";
-import { GameResult } from "./types";
 import Utils from "./util";
 
 export const utils = new Utils();
@@ -78,23 +78,27 @@ app.post("/bet/", (req, res) => {
 
   if (!currentGameState.running) {
     success = false;
-  } else if (action === "init" && !currentGameState.active) {
+  } else if (action === BetRequestAction.INIT && !currentGameState.active) {
     currentGameState.suspended
       ? state.resumeSuspendedGameState(betStrategy, tableName)
       : state.initGameState(betStrategy, tableName);
   } else if (
-    action === "update" &&
+    action === BetRequestAction.UPDATE &&
     currentGameState.active &&
     isTableMatching
   ) {
     state.updateGameState(betSize);
   } else if (
-    action === "suspend" &&
+    action === BetRequestAction.SUSPEND &&
     currentGameState.active &&
     isTableMatching
   ) {
     state.suspendGameState(betSize, betStrategy);
-  } else if (action === "reset" && currentGameState.active && isTableMatching) {
+  } else if (
+    action === BetRequestAction.RESET &&
+    currentGameState.active &&
+    isTableMatching
+  ) {
     state.resetGameState();
     stats.updateStats(betResult, betStrategy, betProgression, tableName);
 

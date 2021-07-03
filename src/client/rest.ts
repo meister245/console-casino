@@ -1,22 +1,22 @@
 import { serverUrl } from "../constants";
 import {
   GameResult,
-  GameState,
   RouletteBotConfig,
   ServerGameState,
   ServerState,
-} from "./types";
+} from "./../types";
+import { GameState } from "./betManager/roulette";
 
-interface TableRequestResponse {
-  success: boolean;
-  tableName?: string;
-}
-
-enum BetRequestAction {
+export enum BetRequestAction {
   INIT = "init",
   UPDATE = "update",
   SUSPEND = "suspend",
   RESET = "reset",
+}
+
+interface TableRequestResponse {
+  success: boolean;
+  tableName?: string;
 }
 
 interface BetLogRequestProps {
