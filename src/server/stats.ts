@@ -3,7 +3,7 @@ import { GameResult } from "./types";
 export type ServerStats = {
   totalGames: number;
   tableStats: TableStats;
-  strategyMultiplierStats: StrategyMultiplierStats;
+  strategyStats: StrategyStats;
 };
 
 interface TableStats {
@@ -13,49 +13,50 @@ interface TableStats {
     gamesAbort: number;
   };
 }
-interface MultiplierStats {
-  [multiplier: string]: {
-    count: number;
-    percent: number;
-  };
-}
 
-interface StrategyMultiplierStats {
+interface StrategyStats {
   [strategy: string]: {
     count: number;
     percent: number;
-    multiplier: MultiplierStats;
+    progression: ProgressionStats;
+  };
+}
+
+interface ProgressionStats {
+  [progression: string]: {
+    count: number;
+    percent: number;
   };
 }
 
 class Stats implements ServerStats {
   totalGames: number;
   tableStats: TableStats;
-  strategyMultiplierStats: StrategyMultiplierStats;
+  strategyStats: StrategyStats;
 
   constructor() {
     this.totalGames = 0;
     this.tableStats = {};
-    this.strategyMultiplierStats = {};
+    this.strategyStats = {};
   }
 
   getServerStats(): ServerStats {
     return {
       totalGames: this.totalGames,
       tableStats: this.tableStats,
-      strategyMultiplierStats: this.strategyMultiplierStats,
+      strategyStats: this.strategyStats,
     };
   }
 
   updateStats(
     result: GameResult,
     strategy: string,
-    multiplier: number,
+    progression: number,
     tableName: string
   ): void {
     this.totalGames += 1;
     this.updateGameStats(result, tableName);
-    this.updateStrategyMultiplierStats(strategy, multiplier);
+    this.updateStrategyStats(strategy, progression);
   }
 
   updateGameStats(result: GameResult, tableName: string): void {
@@ -78,34 +79,34 @@ class Stats implements ServerStats {
     }
   }
 
-  updateStrategyMultiplierStats(strategy: string, multiplier: number): void {
-    if (!(strategy in this.strategyMultiplierStats)) {
-      this.strategyMultiplierStats[strategy] = {
+  updateStrategyStats(strategy: string, progression: number): void {
+    if (!(strategy in this.strategyStats)) {
+      this.strategyStats[strategy] = {
         count: 0,
         percent: 0,
-        multiplier: {},
+        progression: {},
       };
     }
 
-    this.strategyMultiplierStats[strategy].count += 1;
+    this.strategyStats[strategy].count += 1;
 
-    if (!(multiplier in this.strategyMultiplierStats[strategy].multiplier)) {
-      this.strategyMultiplierStats[strategy].multiplier[multiplier] = {
+    if (!(progression in this.strategyStats[strategy].progression)) {
+      this.strategyStats[strategy].progression[progression] = {
         count: 0,
         percent: 0,
       };
     }
 
-    this.strategyMultiplierStats[strategy].multiplier[multiplier].count += 1;
+    this.strategyStats[strategy].progression[progression].count += 1;
 
-    Object.keys(this.strategyMultiplierStats).forEach((strategyKey) => {
-      const item = this.strategyMultiplierStats[strategyKey];
+    Object.keys(this.strategyStats).forEach((strategyKey) => {
+      const item = this.strategyStats[strategyKey];
       item.percent = Math.floor((item.count / this.totalGames) * 100);
 
-      Object.keys(item.multiplier).forEach((multiplierKey) => {
-        const multiplierItem = item.multiplier[multiplierKey];
-        multiplierItem.percent = Math.floor(
-          (multiplierItem.count / this.totalGames) * 100
+      Object.keys(item.progression).forEach((progressionKey) => {
+        const progressionItem = item.progression[progressionKey];
+        progressionItem.percent = Math.floor(
+          (progressionItem.count / this.totalGames) * 100
         );
       });
     });

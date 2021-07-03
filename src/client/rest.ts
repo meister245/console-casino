@@ -28,7 +28,7 @@ interface BetLogRequestProps {
 interface BetRequestProps {
   action: BetRequestAction;
   betStrategy?: string;
-  betMultiplier?: number;
+  betProgression?: number;
   betResult?: GameResult;
   betSize?: number;
   tableName?: string;
@@ -137,7 +137,7 @@ export class RESTClient {
       tableName,
       betResult: gameResult,
       betStrategy: gameState?.betStrategy,
-      betMultiplier: gameState?.progressionCount,
+      betProgression: gameState?.progressionCount,
     });
   }
 

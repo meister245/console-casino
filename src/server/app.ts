@@ -63,13 +63,13 @@ app.delete("/table/", (req, res) => {
 app.post("/bet/", (req, res) => {
   let success = true;
 
-  const { action, betStrategy, betSize, betResult, betMultiplier, tableName } =
+  const { action, betStrategy, betSize, betResult, betProgression, tableName } =
     {
       action: req.body?.action ?? undefined,
       betStrategy: req.body?.betStrategy ?? undefined,
       betSize: req.body?.betSize ?? undefined,
       betResult: req.body?.betResult ?? undefined,
-      betMultiplier: req.body?.betMultiplier ?? undefined,
+      betProgression: req.body?.betProgression ?? undefined,
       tableName: req.body?.tableName ?? undefined,
     };
 
@@ -96,7 +96,7 @@ app.post("/bet/", (req, res) => {
     state.suspendGameState(betSize, betStrategy);
   } else if (action === "reset" && currentGameState.active && isTableMatching) {
     state.resetGameState();
-    stats.updateStats(betResult, betStrategy, betMultiplier, tableName);
+    stats.updateStats(betResult, betStrategy, betProgression, tableName);
 
     betResult === GameResult.LOSE && config.stopOnLoss && state.stopRunning();
 
