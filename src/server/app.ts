@@ -63,15 +63,23 @@ app.delete("/table/", (req, res) => {
 app.post("/bet/", (req, res) => {
   let success = true;
 
-  const { action, betStrategy, betSize, betResult, betProgression, tableName } =
-    {
-      action: req.body?.action ?? undefined,
-      betStrategy: req.body?.betStrategy ?? undefined,
-      betSize: req.body?.betSize ?? undefined,
-      betResult: req.body?.betResult ?? undefined,
-      betProgression: req.body?.betProgression ?? undefined,
-      tableName: req.body?.tableName ?? undefined,
-    };
+  const {
+    action,
+    betStrategy,
+    betSize,
+    betResult,
+    betProgression,
+    profit,
+    tableName,
+  } = {
+    action: req.body?.action ?? undefined,
+    betStrategy: req.body?.betStrategy ?? undefined,
+    betSize: req.body?.betSize ?? undefined,
+    betResult: req.body?.betResult ?? undefined,
+    betProgression: req.body?.betProgression ?? undefined,
+    profit: req.body?.profit ?? undefined,
+    tableName: req.body?.tableName ?? undefined,
+  };
 
   const currentGameState = state.getGameState();
   const isTableMatching = tableName === currentGameState.tableName;
@@ -100,7 +108,13 @@ app.post("/bet/", (req, res) => {
     isTableMatching
   ) {
     state.resetGameState();
-    stats.updateStats(betResult, betStrategy, betProgression, tableName);
+    stats.updateStats(
+      betResult,
+      betStrategy,
+      profit,
+      betProgression,
+      tableName
+    );
 
     betResult === GameResult.LOSE && config.stopOnLoss && state.stopRunning();
 

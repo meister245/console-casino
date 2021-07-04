@@ -1,6 +1,7 @@
 import { GameResult } from "./../types";
 
 export type ServerStats = {
+  totalProfit: number;
   totalGames: number;
   tableStats: TableStats;
   strategyStats: StrategyStats;
@@ -17,6 +18,7 @@ interface TableStats {
 interface StrategyStats {
   [strategy: string]: {
     count: number;
+    profit: number;
     percent: number;
     progression: ProgressionStats;
   };
@@ -25,16 +27,19 @@ interface StrategyStats {
 interface ProgressionStats {
   [progression: string]: {
     count: number;
+    profit: number;
     percent: number;
   };
 }
 
 class Stats implements ServerStats {
+  totalProfit: number;
   totalGames: number;
   tableStats: TableStats;
   strategyStats: StrategyStats;
 
   constructor() {
+    this.totalProfit = 0;
     this.totalGames = 0;
     this.tableStats = {};
     this.strategyStats = {};
@@ -42,6 +47,7 @@ class Stats implements ServerStats {
 
   getServerStats(): ServerStats {
     return {
+      totalProfit: this.totalProfit,
       totalGames: this.totalGames,
       tableStats: this.tableStats,
       strategyStats: this.strategyStats,
@@ -51,12 +57,16 @@ class Stats implements ServerStats {
   updateStats(
     result: GameResult,
     strategy: string,
+    profit: number,
     progression: number,
     tableName: string
   ): void {
     this.totalGames += 1;
+    this.totalProfit += profit;
+    this.totalProfit = parseFloat(this.totalProfit.toFixed(2));
+
     this.updateGameStats(result, tableName);
-    this.updateStrategyStats(strategy, progression);
+    this.updateStrategyStats(strategy, profit, progression);
   }
 
   updateGameStats(result: GameResult, tableName: string): void {
@@ -79,25 +89,41 @@ class Stats implements ServerStats {
     }
   }
 
-  updateStrategyStats(strategy: string, progression: number): void {
+  updateStrategyStats(
+    strategy: string,
+    profit: number,
+    progression: number
+  ): void {
     if (!(strategy in this.strategyStats)) {
       this.strategyStats[strategy] = {
         count: 0,
         percent: 0,
+        profit: 0,
         progression: {},
       };
     }
 
     this.strategyStats[strategy].count += 1;
+    this.strategyStats[strategy].profit += profit;
+
+    this.strategyStats[strategy].profit = parseFloat(
+      this.strategyStats[strategy].profit.toFixed(2)
+    );
 
     if (!(progression in this.strategyStats[strategy].progression)) {
       this.strategyStats[strategy].progression[progression] = {
         count: 0,
+        profit: 0,
         percent: 0,
       };
     }
 
     this.strategyStats[strategy].progression[progression].count += 1;
+    this.strategyStats[strategy].progression[progression].profit += profit;
+
+    this.strategyStats[strategy].progression[progression].profit = parseFloat(
+      this.strategyStats[strategy].progression[progression].profit.toFixed(2)
+    );
 
     Object.keys(this.strategyStats).forEach((strategyKey) => {
       const item = this.strategyStats[strategyKey];

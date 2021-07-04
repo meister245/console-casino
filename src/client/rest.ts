@@ -31,6 +31,7 @@ interface BetRequestProps {
   betProgression?: number;
   betResult?: GameResult;
   betSize?: number;
+  profit?: number;
   tableName?: string;
 }
 
@@ -135,6 +136,7 @@ export class RESTClient {
     return await this.postBet(tableName, {
       action: BetRequestAction.RESET,
       tableName,
+      profit: gameState?.profit,
       betResult: gameResult,
       betStrategy: gameState?.betStrategy,
       betProgression: gameState?.progressionCount,

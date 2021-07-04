@@ -1,6 +1,7 @@
 import {
   messageRegexInactive,
   rouletteNumbers,
+  roulettePayout,
   serverGameStoppedUrl,
 } from "../../constants";
 import {
@@ -41,6 +42,7 @@ export interface GameState {
   betStrategy: string;
   suspended: boolean;
   progressionCount: number;
+  profit: number | null;
 }
 
 export class RouletteBetManager extends RESTClient {
@@ -286,61 +288,89 @@ export class RouletteBetManager extends RESTClient {
         });
 
         if (isWin) {
-          const { success } = await this.postBetReset(
-            GameResult.WIN,
-            this.state.gameState,
-            tableName
-          );
-          success && this.logMessage("registered win, reset server state");
-          this.resetGameState();
+          await this.resultWinHandler(tableName);
         } else if (suspendLossLimit > 0) {
           const isSuspendLossReached =
             this.state.gameState.progressionCount === suspendLossLimit;
 
-          if (!isSuspendLossReached) {
-            const { success } = await this.postBetUpdate(
-              this.state.gameState.betSize,
-              tableName
-            );
-            success &&
-              this.logMessage("updated bet size, updated server state");
-            this.state.gameState.progressionCount += 1;
-          } else if (isSuspendLossReached) {
-            const { success } = await this.postBetSuspend(
-              this.state.gameState.betSize,
-              this.state.gameState.betStrategy,
-              tableName
-            );
-            success &&
-              this.logMessage("suspend limit reached, reset server state");
-            this.resetGameState();
-          }
+          await this.resultSuspendLossHandler(isSuspendLossReached, tableName);
         } else if (stopLossLimit > 0) {
           const isStopLossReached =
             this.state.gameState.progressionCount === stopLossLimit;
 
-          if (!isStopLossReached) {
-            const { success } = await this.postBetUpdate(
-              this.state.gameState.betSize,
-              tableName
-            );
-            success &&
-              this.logMessage("updated bet size, updated server state");
-            this.state.gameState.progressionCount += 1;
-          } else if (isStopLossReached) {
-            const { success } = await this.postBetReset(
-              GameResult.LOSE,
-              this.state.gameState,
-              tableName
-            );
-            success && this.logMessage("registered loss, reset server state");
-            this.resetGameState();
-          }
+          await this.resultStopLossHandler(isStopLossReached, tableName);
         }
       }
 
       this.state.gameStage = GameStage.BET;
     }
+  }
+
+  async resultWinHandler(tableName: string): Promise<void> {
+    this.calculateWinProfit();
+    const { success } = await this.postBetReset(
+      GameResult.WIN,
+      this.state.gameState,
+      tableName
+    );
+    success && this.logMessage("registered win, reset server state");
+    this.resetGameState();
+  }
+
+  async resultSuspendLossHandler(
+    isSuspendLossReached: boolean,
+    tableName: string
+  ): Promise<void> {
+    if (!isSuspendLossReached) {
+      const { success } = await this.postBetUpdate(
+        this.state.gameState.betSize,
+        tableName
+      );
+      success && this.logMessage("updated bet size, updated server state");
+      this.state.gameState.progressionCount += 1;
+    } else if (isSuspendLossReached) {
+      const { success } = await this.postBetSuspend(
+        this.state.gameState.betSize,
+        this.state.gameState.betStrategy,
+        tableName
+      );
+      success && this.logMessage("suspend limit reached, reset server state");
+      this.resetGameState();
+    }
+  }
+
+  async resultStopLossHandler(
+    isStopLossReached: boolean,
+    tableName: string
+  ): Promise<void> {
+    if (!isStopLossReached) {
+      const { success } = await this.postBetUpdate(
+        this.state.gameState.betSize,
+        tableName
+      );
+      success && this.logMessage("updated bet size, updated server state");
+      this.state.gameState.progressionCount += 1;
+    } else if (isStopLossReached) {
+      const { success } = await this.postBetReset(
+        GameResult.LOSE,
+        this.state.gameState,
+        tableName
+      );
+      success && this.logMessage("registered loss, reset server state");
+      this.resetGameState();
+    }
+  }
+
+  calculateWinProfit(): void {
+    const betType = this.state.gameStrategy.bets[0];
+
+    const lastBetProfit =
+      roulettePayout[betType] * this.state.gameState.betSize;
+
+    this.state.gameState.profit += lastBetProfit;
+    this.state.gameState.profit = parseFloat(
+      this.state.gameState.profit.toFixed(2)
+    );
   }
 
   setNextBetSize(): void {
@@ -397,6 +427,8 @@ export class RouletteBetManager extends RESTClient {
       betSize: this.state.gameState.betSize,
       betStrategy: this.state.gameState.betStrategy,
     });
+
+    this.state.gameState.profit -= totalBetSize;
 
     this.logMessage(`bets: ${this.state.gameStrategy.bets}`);
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`);
@@ -477,6 +509,7 @@ export class RouletteBetManager extends RESTClient {
     strategy: RouletteStrategy,
     serverState: ServerGameState
   ): void {
+    this.state.gameStrategy = strategy;
     this.state.gameState = {
       betSize: serverState.betSize
         ? serverState.betSize
@@ -484,8 +517,8 @@ export class RouletteBetManager extends RESTClient {
       betStrategy: serverState.betStrategy,
       suspended: serverState.suspended,
       progressionCount: 1,
+      profit: 0,
     };
-    this.state.gameStrategy = strategy;
   }
 
   resetGameState(): void {
