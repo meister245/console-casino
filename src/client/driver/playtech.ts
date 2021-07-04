@@ -200,6 +200,12 @@ export class Playtech extends DriverCommon {
     );
   }
 
+  closeMessages(): void {
+    document
+      .querySelectorAll('[data-automation-locator="popup.button.resolve"]')
+      .forEach((elem: HTMLElement) => this.simulatedClick(elem));
+  }
+
   toggleTableLimits(): void {
     this.simulatedClick(
       document.querySelector('[data-automation-locator="button.limits"]')

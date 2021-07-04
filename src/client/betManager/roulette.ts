@@ -50,6 +50,7 @@ export class RouletteBetManager extends RESTClient {
   private config: RouletteConfig;
   private lastBetTime: number;
   private lastLogMessage: null | string;
+  private lastGameState: GameState | null;
   private running: boolean;
   private state: ClientState;
   private strategies: RouletteStrategies;
@@ -68,6 +69,7 @@ export class RouletteBetManager extends RESTClient {
     this.running = true;
 
     this.lastBetTime = Math.floor(Date.now() / 1000);
+    this.lastGameState = null;
     this.lastLogMessage = null;
 
     this.state = {
@@ -193,12 +195,21 @@ export class RouletteBetManager extends RESTClient {
       }
 
       if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
+        this.backupGameState();
         this.setNextBetSize();
         await this.submitBets();
       }
 
       this.state.gameStage = GameStage.WAIT;
     }
+  }
+
+  backupGameState(): void {
+    this.lastGameState = JSON.parse(JSON.stringify(this.state.gameState));
+  }
+
+  restoreGameState(): void {
+    this.state.gameState = JSON.parse(JSON.stringify(this.lastGameState));
   }
 
   isMatchingStrategy(
@@ -272,7 +283,10 @@ export class RouletteBetManager extends RESTClient {
 
       const lastNumber = this.driver.getLastNumber();
 
-      if (this.state.gameState) {
+      if (isNaN(lastNumber)) {
+        this.restoreGameState();
+        this.driver.closeMessages();
+      } else if (this.state.gameState) {
         const tableName = this.driver.getTableName();
         const winTypes = this.getWinTypes(lastNumber);
 
@@ -522,6 +536,7 @@ export class RouletteBetManager extends RESTClient {
   }
 
   resetGameState(): void {
+    this.lastGameState = null;
     this.state.gameState = null;
     this.state.gameStrategy = null;
   }
