@@ -1,4 +1,4 @@
-import { RouletteConfig } from "../../types";
+import { messageRegexInProgress } from "../../constants";
 import { RouletteBetManager } from "../betManager/roulette";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
@@ -29,7 +29,11 @@ export class RouletteBot extends RESTClient {
     const driver = this.getDriver(config.driverName as Driver);
     const betManager = new RouletteBetManager(driver, config, strategies);
 
-    await this.setupTable(driver, config, betManager);
+    await this.setupTable(driver, betManager);
+
+    if (!config.dryRun && config.minBalance > driver.getBalance()) {
+      throw new Error("balance too low");
+    }
 
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
@@ -60,32 +64,42 @@ export class RouletteBot extends RESTClient {
 
   async setupTable(
     driver: Playtech,
-    config: RouletteConfig,
     betManager: RouletteBetManager
   ): Promise<void> {
     while (driver.getLobbyTables().length === 0) {
       await driver.sleep(1500);
     }
 
-    const { tableName } = await this.postTableAssign();
+    const { success, tableName } = await this.postTableAssign();
 
-    if (!tableName) {
+    if (!success) {
       throw Error("no free tables");
     }
 
     const isTableFound = driver.navigateLobbyTable(tableName);
 
-    if (tableName && isTableFound) {
+    if (success && !isTableFound) {
+      await driver.sleep(60 * 15 * 1000);
+      await betManager.reload(tableName);
+      throw Error(`table ${tableName} offline`);
+    }
+
+    await driver.sleep(1500);
+
+    for (const msg of driver.getMessages()) {
+      if (msg.match(messageRegexInProgress)) {
+        await driver.sleep(60 * 1000);
+        await betManager.reload(tableName);
+        throw Error("table session unfinished");
+      }
+    }
+
+    await driver.sleep(60 * 1000);
+
+    if (success && isTableFound) {
       while (!driver.getDealerMessage()) {
         await driver.sleep(1500);
       }
-
-      if (!config.dryRun && config.minBalance > driver.getBalance()) {
-        throw new Error("balance too low");
-      }
-    } else if (tableName && !isTableFound) {
-      await driver.sleep(60 * 15 * 1000);
-      await betManager.reload(tableName);
     }
 
     this.tableName = tableName;
