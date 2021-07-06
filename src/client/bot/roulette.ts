@@ -9,7 +9,7 @@ enum Driver {
 
 export class RouletteBot extends RESTClient {
   private running: boolean;
-  private tableName: string;
+  private tableName: string | undefined;
 
   constructor() {
     super();
@@ -70,41 +70,49 @@ export class RouletteBot extends RESTClient {
       await driver.sleep(1500);
     }
 
-    const { success, tableName } = await this.postTableAssign();
+    let isTableFound = false;
 
-    if (!success) {
-      await driver.sleep(60 * 1000);
-      await betManager.reload(tableName);
-      throw Error("no free tables");
-    }
+    while (!isTableFound) {
+      const { success, tableName } = await this.postTableAssign();
 
-    const isTableFound = driver.navigateLobbyTable(tableName);
+      if (!success) {
+        betManager.logMessage("network error");
+        await driver.sleep(2500);
+        continue;
+      }
 
-    if (success && !isTableFound) {
-      await driver.sleep(60 * 15 * 1000);
-      await betManager.reload(tableName);
-      throw Error(`table ${tableName} offline`);
-    }
+      if (!tableName) {
+        betManager.logMessage("no free tables");
+        await driver.sleep(2500);
+        throw new Error("no free tables");
+      }
 
-    await driver.sleep(1500);
+      isTableFound = driver.navigateLobbyTable(tableName);
 
-    for (const msg of driver.getMessages()) {
-      if (msg.match(messageRegexInProgress)) {
-        await driver.sleep(60 * 1000);
+      if (tableName && !isTableFound) {
+        betManager.logMessage(`table ${tableName} offline`);
+        await driver.sleep(60 * 10 * 1000);
         await betManager.reload(tableName);
-        throw Error("table session unfinished");
+        throw new Error(`table ${tableName} offline`);
+      }
+
+      for (const msg of driver.getMessages()) {
+        if (msg.match(messageRegexInProgress)) {
+          betManager.logMessage(`table ${tableName} session unfinished`);
+          await driver.sleep(60 * 1000);
+          await betManager.reload(tableName);
+          throw new Error(`table ${tableName} session unfinished`);
+        }
+      }
+
+      if (tableName) {
+        this.tableName = tableName;
       }
     }
 
-    await driver.sleep(60 * 1000);
-
-    if (success && isTableFound) {
-      while (!driver.getDealerMessage()) {
-        await driver.sleep(1500);
-      }
+    while (!this.tableName || !driver.getDealerMessage) {
+      await driver.sleep(1500);
     }
-
-    this.tableName = tableName;
   }
 }
 

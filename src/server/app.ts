@@ -49,9 +49,8 @@ app.get("/stats/", (req, res) => {
 
 app.post("/table/", (req, res) => {
   const tableName = state.assignTable(config);
-  const success = tableName !== null;
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success, tableName }));
+  res.send(JSON.stringify({ success: true, tableName }));
 });
 
 app.delete("/table/", (req, res) => {
