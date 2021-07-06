@@ -40,7 +40,7 @@ export class RouletteBot extends RESTClient {
     while (this.running) {
       await betManager.checkBrowserInactivity();
 
-      if (!betManager.validateBetActivity()) {
+      if (!betManager.validateActivity()) {
         await betManager.reload(this.tableName);
       }
 

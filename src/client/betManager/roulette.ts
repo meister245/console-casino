@@ -48,12 +48,13 @@ export interface GameState {
 export class RouletteBetManager extends RESTClient {
   private driver: Playtech;
   private config: RouletteConfig;
-  private lastBetTime: number;
-  private lastLogMessage: null | string;
-  private lastGameState: GameState | null;
-  private running: boolean;
   private state: ClientState;
   private strategies: RouletteStrategies;
+
+  private running: boolean;
+  private initTime: number;
+  private lastGameState: GameState | null;
+  private lastLogMessage: null | string;
 
   constructor(
     driver: Playtech,
@@ -67,8 +68,7 @@ export class RouletteBetManager extends RESTClient {
     this.strategies = strategies;
 
     this.running = true;
-
-    this.lastBetTime = Math.floor(Date.now() / 1000);
+    this.initTime = Math.floor(Date.now() / 1000);
     this.lastGameState = null;
     this.lastLogMessage = null;
 
@@ -83,10 +83,6 @@ export class RouletteBetManager extends RESTClient {
     return this.running;
   }
 
-  updateLastBetTime(): void {
-    this.lastBetTime = Math.floor(Date.now() / 1000);
-  }
-
   async reload(tableName: string | undefined): Promise<void> {
     this.running = false;
 
@@ -97,11 +93,11 @@ export class RouletteBetManager extends RESTClient {
     window.location.href = this.config.lobbyUrl;
   }
 
-  validateBetActivity(): boolean {
+  validateActivity(): boolean {
     let result = true;
 
     if (!this.state.gameState) {
-      const timeDiff = Math.floor(Date.now() / 1000) - this.lastBetTime;
+      const timeDiff = Math.floor(Date.now() / 1000) - this.initTime;
 
       if (timeDiff > 60 * 20) {
         result = false;
@@ -437,8 +433,6 @@ export class RouletteBetManager extends RESTClient {
         totalBetSize += this.config.chipSize.valueOf();
       }
     }
-
-    !this.config.dryRun && this.updateLastBetTime();
 
     await this.postBetLog({
       tableName: this.driver.getTableName(),
