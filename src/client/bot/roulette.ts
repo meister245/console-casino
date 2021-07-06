@@ -73,6 +73,8 @@ export class RouletteBot extends RESTClient {
     const { success, tableName } = await this.postTableAssign();
 
     if (!success) {
+      await driver.sleep(60 * 1000);
+      await betManager.reload(tableName);
       throw Error("no free tables");
     }
 

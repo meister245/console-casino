@@ -87,9 +87,13 @@ export class RouletteBetManager extends RESTClient {
     this.lastBetTime = Math.floor(Date.now() / 1000);
   }
 
-  async reload(tableName: string): Promise<void> {
+  async reload(tableName: string | undefined): Promise<void> {
     this.running = false;
-    await this.deleteTable(tableName);
+
+    if (tableName) {
+      await this.deleteTable(tableName);
+    }
+
     window.location.href = this.config.lobbyUrl;
   }
 
