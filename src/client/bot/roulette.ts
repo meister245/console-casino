@@ -34,16 +34,10 @@ export class RouletteBot extends RESTClient {
       throw new Error("balance too low");
     }
 
-    window.onbeforeunload = async () => {
-      tableName && (await this.deleteTable(tableName));
-    };
-
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
     while (this.running && tableName) {
-      const result = await betManager.isReloadRequired();
-
-      if (result) {
+      if (await betManager.isReloadRequired()) {
         await betManager.reload(tableName);
       }
 
