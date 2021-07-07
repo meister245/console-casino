@@ -83,28 +83,10 @@ export class RouletteBetManager extends RESTClient {
     return this.running;
   }
 
-  async reload(tableName: string | undefined): Promise<void> {
+  async reload(tableName: string): Promise<void> {
     this.running = false;
-
-    if (tableName) {
-      await this.deleteTable(tableName);
-    }
-
+    await this.deleteTable(tableName);
     window.location.href = this.config.lobbyUrl;
-  }
-
-  validateActivity(): boolean {
-    let result = true;
-
-    if (!this.state.gameState) {
-      const timeDiff = Math.floor(Date.now() / 1000) - this.initTime;
-
-      if (timeDiff > 60 * 20) {
-        result = false;
-      }
-    }
-
-    return result;
   }
 
   async runStage(): Promise<void> {
@@ -130,7 +112,15 @@ export class RouletteBetManager extends RESTClient {
     }
   }
 
-  async checkBrowserInactivity(): Promise<void> {
+  async isReloadRequired(): Promise<boolean> {
+    if (!this.state.gameState) {
+      const timeDiff = Math.floor(Date.now() / 1000) - this.initTime;
+
+      if (timeDiff > 60 * 20) {
+        return true;
+      }
+    }
+
     for (const message of this.driver.getMessages()) {
       if (message && message.match(messageRegexInactive)) {
         const tableName = this.driver.getTableName();
@@ -143,10 +133,11 @@ export class RouletteBetManager extends RESTClient {
           );
         }
 
-        await this.reload(tableName);
-        break;
+        return true;
       }
     }
+
+    return false;
   }
 
   runStageSpin(dealerMessage: TableMessage): void {

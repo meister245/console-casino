@@ -9,7 +9,6 @@ enum Driver {
 
 export class RouletteBot extends RESTClient {
   private running: boolean;
-  private tableName: string | undefined;
 
   constructor() {
     super();
@@ -29,7 +28,7 @@ export class RouletteBot extends RESTClient {
     const driver = this.getDriver(config.driverName as Driver);
     const betManager = new RouletteBetManager(driver, config, strategies);
 
-    await this.setupTable(driver, betManager);
+    const tableName = await this.setupTable(driver, betManager);
 
     if (!config.dryRun && config.minBalance > driver.getBalance()) {
       throw new Error("balance too low");
@@ -37,16 +36,18 @@ export class RouletteBot extends RESTClient {
 
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
-    while (this.running) {
-      await betManager.checkBrowserInactivity();
+    while (this.running && tableName) {
+      const result = await betManager.isReloadRequired();
 
-      if (!betManager.validateActivity()) {
-        await betManager.reload(this.tableName);
+      if (result) {
+        await betManager.reload(tableName);
       }
 
       await betManager.runStage();
       await driver.sleep(1500);
     }
+
+    betManager.logMessage("bot process terminated");
   }
 
   stop(): void {
@@ -65,35 +66,36 @@ export class RouletteBot extends RESTClient {
   async setupTable(
     driver: Playtech,
     betManager: RouletteBetManager
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     while (driver.getLobbyTables().length === 0) {
       await driver.sleep(1500);
     }
 
     let isTableFound = false;
 
-    while (!isTableFound) {
+    while (this.running && !isTableFound) {
       const { success, tableName } = await this.postTableAssign();
 
       if (!success) {
         betManager.logMessage("network error");
-        await driver.sleep(2500);
+        await driver.sleep(5000);
         continue;
       }
 
       if (!tableName) {
         betManager.logMessage("no free tables");
-        await driver.sleep(2500);
-        throw new Error("no free tables");
+        this.stop();
+        return;
       }
 
       isTableFound = driver.navigateLobbyTable(tableName);
 
-      if (tableName && !isTableFound) {
+      if (!isTableFound) {
         betManager.logMessage(`table ${tableName} offline`);
         await driver.sleep(60 * 10 * 1000);
         await betManager.reload(tableName);
-        throw new Error(`table ${tableName} offline`);
+        this.stop();
+        return;
       }
 
       for (const msg of driver.getMessages()) {
@@ -101,17 +103,16 @@ export class RouletteBot extends RESTClient {
           betManager.logMessage(`table ${tableName} session unfinished`);
           await driver.sleep(60 * 1000);
           await betManager.reload(tableName);
-          throw new Error(`table ${tableName} session unfinished`);
+          this.stop();
+          return;
         }
       }
 
-      if (tableName) {
-        this.tableName = tableName;
+      while (!driver.getDealerMessage) {
+        await driver.sleep(1500);
       }
-    }
 
-    while (!this.tableName || !driver.getDealerMessage) {
-      await driver.sleep(1500);
+      return tableName;
     }
   }
 }
