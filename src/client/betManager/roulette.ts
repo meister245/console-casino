@@ -83,6 +83,9 @@ export class RouletteBetManager extends RESTClient {
     return this.running;
   }
 
+  getRandomRangeNumber = (min: number, max: number): number =>
+    Math.floor(Math.random() * (max - min)) + min;
+
   async reload(tableName: string): Promise<void> {
     this.running = false;
     await this.deleteTable(tableName);
@@ -116,7 +119,7 @@ export class RouletteBetManager extends RESTClient {
     if (!this.state.gameState) {
       const timeDiff = Math.floor(Date.now() / 1000) - this.initTime;
 
-      if (timeDiff > 60 * 20) {
+      if (timeDiff > 60 * this.getRandomRangeNumber(18, 22)) {
         return true;
       }
     }
