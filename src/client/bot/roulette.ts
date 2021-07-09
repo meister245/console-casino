@@ -1,4 +1,3 @@
-import { messageRegexInProgress } from "../../constants";
 import { RouletteBetManager } from "../betManager/roulette";
 import { Playtech } from "../driver/playtech";
 import { RESTClient } from "../rest";
@@ -96,14 +95,11 @@ export class RouletteBot extends RESTClient {
         return;
       }
 
-      for (const msg of driver.getMessages()) {
-        if (msg.match(messageRegexInProgress)) {
-          betManager.logMessage(`table ${tableName} session unfinished`);
-          await driver.sleep(60 * 1000);
-          await betManager.reload(tableName);
-          this.stop();
-          return;
-        }
+      if (await betManager.isReloadRequired()) {
+        await driver.sleep(60 * 1000);
+        await betManager.reload(tableName);
+        this.stop();
+        return;
       }
 
       while (!driver.getDealerMessage) {

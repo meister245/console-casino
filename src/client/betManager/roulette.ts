@@ -1,5 +1,6 @@
 import {
   messageRegexInactive,
+  messageRegexInProgress,
   rouletteNumbers,
   roulettePayout,
   serverGameStoppedUrl,
@@ -124,18 +125,23 @@ export class RouletteBetManager extends RESTClient {
       }
     }
 
-    for (const message of this.driver.getMessages()) {
-      if (message && message.match(messageRegexInactive)) {
-        const tableName = this.driver.getTableName();
+    for (const msg of this.driver.getMessages()) {
+      if (msg && msg.match(messageRegexInactive)) {
+        this.logMessage("table inactive");
 
         if (this.state.gameState) {
           await this.postBetReset(
             GameResult.ABORT,
             this.state.gameState,
-            tableName
+            this.driver.getTableName()
           );
         }
 
+        return true;
+      }
+
+      if (msg && msg.match(messageRegexInProgress)) {
+        this.logMessage("table session unfinished");
         return true;
       }
     }
