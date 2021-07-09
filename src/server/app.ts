@@ -144,5 +144,8 @@ app.post("/bet/log/", (req, res) => {
 });
 
 if (require.main === module) {
-  app.listen(8080, () => logger.info("console-casino server is running"));
+  app.listen(8080, () => {
+    logger.info(`environment: ${config.dryRun ? "DEVELOPMENT" : "PRODUCTION"}`);
+    logger.info("console-casino server is running");
+  });
 }
