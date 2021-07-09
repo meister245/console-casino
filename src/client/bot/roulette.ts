@@ -40,7 +40,10 @@ class RouletteBot extends RESTClient {
         await betManager.reload(tableName);
       }
 
-      await betManager.runStage();
+      if (driver.getDealerMessage()) {
+        await betManager.runStage();
+      }
+
       await driver.sleep(1500);
     }
 
@@ -100,10 +103,6 @@ class RouletteBot extends RESTClient {
         await betManager.reload(tableName);
         this.stop();
         return;
-      }
-
-      while (!driver.getDealerMessage) {
-        await driver.sleep(1500);
       }
 
       return tableName;
