@@ -1,4 +1,4 @@
-export class DriverCommon {
+class DriverCommon {
   simulatedClick(target: HTMLElement): void {
     const event = target.ownerDocument.createEvent("MouseEvents");
     const opts = {
@@ -44,3 +44,5 @@ export class DriverCommon {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
+
+export default DriverCommon;

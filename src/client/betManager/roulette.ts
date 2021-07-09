@@ -15,8 +15,8 @@ import {
   RouletteTriggers,
   ServerGameState,
 } from "../../types";
-import { Playtech } from "../driver/playtech";
-import { RESTClient } from "../rest";
+import Playtech from "../driver/playtech";
+import RESTClient from "../rest";
 
 enum TableMessage {
   WAIT = "wait for the next round",
@@ -46,7 +46,7 @@ export interface GameState {
   profit: number | null;
 }
 
-export class RouletteBetManager extends RESTClient {
+class RouletteBetManager extends RESTClient {
   private driver: Playtech;
   private config: RouletteConfig;
   private state: ClientState;
@@ -120,7 +120,7 @@ export class RouletteBetManager extends RESTClient {
     if (!this.state.gameState) {
       const timeDiff = Math.floor(Date.now() / 1000) - this.initTime;
 
-      if (timeDiff > 60 * this.getRandomRangeNumber(18, 22)) {
+      if (timeDiff > 60 * this.getRandomRangeNumber(18, 23)) {
         return true;
       }
     }
@@ -562,3 +562,5 @@ export class RouletteBetManager extends RESTClient {
     }
   }
 }
+
+export default RouletteBetManager;

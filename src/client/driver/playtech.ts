@@ -1,4 +1,4 @@
-import { DriverCommon } from "./common";
+import DriverCommon from "./common";
 
 interface DriverSelectors {
   chip: ChipSelectors;
@@ -13,7 +13,7 @@ interface RouletteSelectors {
   [item: string]: string;
 }
 
-export class Playtech extends DriverCommon {
+class Playtech extends DriverCommon {
   selectors: DriverSelectors;
 
   constructor() {
@@ -234,3 +234,5 @@ export class Playtech extends DriverCommon {
     );
   }
 }
+
+export default Playtech;

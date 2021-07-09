@@ -1,12 +1,12 @@
-import { RouletteBetManager } from "../betManager/roulette";
-import { Playtech } from "../driver/playtech";
-import { RESTClient } from "../rest";
+import RouletteBetManager from "../betManager/roulette";
+import Playtech from "../driver/playtech";
+import RESTClient from "../rest";
 
 enum Driver {
   PLAYTECH = "playtech",
 }
 
-export class RouletteBot extends RESTClient {
+class RouletteBot extends RESTClient {
   private running: boolean;
 
   constructor() {

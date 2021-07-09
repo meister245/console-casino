@@ -44,7 +44,7 @@ interface BetLogRequestResponse {
   success: boolean;
 }
 
-export class RESTClient {
+class RESTClient {
   async getConfig(): Promise<RouletteBotConfig> {
     return fetch(`${serverUrl}/config/`)
       .then((resp) => resp.json())
@@ -154,3 +154,5 @@ export class RESTClient {
       .catch((err) => console.error(err));
   }
 }
+
+export default RESTClient;
