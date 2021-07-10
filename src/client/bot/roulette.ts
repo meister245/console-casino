@@ -40,7 +40,7 @@ class RouletteBot extends RESTClient {
         await betManager.reload(tableName);
       }
 
-      if (driver.getDealerMessage()) {
+      if (driver.getDealerName()) {
         await betManager.runStage();
       }
 
