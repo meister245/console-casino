@@ -53,9 +53,10 @@ class RouletteBetManager extends RESTClient {
   private strategies: RouletteStrategies;
 
   private running: boolean;
-  private initTime: number;
   private lastGameState: GameState | null;
   private lastLogMessage: null | string;
+  private timeResetDiff: number;
+  private timeStarted: number;
 
   constructor(
     driver: Playtech,
@@ -69,9 +70,11 @@ class RouletteBetManager extends RESTClient {
     this.strategies = strategies;
 
     this.running = true;
-    this.initTime = Math.floor(Date.now() / 1000);
     this.lastGameState = null;
     this.lastLogMessage = null;
+
+    this.timeStarted = Math.floor(Date.now() / 1000);
+    this.timeResetDiff = 60 * this.getRandomRangeNumber(18, 23);
 
     this.state = {
       gameState: null,
@@ -118,9 +121,9 @@ class RouletteBetManager extends RESTClient {
 
   async isReloadRequired(): Promise<boolean> {
     if (!this.state.gameState) {
-      const timeDiff = Math.floor(Date.now() / 1000) - this.initTime;
+      const timeDiff = Math.floor(Date.now() / 1000) - this.timeStarted;
 
-      if (timeDiff > 60 * this.getRandomRangeNumber(18, 23)) {
+      if (timeDiff > this.timeResetDiff) {
         return true;
       }
     }
