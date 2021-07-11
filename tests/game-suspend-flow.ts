@@ -20,7 +20,7 @@ describe("Game suspend state workflow", () => {
     strategies["testStrategy"] = {
       limits: {},
       trigger: {},
-      progressionMultiplier: 2,
+      progression: [1, 2, 4, 8, 16, 32, 64, 128],
       bets: [RouletteBet.RED],
     };
 
