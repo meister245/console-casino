@@ -25,6 +25,12 @@ app.use(express.urlencoded({ extended: true }));
 
 if (require.main === module) {
   app.use(logRequest);
+
+  // workaround for WSL2 network bridge stuck connections
+  app.use((req, res, next) => {
+    res.set("Connection", "close");
+    next();
+  });
 }
 
 app.get("/client/", (req, res) => {
