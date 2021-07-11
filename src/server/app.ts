@@ -94,7 +94,7 @@ app.post("/bet/", (req, res) => {
     currentGameState.active &&
     isTableMatching
   ) {
-    state.updateGameState(betSize);
+    state.updateGameState(betSize, betProgression);
   } else if (
     action === BetRequestAction.SUSPEND &&
     currentGameState.active &&

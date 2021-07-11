@@ -7,7 +7,16 @@
             "stopWin": 1,
             "stopLoss": 8
         },
-        "progressionMultiplier": 2,
+        "progression": [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128
+        ],
         "trigger": {
             "distribution": [
                 {
@@ -27,7 +36,16 @@
             "stopWin": 1,
             "stopLoss": 8
         },
-        "progressionMultiplier": 2,
+        "progression": [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128
+        ],
         "trigger": {
             "distribution": [
                 {

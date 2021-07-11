@@ -5,6 +5,7 @@ export interface ServerGameState {
   active: boolean;
   suspended: boolean;
   betSize?: number;
+  betProgression?: number;
   betStrategy?: string;
   tableName?: string;
 }
@@ -19,6 +20,7 @@ class State implements ServerState {
   active: boolean;
   suspended: boolean;
   betSize?: number;
+  betProgression?: number;
   betStrategy?: string;
   tableName?: string;
 
@@ -42,6 +44,7 @@ class State implements ServerState {
       active: this.active,
       suspended: this.suspended,
       betSize: this.betSize,
+      betProgression: this.betProgression,
       betStrategy: this.betStrategy,
       tableName: this.tableName,
     };
@@ -71,6 +74,7 @@ class State implements ServerState {
     this.suspended = false;
     this.betSize = undefined;
     this.betStrategy = undefined;
+    this.betProgression = undefined;
     this.tableName = undefined;
   }
 
@@ -81,8 +85,9 @@ class State implements ServerState {
     this.tableName = tableName;
   }
 
-  updateGameState(betSize: number): void {
+  updateGameState(betSize: number, betProgression: number): void {
     this.betSize = betSize;
+    this.betProgression = betProgression;
   }
 
   suspendGameState(betSize: number, betStrategy: string): void {

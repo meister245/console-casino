@@ -67,8 +67,7 @@ export interface RouletteStrategies {
 export interface RouletteStrategy {
   bets: RouletteBet[];
   limits: RouletteLimits;
-  progressionCustom?: number[];
-  progressionMultiplier?: number;
+  progression: number[];
   trigger: RouletteTriggers;
 }
 

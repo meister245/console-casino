@@ -7,7 +7,7 @@
             "stopWin": 1,
             "stopLoss": 12
         },
-        "progressionCustom": [
+        "progression": [
             1,
             1,
             2,
@@ -40,7 +40,7 @@
             "stopWin": 1,
             "stopLoss": 12
         },
-        "progressionCustom": [
+        "progression": [
             1,
             1,
             2,
@@ -73,7 +73,7 @@
             "stopWin": 1,
             "stopLoss": 12
         },
-        "progressionCustom": [
+        "progression": [
             1,
             1,
             2,

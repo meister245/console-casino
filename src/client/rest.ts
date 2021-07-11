@@ -106,11 +106,13 @@ class RESTClient {
 
   async postBetUpdate(
     betSize: number,
+    betProgression: number,
     tableName: string
   ): Promise<BetRequestResponse> {
     return await this.postBet(tableName, {
       action: BetRequestAction.UPDATE,
       betSize,
+      betProgression,
       tableName,
     });
   }
@@ -139,7 +141,7 @@ class RESTClient {
       profit: gameState?.profit,
       betResult: gameResult,
       betStrategy: gameState?.betStrategy,
-      betProgression: gameState?.progressionCount,
+      betProgression: gameState?.betProgression,
     });
   }
 

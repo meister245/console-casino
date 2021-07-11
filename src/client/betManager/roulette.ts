@@ -41,8 +41,8 @@ interface ClientState {
 export interface GameState {
   betSize: number;
   betStrategy: string;
+  betProgression: number;
   suspended: boolean;
-  progressionCount: number;
   profit: number | null;
 }
 
@@ -308,12 +308,12 @@ class RouletteBetManager extends RESTClient {
           await this.resultWinHandler(tableName);
         } else if (suspendLossLimit > 0) {
           const isSuspendLossReached =
-            this.state.gameState.progressionCount === suspendLossLimit;
+            this.state.gameState.betProgression === suspendLossLimit;
 
           await this.resultSuspendLossHandler(isSuspendLossReached, tableName);
         } else if (stopLossLimit > 0) {
           const isStopLossReached =
-            this.state.gameState.progressionCount === stopLossLimit;
+            this.state.gameState.betProgression === stopLossLimit;
 
           await this.resultStopLossHandler(isStopLossReached, tableName);
         }
@@ -345,10 +345,11 @@ class RouletteBetManager extends RESTClient {
     if (!isSuspendLossReached) {
       const { success } = await this.postBetUpdate(
         this.state.gameState.betSize,
+        this.state.gameState.betProgression,
         tableName
       );
       success && this.logMessage("updated bet size, updated server state");
-      this.state.gameState.progressionCount += 1;
+      this.state.gameState.betProgression += 1;
     } else if (isSuspendLossReached) {
       const { success } = await this.postBetSuspend(
         this.state.gameState.betSize,
@@ -367,10 +368,11 @@ class RouletteBetManager extends RESTClient {
     if (!isStopLossReached) {
       const { success } = await this.postBetUpdate(
         this.state.gameState.betSize,
+        this.state.gameState.betProgression,
         tableName
       );
       success && this.logMessage("updated bet size, updated server state");
-      this.state.gameState.progressionCount += 1;
+      this.state.gameState.betProgression += 1;
     } else if (isStopLossReached) {
       const { success } = await this.postBetReset(
         GameResult.LOSE,
@@ -396,26 +398,12 @@ class RouletteBetManager extends RESTClient {
   }
 
   setNextBetSize(): void {
-    if (
-      this.state.gameState.progressionCount === 1 &&
-      !this.state.gameState.suspended
-    ) {
-      return;
-    }
+    const nextProgressionUnit =
+      this.state.gameStrategy.progression[
+        this.state.gameState.betProgression - 1
+      ];
 
-    if (this.state.gameStrategy.progressionMultiplier) {
-      this.state.gameState.betSize =
-        this.state.gameState.betSize *
-        this.state.gameStrategy.progressionMultiplier;
-    }
-
-    if (this.state.gameStrategy.progressionCustom) {
-      this.state.gameState.betSize =
-        this.config.chipSize *
-        this.state.gameStrategy.progressionCustom[
-          this.state.gameState.progressionCount - 1
-        ];
-    }
+    this.state.gameState.betSize = this.config.chipSize * nextProgressionUnit;
 
     this.state.gameState.betSize = parseFloat(
       this.state.gameState.betSize.toFixed(2)
@@ -503,7 +491,11 @@ class RouletteBetManager extends RESTClient {
   }
 
   validateChipSize(state: ServerGameState | GameState): boolean {
-    const betSize = state?.betSize ?? this.config.chipSize;
+    const betSize = state?.betSize ?? 0;
+
+    if (betSize === 0) {
+      return true;
+    }
 
     let betSizeTemp = betSize.valueOf();
     let smallestChipSize = this.driver.getChipSizes()[0];
@@ -537,12 +529,10 @@ class RouletteBetManager extends RESTClient {
   ): void {
     this.state.gameStrategy = strategy;
     this.state.gameState = {
-      betSize: serverState.betSize
-        ? serverState.betSize
-        : this.config.chipSize.valueOf(),
+      betSize: 0,
       betStrategy: serverState.betStrategy,
       suspended: serverState.suspended,
-      progressionCount: 1,
+      betProgression: 1,
       profit: 0,
     };
   }
