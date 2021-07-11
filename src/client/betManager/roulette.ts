@@ -389,6 +389,7 @@ class RouletteBetManager extends RESTClient {
       roulettePayout[betType] * this.state.gameState.betSize;
 
     this.state.gameState.profit += lastBetProfit;
+
     this.state.gameState.profit = parseFloat(
       this.state.gameState.profit.toFixed(2)
     );
@@ -449,6 +450,10 @@ class RouletteBetManager extends RESTClient {
       });
 
       this.state.gameState.profit -= totalBetSize;
+
+      this.state.gameState.profit = parseFloat(
+        this.state.gameState.profit.toFixed(2)
+      );
     }
 
     this.logMessage(`bets: ${this.state.gameStrategy.bets}`);
