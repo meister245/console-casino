@@ -50,9 +50,19 @@ class Stats implements ServerStats {
     return {
       totalProfit: this.totalProfit,
       totalGames: this.totalGames,
-      tableStats: this.tableStats,
-      strategyStats: this.strategyStats,
+      tableStats: this.sortObject(this.tableStats) as TableStats,
+      strategyStats: this.sortObject(this.strategyStats) as StrategyStats,
     };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  sortObject(stats: object): object {
+    return Object.keys(stats)
+      .sort()
+      .reduce((result: never, key) => {
+        result[key] = stats[key as never] as never;
+        return result;
+      }, {});
   }
 
   updateStats(
