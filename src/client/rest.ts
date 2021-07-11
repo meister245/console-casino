@@ -16,7 +16,7 @@ export enum BetRequestAction {
 
 interface TableRequestResponse {
   success: boolean;
-  tableName?: string;
+  tableRegex?: string;
 }
 
 interface BetLogRequestProps {

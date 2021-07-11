@@ -55,10 +55,10 @@ class State implements ServerState {
   }
 
   assignTable(config: RouletteConfig): string | null {
-    for (const tableName of config.tables) {
-      if (!this.tables.includes(tableName)) {
-        this.tables.push(tableName);
-        return tableName;
+    for (const tableRegex of config.tableRegex) {
+      if (!this.tables.includes(tableRegex)) {
+        this.tables.push(tableRegex);
+        return tableRegex;
       }
     }
 

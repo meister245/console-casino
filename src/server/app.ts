@@ -54,9 +54,9 @@ app.get("/stats/", (req, res) => {
 });
 
 app.post("/table/", (req, res) => {
-  const tableName = state.assignTable(config);
+  const tableRegex = state.assignTable(config);
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify({ success: true, tableName }));
+  res.send(JSON.stringify({ success: true, tableRegex }));
 });
 
 app.delete("/table/", (req, res) => {

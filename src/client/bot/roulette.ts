@@ -27,7 +27,7 @@ class RouletteBot extends RESTClient {
     const driver = this.getDriver(config.driverName as Driver);
     const betManager = new RouletteBetManager(driver, config, strategies);
 
-    const tableName = await this.setupTable(driver, betManager);
+    const tableRegex = await this.setupTable(driver, betManager);
 
     if (!config.dryRun && config.minBalance > driver.getBalance()) {
       throw new Error("balance too low");
@@ -35,9 +35,9 @@ class RouletteBot extends RESTClient {
 
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
-    while (this.running && tableName) {
+    while (this.running && tableRegex) {
       if (await betManager.isReloadRequired()) {
-        await betManager.reload(tableName);
+        await betManager.reload(tableRegex);
       }
 
       if (driver.getDealerName()) {
@@ -74,7 +74,7 @@ class RouletteBot extends RESTClient {
     let isTableFound = false;
 
     while (this.running && !isTableFound) {
-      const { success, tableName } = await this.postTableAssign();
+      const { success, tableRegex } = await this.postTableAssign();
 
       if (!success) {
         betManager.logMessage("network error");
@@ -82,30 +82,30 @@ class RouletteBot extends RESTClient {
         continue;
       }
 
-      if (!tableName) {
+      if (!tableRegex) {
         betManager.logMessage("no free tables");
         this.stop();
         return;
       }
 
-      isTableFound = driver.navigateLobbyTable(tableName);
+      isTableFound = driver.navigateLobbyTable(tableRegex);
 
       if (!isTableFound) {
-        betManager.logMessage(`table ${tableName} offline`);
+        betManager.logMessage(`table offline`);
         await driver.sleep(60 * 10 * 1000);
-        await betManager.reload(tableName);
+        await betManager.reload(tableRegex);
         this.stop();
         return;
       }
 
       if (await betManager.isReloadRequired()) {
         await driver.sleep(60 * 1000);
-        await betManager.reload(tableName);
+        await betManager.reload(tableRegex);
         this.stop();
         return;
       }
 
-      return tableName;
+      return tableRegex;
     }
   }
 }

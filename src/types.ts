@@ -57,7 +57,7 @@ export interface RouletteConfig {
   driverName: string;
   minBalance: number;
   lobbyUrl: string;
-  tables: string[];
+  tableRegex: string[];
 }
 
 export interface RouletteStrategies {
