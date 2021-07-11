@@ -11,6 +11,7 @@ interface TableStats {
   [result: string]: {
     gamesWin: number;
     gamesLose: number;
+    gamesNull: number;
     gamesAbort: number;
   };
 }
@@ -71,7 +72,12 @@ class Stats implements ServerStats {
 
   updateGameStats(result: GameResult, tableName: string): void {
     if (!(tableName in this.tableStats)) {
-      this.tableStats[tableName] = { gamesWin: 0, gamesLose: 0, gamesAbort: 0 };
+      this.tableStats[tableName] = {
+        gamesWin: 0,
+        gamesLose: 0,
+        gamesAbort: 0,
+        gamesNull: 0,
+      };
     }
 
     const tableResultStats = this.tableStats[tableName];
@@ -85,6 +91,9 @@ class Stats implements ServerStats {
         break;
       case GameResult.ABORT:
         tableResultStats.gamesAbort += 1;
+        break;
+      case GameResult.NULL:
+        tableResultStats.gamesNull += 1;
         break;
     }
   }

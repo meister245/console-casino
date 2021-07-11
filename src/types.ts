@@ -7,6 +7,7 @@ export { BetRequestAction, ServerGameState, ServerState, ServerStats };
 export enum GameResult {
   WIN = "win",
   LOSE = "lose",
+  NULL = "null",
   ABORT = "abort",
 }
 

@@ -325,8 +325,12 @@ class RouletteBetManager extends RESTClient {
 
   async resultWinHandler(tableName: string): Promise<void> {
     this.calculateWinProfit();
+
+    const gameResult =
+      this.state.gameState.profit > 0 ? GameResult.WIN : GameResult.NULL;
+
     const { success } = await this.postBetReset(
-      GameResult.WIN,
+      gameResult,
       this.state.gameState,
       tableName
     );
@@ -437,13 +441,15 @@ class RouletteBetManager extends RESTClient {
       }
     }
 
-    await this.postBetLog({
-      tableName: this.driver.getTableName(),
-      betSize: this.state.gameState.betSize,
-      betStrategy: this.state.gameState.betStrategy,
-    });
+    if (totalBetSize > 0) {
+      await this.postBetLog({
+        tableName: this.driver.getTableName(),
+        betSize: this.state.gameState.betSize,
+        betStrategy: this.state.gameState.betStrategy,
+      });
 
-    this.state.gameState.profit -= totalBetSize;
+      this.state.gameState.profit -= totalBetSize;
+    }
 
     this.logMessage(`bets: ${this.state.gameStrategy.bets}`);
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`);

@@ -5,9 +5,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -50,9 +54,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -95,9 +103,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -140,9 +152,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -185,9 +201,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -230,9 +250,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -275,9 +299,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -320,9 +348,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -365,9 +397,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -410,9 +446,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
@@ -455,9 +495,13 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 24
+            "stopLoss": 28
         },
         "progressionCustom": [
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             1,
