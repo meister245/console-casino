@@ -39,6 +39,13 @@ using state machines in the browser developer console
 
     loadScript('http://localhost:8080/client/')
 
+**Browser Settings**
+
+Some casinos kick sessions, if media to load, the browser should be configured to allow videos / audio by default. Some browsers will block media, until the window is in the foreground, that is an advanced config value.
+
+Firefox config key:
+- *media.block-autoplay-until-in-foreground*
+
 **Supported Casinos**
 
 - Any casino using Playtech gaming software
