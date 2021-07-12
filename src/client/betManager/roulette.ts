@@ -264,10 +264,12 @@ class RouletteBetManager extends RESTClient {
   runStageWait(dealerMessage: TableMessage): void {
     this.logMessage("waiting for next round");
 
+    const currentBetSize = this.state.gameState?.betSize ?? 0;
+
     const expectedMessage =
-      this.config.dryRun || this.state.gameState === null
-        ? TableMessage.WAIT
-        : TableMessage.EMPTY;
+      !this.config.dryRun && currentBetSize > 0
+        ? TableMessage.EMPTY
+        : TableMessage.WAIT;
 
     if (dealerMessage === expectedMessage) {
       if (this.state.gameState) {
