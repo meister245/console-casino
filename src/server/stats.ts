@@ -1,6 +1,7 @@
 import { GameResult } from "./../types";
 
 export type ServerStats = {
+  dateStarted: Date;
   totalProfit: number;
   totalGames: number;
   tableStats: TableStats;
@@ -34,20 +35,24 @@ interface ProgressionStats {
 }
 
 class Stats implements ServerStats {
+  dateStarted: Date;
   totalProfit: number;
   totalGames: number;
   tableStats: TableStats;
   strategyStats: StrategyStats;
 
   constructor() {
+    this.dateStarted = new Date();
     this.totalProfit = 0;
     this.totalGames = 0;
+
     this.tableStats = {};
     this.strategyStats = {};
   }
 
   getServerStats(): ServerStats {
     return {
+      dateStarted: this.dateStarted,
       totalProfit: this.totalProfit,
       totalGames: this.totalGames,
       tableStats: this.sortObject(this.tableStats) as TableStats,

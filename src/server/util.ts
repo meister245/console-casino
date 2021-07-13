@@ -6,10 +6,9 @@ import {
   RouletteConfig,
   RouletteStrategies,
   ServerGameState,
-  ServerStats,
 } from "./../types";
 import State from "./state";
-import Stats from "./stats";
+import Stats, { ServerStats } from "./stats";
 
 const distDir = path.resolve(__dirname, "..", "..", "dist");
 const userDataDir = path.resolve(os.homedir(), ".console-casino");
