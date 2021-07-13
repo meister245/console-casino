@@ -44,23 +44,60 @@ interface BetLogRequestResponse {
   success: boolean;
 }
 
+const wait = (delay: number) => {
+  return new Promise((resolve) => setTimeout(resolve, delay));
+};
+
 class RESTClient {
-  async getConfig(): Promise<RouletteBotConfig> {
+  async getConfig(retryTimes = 3): Promise<RouletteBotConfig> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(1000).then(() => this.getConfig(retryTimes - 1));
+    };
+
     return fetch(`${serverUrl}/config/`)
       .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+      .catch(onError);
   }
 
-  async postTableAssign(): Promise<TableRequestResponse> {
+  async postTableAssign(retryTimes = 3): Promise<TableRequestResponse> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(1000).then(() => this.postTableAssign(retryTimes - 1));
+    };
+
     return fetch(`${serverUrl}/table/`, {
       method: "POST",
       mode: "cors",
     })
       .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+      .catch(onError);
   }
 
-  async deleteTable(tableName: string): Promise<TableRequestResponse> {
+  async deleteTable(
+    tableName: string,
+    retryTimes = 3
+  ): Promise<TableRequestResponse> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(1000).then(() => this.deleteTable(tableName, retryTimes - 1));
+    };
+
     return fetch(`${serverUrl}/table/`, {
       method: "DELETE",
       mode: "cors",
@@ -68,21 +105,49 @@ class RESTClient {
       body: JSON.stringify({ tableName }),
     })
       .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+      .catch(onError);
   }
 
-  async getServerState(tableName: string): Promise<ServerState> {
+  async getServerState(
+    tableName: string,
+    retryTimes = 3
+  ): Promise<ServerState> {
     const source = tableName.replace(/\s/, "-").toLowerCase();
+
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(150).then(() =>
+        this.getServerState(tableName, retryTimes - 1)
+      );
+    };
 
     return fetch(`${serverUrl}/state/?tableName=${source}`)
       .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+      .catch(onError);
   }
 
   async postBet(
     tableName: string,
-    data: BetRequestProps
+    data: BetRequestProps,
+    retryTimes = 3
   ): Promise<BetRequestResponse> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(150).then(() =>
+        this.postBet(tableName, data, retryTimes - 1)
+      );
+    };
+
     return fetch(`${serverUrl}/bet/?tableName=${tableName}`, {
       method: "POST",
       mode: "cors",
@@ -90,26 +155,26 @@ class RESTClient {
       body: JSON.stringify(data),
     })
       .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+      .catch(onError);
   }
 
-  async postBetInit(
+  postBetInit(
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.postBet(tableName, {
+    return this.postBet(tableName, {
       action: BetRequestAction.INIT,
       betStrategy,
       tableName,
     });
   }
 
-  async postBetUpdate(
+  postBetUpdate(
     betSize: number,
     betProgression: number,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.postBet(tableName, {
+    return this.postBet(tableName, {
       action: BetRequestAction.UPDATE,
       betSize,
       betProgression,
@@ -117,12 +182,12 @@ class RESTClient {
     });
   }
 
-  async postBetSuspend(
+  postBetSuspend(
     betSize: number,
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.postBet(tableName, {
+    return this.postBet(tableName, {
       action: BetRequestAction.SUSPEND,
       betSize,
       betStrategy,
@@ -130,12 +195,12 @@ class RESTClient {
     });
   }
 
-  async postBetReset(
+  postBetReset(
     gameResult: GameResult,
     gameState: GameState,
     tableName: string
   ): Promise<BetRequestResponse> {
-    return await this.postBet(tableName, {
+    return this.postBet(tableName, {
       action: BetRequestAction.RESET,
       tableName,
       profit: gameState?.profit,
@@ -145,7 +210,20 @@ class RESTClient {
     });
   }
 
-  async postBetLog(data: BetLogRequestProps): Promise<BetLogRequestResponse> {
+  async postBetLog(
+    data: BetLogRequestProps,
+    retryTimes = 3
+  ): Promise<BetLogRequestResponse> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(250).then(() => this.postBetLog(data, retryTimes - 1));
+    };
+
     return fetch(`${serverUrl}/bet/log/`, {
       method: "POST",
       mode: "cors",
@@ -153,7 +231,7 @@ class RESTClient {
       body: JSON.stringify(data),
     })
       .then((resp) => resp.json())
-      .catch((err) => console.error(err));
+      .catch(onError);
   }
 }
 
