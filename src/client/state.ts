@@ -57,6 +57,10 @@ class ClientState {
     this.gameState.betProgression += 1;
   }
 
+  setGameStage(stage: GameStage): void {
+    this.gameStage = stage;
+  }
+
   resetGameState(): void {
     this.lastGameState = null;
     this.gameState = null;

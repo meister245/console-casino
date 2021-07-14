@@ -130,7 +130,7 @@ class RouletteBetManager extends RESTClient {
     this.logMessage("waiting for next spin");
 
     if (dealerMessage === TableMessage.WAIT) {
-      this.state.gameStage = GameStage.BET;
+      this.state.setGameStage(GameStage.BET);
     }
   }
 
@@ -177,7 +177,7 @@ class RouletteBetManager extends RESTClient {
         await this.submitBets();
       }
 
-      this.state.gameStage = GameStage.WAIT;
+      this.state.setGameStage(GameStage.WAIT);
     }
   }
 
@@ -239,9 +239,9 @@ class RouletteBetManager extends RESTClient {
 
     if (dealerMessage === expectedMessage) {
       if (this.state.gameState) {
-        this.state.gameStage = GameStage.RESULTS;
+        this.state.setGameStage(GameStage.RESULTS);
       } else {
-        this.state.gameStage = GameStage.BET;
+        this.state.setGameStage(GameStage.BET);
       }
     }
   }
@@ -287,7 +287,7 @@ class RouletteBetManager extends RESTClient {
         }
       }
 
-      this.state.gameStage = GameStage.BET;
+      this.state.setGameStage(GameStage.BET);
     }
   }
 
