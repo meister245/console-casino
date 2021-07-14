@@ -1,5 +1,5 @@
 class DriverCommon {
-  simulatedClick(target: HTMLElement): void {
+  simulatedClick(target: Element): void {
     const event = target.ownerDocument.createEvent("MouseEvents");
     const opts = {
       type: "click",

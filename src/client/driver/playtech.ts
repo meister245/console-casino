@@ -199,7 +199,7 @@ class Playtech extends DriverCommon {
   closeMessages(): void {
     document
       .querySelectorAll('[data-automation-locator="popup.button.resolve"]')
-      .forEach((elem: HTMLElement) => this.simulatedClick(elem));
+      .forEach((elem: Element) => this.simulatedClick(elem));
   }
 
   toggleTableLimits(): void {
