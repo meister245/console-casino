@@ -26,16 +26,21 @@ enum TableMessage {
   EMPTY = "",
 }
 
+export const sleep = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 class RouletteBetManager extends RESTClient {
   private driver: Playtech;
   private config: RouletteConfig;
-  private state: ClientState;
   private strategies: RouletteStrategies;
 
   private running: boolean;
   private lastLogMessage: null | string;
   private timeResetDiff: number;
   private timeStarted: number;
+
+  state: ClientState;
 
   constructor(
     driver: Playtech,
@@ -178,8 +183,8 @@ class RouletteBetManager extends RESTClient {
       const isStrategyMatching = this.isMatchingStrategy(
         strategy.trigger,
         numberHistory,
-        serverState.betStrategy,
-        serverState.suspended
+        serverState?.betStrategy,
+        serverState?.suspended ?? false
       );
 
       if (isStrategyMatching) {
@@ -391,7 +396,7 @@ class RouletteBetManager extends RESTClient {
 
     let totalBetSize = 0;
 
-    await this.driver.sleep(2000);
+    await sleep(2000);
 
     !this.config.dryRun && this.driver.setChipSize(this.config.chipSize);
 

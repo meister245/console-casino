@@ -1,4 +1,4 @@
-import RouletteBetManager from "../betManager/roulette";
+import RouletteBetManager, { sleep } from "../betManager/roulette";
 import Playtech from "../driver/playtech";
 import RESTClient from "../rest";
 
@@ -44,7 +44,7 @@ class RouletteBot extends RESTClient {
         await betManager.runStage();
       }
 
-      await driver.sleep(1500);
+      await sleep(1500);
     }
 
     betManager.logMessage("bot process terminated");
@@ -68,7 +68,7 @@ class RouletteBot extends RESTClient {
     betManager: RouletteBetManager
   ): Promise<string | undefined> {
     while (driver.getLobbyTables().length === 0) {
-      await driver.sleep(1500);
+      await sleep(1500);
     }
 
     let isTableFound = false;
@@ -78,7 +78,7 @@ class RouletteBot extends RESTClient {
 
       if (!success) {
         betManager.logMessage("network error");
-        await driver.sleep(5000);
+        await sleep(5000);
         continue;
       }
 
@@ -92,14 +92,14 @@ class RouletteBot extends RESTClient {
 
       if (!isTableFound) {
         betManager.logMessage(`table offline`);
-        await driver.sleep(60 * 10 * 1000);
+        await sleep(60 * 10 * 1000);
         await betManager.reload(tableRegex);
         this.stop();
         return;
       }
 
       if (await betManager.isReloadRequired()) {
-        await driver.sleep(60 * 1000);
+        await sleep(60 * 1000);
         await betManager.reload(tableRegex);
         this.stop();
         return;
