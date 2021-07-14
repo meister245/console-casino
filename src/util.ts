@@ -2,17 +2,13 @@ import fs = require("fs");
 import os = require("os");
 import path = require("path");
 
-import {
-  RouletteConfig,
-  RouletteStrategies,
-  ServerGameState,
-} from "./../types";
-import State from "./state";
-import Stats, { ServerStats } from "./stats";
+import State from "./server/state";
+import Stats, { ServerStats } from "./server/stats";
+import { RouletteConfig, RouletteStrategies, ServerGameState } from "./types";
 
-const distDir = path.resolve(__dirname, "..", "..", "dist");
+const distDir = path.resolve(__dirname, "..", "dist");
 const userDataDir = path.resolve(os.homedir(), ".console-casino");
-const resourcesDir = path.resolve(__dirname, "..", "..", "resources");
+const resourcesDir = path.resolve(__dirname, "..", "resources");
 
 const gameBetsPath = path.resolve(userDataDir, "gameBets.log");
 const gameStatePath = path.resolve(userDataDir, "gameState.json");

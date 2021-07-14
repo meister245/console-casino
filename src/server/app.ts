@@ -1,11 +1,11 @@
 import express = require("express");
 import cors = require("cors");
 
+import Utils from "../util";
 import { BetRequestAction, GameResult } from "./../types";
 import { logger, logRequest } from "./logger";
 import State from "./state";
 import Stats from "./stats";
-import Utils from "./util";
 
 export const utils = new Utils();
 export const config = utils.getConfig();
