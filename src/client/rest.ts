@@ -1,3 +1,5 @@
+import fetch from "cross-fetch";
+
 import { serverUrl } from "../constants";
 import {
   GameResult,

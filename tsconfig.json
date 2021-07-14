@@ -12,7 +12,9 @@
     ],
   },
   "include": [
-    "./src/server/*"
+    "./src/client/*",
+    "./src/server/*",
+    "./src/backtest/*",
   ],
   "lib": [
     "es2018",
