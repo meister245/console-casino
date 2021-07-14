@@ -17,33 +17,13 @@ import {
 } from "../../types";
 import Playtech from "../driver/playtech";
 import RESTClient from "../rest";
+import ClientState, { GameStage, GameState } from "../state";
 
 enum TableMessage {
   WAIT = "wait for the next round",
   BETS = "place your bets",
   LAST_BETS = "last bets",
   EMPTY = "",
-}
-
-enum GameStage {
-  BET = "stage-bet",
-  SPIN = "stage-spin",
-  WAIT = "stage-wait",
-  RESULTS = "stage-results",
-}
-
-interface ClientState {
-  gameStage: GameStage;
-  gameState: GameState | null;
-  gameStrategy: RouletteStrategy | null;
-}
-
-export interface GameState {
-  betSize: number;
-  betStrategy: string;
-  betProgression: number;
-  suspended: boolean;
-  profit: number | null;
 }
 
 class RouletteBetManager extends RESTClient {
@@ -53,7 +33,6 @@ class RouletteBetManager extends RESTClient {
   private strategies: RouletteStrategies;
 
   private running: boolean;
-  private lastGameState: GameState | null;
   private lastLogMessage: null | string;
   private timeResetDiff: number;
   private timeStarted: number;
@@ -70,17 +49,12 @@ class RouletteBetManager extends RESTClient {
     this.strategies = strategies;
 
     this.running = true;
-    this.lastGameState = null;
     this.lastLogMessage = null;
 
     this.timeStarted = Math.floor(Date.now() / 1000);
     this.timeResetDiff = 60 * this.getRandomRangeNumber(18, 23);
 
-    this.state = {
-      gameState: null,
-      gameStrategy: null,
-      gameStage: GameStage.SPIN,
-    };
+    this.state = new ClientState();
   }
 
   isActive(): boolean {
@@ -198,21 +172,13 @@ class RouletteBetManager extends RESTClient {
       }
 
       if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
-        this.backupGameState();
-        this.setNextBetSize();
+        this.state.backupGameState();
+        this.state.setNextBetSize(this.config.chipSize);
         await this.submitBets();
       }
 
       this.state.gameStage = GameStage.WAIT;
     }
-  }
-
-  backupGameState(): void {
-    this.lastGameState = JSON.parse(JSON.stringify(this.state.gameState));
-  }
-
-  restoreGameState(): void {
-    this.state.gameState = JSON.parse(JSON.stringify(this.lastGameState));
   }
 
   isMatchingStrategy(
@@ -255,7 +221,7 @@ class RouletteBetManager extends RESTClient {
 
     if (success) {
       this.logMessage("server accepted bet");
-      this.setupGameState(strategy, state);
+      this.state.setupGameState(strategy, state.betStrategy, state.suspended);
     } else {
       this.logMessage("server refused bet");
     }
@@ -289,7 +255,7 @@ class RouletteBetManager extends RESTClient {
       const lastNumber = this.driver.getLastNumber();
 
       if (isNaN(lastNumber)) {
-        this.restoreGameState();
+        this.state.restoreGameState();
         this.driver.closeMessages();
       } else if (this.state.gameState) {
         const tableName = this.driver.getTableName();
@@ -337,7 +303,7 @@ class RouletteBetManager extends RESTClient {
       tableName
     );
     success && this.logMessage("registered win, reset server state");
-    this.resetGameState();
+    this.state.resetGameState();
   }
 
   async resultSuspendLossHandler(
@@ -351,7 +317,7 @@ class RouletteBetManager extends RESTClient {
         tableName
       );
       success && this.logMessage("updated bet size, updated server state");
-      this.state.gameState.betProgression += 1;
+      this.state.setNextBetProgression();
     } else if (isSuspendLossReached) {
       const { success } = await this.postBetSuspend(
         this.state.gameState.betSize,
@@ -359,7 +325,7 @@ class RouletteBetManager extends RESTClient {
         tableName
       );
       success && this.logMessage("suspend limit reached, reset server state");
-      this.resetGameState();
+      this.state.resetGameState();
     }
   }
 
@@ -374,7 +340,7 @@ class RouletteBetManager extends RESTClient {
         tableName
       );
       success && this.logMessage("updated bet size, updated server state");
-      this.state.gameState.betProgression += 1;
+      this.state.setNextBetProgression();
     } else if (isStopLossReached) {
       const { success } = await this.postBetReset(
         GameResult.LOSE,
@@ -382,7 +348,7 @@ class RouletteBetManager extends RESTClient {
         tableName
       );
       success && this.logMessage("registered loss, reset server state");
-      this.resetGameState();
+      this.state.resetGameState();
     }
   }
 
@@ -396,19 +362,6 @@ class RouletteBetManager extends RESTClient {
 
     this.state.gameState.profit = parseFloat(
       this.state.gameState.profit.toFixed(2)
-    );
-  }
-
-  setNextBetSize(): void {
-    const nextProgressionUnit =
-      this.state.gameStrategy.progression[
-        this.state.gameState.betProgression - 1
-      ];
-
-    this.state.gameState.betSize = this.config.chipSize * nextProgressionUnit;
-
-    this.state.gameState.betSize = parseFloat(
-      this.state.gameState.betSize.toFixed(2)
     );
   }
 
@@ -523,26 +476,6 @@ class RouletteBetManager extends RESTClient {
     }
 
     return true;
-  }
-
-  setupGameState(
-    strategy: RouletteStrategy,
-    serverState: ServerGameState
-  ): void {
-    this.state.gameStrategy = strategy;
-    this.state.gameState = {
-      betSize: 0,
-      betStrategy: serverState.betStrategy,
-      suspended: serverState.suspended,
-      betProgression: 1,
-      profit: 0,
-    };
-  }
-
-  resetGameState(): void {
-    this.lastGameState = null;
-    this.state.gameState = null;
-    this.state.gameStrategy = null;
   }
 
   getWinTypes(lastNumber: number): string[] {

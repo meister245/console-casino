@@ -5,7 +5,7 @@ import {
   ServerGameState,
   ServerState,
 } from "./../types";
-import { GameState } from "./betManager/roulette";
+import { GameState } from "./state";
 
 export enum BetRequestAction {
   INIT = "init",
