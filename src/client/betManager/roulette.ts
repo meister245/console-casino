@@ -165,7 +165,7 @@ class RouletteBetManager extends RESTClient {
       if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
         this.state.backupGameState();
         this.state.setNextBetSize(this.config.chipSize);
-        await this.submitBets();
+        await this.submitBets(tableName);
       }
 
       this.state.setGameStage(GameStage.WAIT);
@@ -391,13 +391,12 @@ class RouletteBetManager extends RESTClient {
     );
   }
 
-  async submitBets(): Promise<void> {
+  async submitBets(tableName: string): Promise<void> {
     this.logMessage(`bet strategy: ${this.state.gameState.betStrategy}`);
 
     let totalBetSize = 0;
 
-    await sleep(2000);
-
+    !this.config.dryRun && (await sleep(2000));
     !this.config.dryRun && this.driver.setChipSize(this.config.chipSize);
 
     for (const betName of this.state.gameStrategy.bets) {
@@ -413,7 +412,7 @@ class RouletteBetManager extends RESTClient {
 
     if (totalBetSize > 0) {
       await this.postBetLog({
-        tableName: this.driver.getTableName(),
+        tableName: tableName,
         betSize: this.state.gameState.betSize,
         betStrategy: this.state.gameState.betStrategy,
       });
