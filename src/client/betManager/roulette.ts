@@ -152,23 +152,9 @@ class RouletteBetManager extends RESTClient {
       }
 
       if (!this.state.gameState && this.validateChipSize(serverState)) {
+        const tableName = this.driver.getTableName();
         const numberHistory = this.driver.getNumberHistory();
-
-        for (const strategyName in this.strategies) {
-          const strategy = this.strategies[strategyName];
-
-          const isStrategyMatching = this.isMatchingStrategy(
-            strategy.trigger,
-            numberHistory,
-            serverState.betStrategy,
-            serverState.suspended
-          );
-
-          if (isStrategyMatching) {
-            await this.registerBet(strategyName, strategy);
-            break;
-          }
-        }
+        await this.findMatchingStrategy(numberHistory, serverState, tableName);
       }
 
       if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
@@ -178,6 +164,28 @@ class RouletteBetManager extends RESTClient {
       }
 
       this.state.setGameStage(GameStage.WAIT);
+    }
+  }
+
+  async findMatchingStrategy(
+    numberHistory: number[],
+    serverState: ServerGameState,
+    tableName: string
+  ): Promise<void> {
+    for (const strategyName in this.strategies) {
+      const strategy = this.strategies[strategyName];
+
+      const isStrategyMatching = this.isMatchingStrategy(
+        strategy.trigger,
+        numberHistory,
+        serverState.betStrategy,
+        serverState.suspended
+      );
+
+      if (isStrategyMatching) {
+        await this.registerBet(strategyName, strategy, tableName);
+        break;
+      }
     }
   }
 
@@ -212,11 +220,11 @@ class RouletteBetManager extends RESTClient {
 
   async registerBet(
     strategyName: string,
-    strategy: RouletteStrategy
+    strategy: RouletteStrategy,
+    tableName: string
   ): Promise<void> {
     this.logMessage(`strategy matched - ${strategyName}`);
 
-    const tableName = this.driver.getTableName();
     const { success, state } = await this.postBetInit(strategyName, tableName);
 
     if (success) {
@@ -252,43 +260,56 @@ class RouletteBetManager extends RESTClient {
     if ([TableMessage.BETS, TableMessage.LAST_BETS].includes(dealerMessage)) {
       this.logMessage("processing results");
 
+      const tableName = this.driver.getTableName();
       const lastNumber = this.driver.getLastNumber();
 
       if (isNaN(lastNumber)) {
         this.state.restoreGameState();
         this.driver.closeMessages();
-      } else if (this.state.gameState) {
-        const tableName = this.driver.getTableName();
-        const winTypes = this.getWinTypes(lastNumber);
+      }
 
-        const stopLossLimit = this.state.gameStrategy?.limits?.stopLoss ?? 0;
-
-        const suspendLossLimit =
-          this.state.gameStrategy?.limits?.suspendLoss ?? 0;
-
-        let isWin = false;
-
-        this.state.gameStrategy.bets.forEach((betName: string) => {
-          isWin = isWin || winTypes.includes(betName);
-        });
-
-        if (isWin) {
-          await this.resultWinHandler(tableName);
-        } else if (suspendLossLimit > 0) {
-          const isSuspendLossReached =
-            this.state.gameState.betProgression === suspendLossLimit;
-
-          await this.resultSuspendLossHandler(isSuspendLossReached, tableName);
-        } else if (stopLossLimit > 0) {
-          const isStopLossReached =
-            this.state.gameState.betProgression === stopLossLimit;
-
-          await this.resultStopLossHandler(isStopLossReached, tableName);
-        }
+      if (!isNaN(lastNumber) && this.state.gameState) {
+        await this.resultEvaluate(lastNumber, tableName);
       }
 
       this.state.setGameStage(GameStage.BET);
     }
+  }
+
+  resultEvaluate(lastNumber: number, tableName: string): Promise<void> {
+    const isWin = this.isLastBetWin(lastNumber);
+    const stopLossLimit = this.state.gameStrategy?.limits?.stopLoss ?? 0;
+    const suspendLossLimit = this.state.gameStrategy?.limits?.suspendLoss ?? 0;
+
+    if (isWin) {
+      return this.resultWinHandler(tableName);
+    }
+
+    if (!isWin && suspendLossLimit > 0) {
+      const isSuspendLossReached =
+        this.state.gameState.betProgression === suspendLossLimit;
+
+      return this.resultSuspendLossHandler(isSuspendLossReached, tableName);
+    }
+
+    if (!isWin && stopLossLimit > 0) {
+      const isStopLossReached =
+        this.state.gameState.betProgression === stopLossLimit;
+
+      return this.resultStopLossHandler(isStopLossReached, tableName);
+    }
+  }
+
+  isLastBetWin(lastNumber: number): boolean {
+    let isWin = false;
+
+    const winTypes = this.getWinTypes(lastNumber);
+
+    this.state.gameStrategy.bets.forEach((betName: string) => {
+      isWin = isWin || winTypes.includes(betName);
+    });
+
+    return isWin;
   }
 
   async resultWinHandler(tableName: string): Promise<void> {
