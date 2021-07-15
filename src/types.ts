@@ -68,6 +68,7 @@ export interface RouletteStrategy {
   limits: RouletteLimits;
   progression: number[];
   trigger: RouletteTriggers;
+  parent?: string[];
 }
 
 interface RouletteLimits {

@@ -12,7 +12,6 @@ import {
   RouletteStrategies,
   RouletteStrategy,
   RouletteTriggerDistribution,
-  RouletteTriggers,
   ServerGameState,
 } from "../../types";
 import Playtech from "../driver/playtech";
@@ -181,7 +180,7 @@ class RouletteBetManager extends RESTClient {
       const strategy = this.strategies[strategyName];
 
       const isStrategyMatching = this.isMatchingStrategy(
-        strategy.trigger,
+        strategy,
         numberHistory,
         serverState?.betStrategy,
         serverState?.suspended ?? false
@@ -195,7 +194,7 @@ class RouletteBetManager extends RESTClient {
   }
 
   isMatchingStrategy(
-    triggers: RouletteTriggers,
+    strategy: RouletteStrategy,
     numberHistory: number[],
     lastBetStrategy: string,
     lastGameSuspended: boolean
@@ -204,7 +203,9 @@ class RouletteBetManager extends RESTClient {
     let percentageMatching = false;
     let suspendedMatching = false;
 
-    if (triggers.parent && triggers.parent.includes(lastBetStrategy)) {
+    const { trigger, parent } = strategy;
+
+    if (parent && parent.includes(lastBetStrategy)) {
       suspendedMatching = true;
     }
 
@@ -212,11 +213,11 @@ class RouletteBetManager extends RESTClient {
       return false;
     }
 
-    if (this.isPatternMatching(triggers.pattern, numberHistory)) {
+    if (this.isPatternMatching(trigger.pattern, numberHistory)) {
       patternMatching = true;
     }
 
-    if (this.isPercentageMatching(triggers.distribution, numberHistory)) {
+    if (this.isPercentageMatching(trigger.distribution, numberHistory)) {
       percentageMatching = true;
     }
 
