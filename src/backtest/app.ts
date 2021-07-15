@@ -1,5 +1,4 @@
 import RouletteBetManager from "../client/betManager/roulette";
-import { GameStage } from "../client/state";
 import Utils from "../util";
 
 const utils = new Utils();
@@ -8,26 +7,28 @@ const strategies = utils.getStrategies();
 
 const betManager = new RouletteBetManager(undefined, config, strategies);
 
-betManager.state.setGameStage(GameStage.BET);
+// disable client logging
+betManager.logMessage = () => undefined;
+
+const tableName = "backtest";
 
 const backtestProcess = async (numbers: number[]) => {
-  const tableName = "backtestTable";
-
   for (let i = 0; i < numbers.length; i++) {
     const number = numbers[i];
 
     if (!betManager.state.gameState) {
       const numberHistory = numbers.slice(0, i + 1);
+      const serverState = await betManager.getServerState(tableName);
 
       await betManager.findMatchingStrategy(
         numberHistory,
-        undefined,
+        serverState,
         tableName
       );
     }
 
     if (betManager.state.gameState) {
-      betManager.state.setNextBetSize(0.1);
+      betManager.state.setNextBetSize(config.chipSize);
       await betManager.submitBets(tableName);
       await betManager.resultEvaluate(number, tableName);
     }
@@ -38,7 +39,9 @@ const backtest = async () => {
   const filePaths = utils.getBacktestFiles();
 
   for (const filePath of filePaths) {
+    console.log(`processing file: ${filePath}`);
     const numbers = utils.readBacktestFile(filePath);
+
     await backtestProcess(numbers);
   }
 };
