@@ -8,6 +8,7 @@
     "build": "webpack && tsc",
     "prestart": "npm run build",
     "start": "node .",
+    "backtest": "npm run clean && node dist/backtest/app.js",
     "test": "mocha -r ts-node/register tests/**/*.ts",
     "clean": "rm -rf ~/.console-casino/ && rm -rf /var/tmp/console-casino.log"
   },

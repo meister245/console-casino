@@ -7,8 +7,10 @@ import Stats, { ServerStats } from "./server/stats";
 import { RouletteConfig, RouletteStrategies, ServerGameState } from "./types";
 
 const distDir = path.resolve(__dirname, "..", "dist");
-const userDataDir = path.resolve(os.homedir(), ".console-casino");
 const resourcesDir = path.resolve(__dirname, "..", "resources");
+
+const userDataDir = path.resolve(os.homedir(), ".console-casino");
+const backtestDir = path.resolve(os.homedir(), ".console-casino-backtest");
 
 const gameBetsPath = path.resolve(userDataDir, "gameBets.log");
 const gameStatePath = path.resolve(userDataDir, "gameState.json");
@@ -32,6 +34,25 @@ class Utils {
     });
 
     return strategies;
+  }
+
+  getBacktestFiles(): string[] {
+    const fileNames = [] as string[];
+
+    if (!fs.existsSync(backtestDir)) {
+      return fileNames;
+    }
+
+    fs.readdirSync(backtestDir).forEach((file) => {
+      fileNames.push(path.resolve(backtestDir, file));
+    });
+
+    return fileNames;
+  }
+
+  readBacktestFile(filePath: string): number[] {
+    const content = fs.readFileSync(filePath, { encoding: "utf8" });
+    return JSON.parse(content);
   }
 
   getClient(): unknown {
