@@ -48,6 +48,12 @@ app.get("/state/", (req, res) => {
   res.send(JSON.stringify(state.getServerState(), null, 2));
 });
 
+app.delete("/state/reset/", (req, res) => {
+  state.resetGameState();
+  res.set("Content-Type", "application/json");
+  res.send(JSON.stringify({ success: true }));
+});
+
 app.get("/stats/", (req, res) => {
   res.set("Content-Type", "application/json");
   res.send(JSON.stringify(stats.getServerStats(), null, 2));

@@ -133,6 +133,26 @@ class RESTClient {
       .catch(onError);
   }
 
+  async deleteServerState(retryTimes = 3): Promise<ServerState> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(150).then(() => this.deleteServerState(retryTimes - 1));
+    };
+
+    return fetch(`${serverUrl}/state/reset/`, {
+      method: "DELETE",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((resp) => resp.json())
+      .catch(onError);
+  }
+
   async postBet(
     tableName: string,
     data: BetRequestProps,

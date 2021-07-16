@@ -10,9 +10,7 @@ const betManager = new RouletteBetManager(undefined, config, strategies);
 // disable client logging
 betManager.logMessage = () => undefined;
 
-const tableName = "backtest";
-
-const backtestProcess = async (numbers: number[]) => {
+const backtestProcess = async (numbers: number[], tableName: string) => {
   for (let i = 0; i < numbers.length; i++) {
     const number = numbers[i];
 
@@ -40,9 +38,14 @@ const backtest = async () => {
 
   for (const filePath of filePaths) {
     console.log(`processing file: ${filePath}`);
-    const numbers = utils.readBacktestFile(filePath);
 
-    await backtestProcess(numbers);
+    const numbers = utils.readBacktestFile(filePath);
+    const tableName = filePath.split("/").pop();
+
+    await backtestProcess(numbers, tableName);
+
+    await betManager.deleteServerState();
+    betManager.state.resetGameState();
   }
 };
 
