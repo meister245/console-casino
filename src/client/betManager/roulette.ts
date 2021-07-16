@@ -496,7 +496,13 @@ class RouletteBetManager extends RESTClient {
       const resultNumber = lastNumbers[i];
       const resultWinTypes = this.getWinTypes(resultNumber);
 
-      if (!resultWinTypes.includes(betPattern)) {
+      let matchResult = false;
+
+      for (const pattern of betPattern.split(",")) {
+        matchResult = matchResult || resultWinTypes.includes(pattern);
+      }
+
+      if (!matchResult) {
         return false;
       }
     }
