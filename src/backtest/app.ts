@@ -13,10 +13,14 @@ betManager.logMessage = () => undefined;
 const backtestProcess = async (numbers: number[], tableName: string) => {
   for (let i = 0; i < numbers.length; i++) {
     const number = numbers[i];
+    const numberHistory = numbers.slice(0, i + 1);
 
     if (!betManager.state.gameState) {
-      const numberHistory = numbers.slice(0, i + 1);
       const serverState = await betManager.getServerState(tableName);
+
+      if (!serverState.running) {
+        throw new Error("server stopped");
+      }
 
       await betManager.findMatchingStrategy(
         numberHistory,
