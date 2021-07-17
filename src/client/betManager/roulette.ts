@@ -199,9 +199,9 @@ class RouletteBetManager extends RESTClient {
     lastBetStrategy: string,
     lastGameSuspended: boolean
   ): boolean {
-    let patternMatching = false;
-    let percentageMatching = false;
     let suspendedMatching = false;
+    let triggerPatternMatching = false;
+    let triggerPercentageMatching = false;
 
     const { trigger, parent } = strategy;
 
@@ -213,15 +213,17 @@ class RouletteBetManager extends RESTClient {
       return false;
     }
 
-    if (this.isPatternMatching(trigger.pattern, numberHistory)) {
-      patternMatching = true;
-    }
+    triggerPatternMatching = this.isPatternMatching(
+      numberHistory,
+      trigger.pattern
+    );
 
-    if (this.isPercentageMatching(trigger.distribution, numberHistory)) {
-      percentageMatching = true;
-    }
+    triggerPercentageMatching = this.isPercentageMatching(
+      numberHistory,
+      trigger.distribution
+    );
 
-    return patternMatching && percentageMatching;
+    return triggerPatternMatching && triggerPercentageMatching;
   }
 
   async registerBet(
@@ -430,12 +432,16 @@ class RouletteBetManager extends RESTClient {
   }
 
   isPercentageMatching(
-    config: RouletteTriggerDistribution[],
-    numberHistory: number[]
+    numberHistory: number[],
+    config: RouletteTriggerDistribution[]
   ): boolean {
     let success = true;
 
     for (const distribution of config) {
+      if (numberHistory.length < distribution.sampleSize) {
+        return false;
+      }
+
       const sampleNumberSet = numberHistory.slice(0, distribution.sampleSize);
 
       const betNumbers =
@@ -490,10 +496,10 @@ class RouletteBetManager extends RESTClient {
     return smallestChipSize <= betSizeTemp && remainder === 0;
   }
 
-  isPatternMatching(pattern: string[], lastNumbers: number[]): boolean {
+  isPatternMatching(numberHistory: number[], pattern: string[]): boolean {
     for (const i in pattern) {
       const betPattern = pattern[i];
-      const resultNumber = lastNumbers[i];
+      const resultNumber = numberHistory[i];
       const resultWinTypes = this.getWinTypes(resultNumber);
 
       let matchResult = false;
