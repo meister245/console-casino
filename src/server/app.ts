@@ -65,6 +65,27 @@ app.post("/table/", (req, res) => {
   res.send(JSON.stringify({ success: true, tableRegex }));
 });
 
+app.post("/table/backtest/", (req, res) => {
+  const { numbers, tableName } = {
+    numbers: req.body.numbers,
+    tableName: req.body.tableName,
+  };
+
+  const lastCollectionTime = utils.backtestCollectionState[tableName];
+
+  if (lastCollectionTime) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    const lastCollectionDiff = currentTime - lastCollectionTime;
+
+    if (lastCollectionDiff > 60 * 60) {
+      utils.writeBacktestFile(tableName, numbers);
+    }
+  }
+
+  res.set("Content-Type", "application/json");
+  res.send(JSON.stringify({ success: true }));
+});
+
 app.delete("/table/", (req, res) => {
   state.removeTable(req.body?.tableName ?? "");
   res.set("Content-Type", "application/json");

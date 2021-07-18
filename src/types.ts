@@ -57,6 +57,7 @@ export interface RouletteConfig {
   minBalance: number;
   lobbyUrl: string;
   tableRegex: string[];
+  backtestCollection?: boolean;
 }
 
 export interface RouletteStrategies {

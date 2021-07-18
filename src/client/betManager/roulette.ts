@@ -35,9 +35,11 @@ class RouletteBetManager extends RESTClient {
   private strategies: RouletteStrategies;
 
   private running: boolean;
+
   private lastLogMessage: null | string;
   private timeResetDiff: number;
   private timeStarted: number;
+  private backtestCollection: boolean;
 
   state: ClientState;
 
@@ -53,10 +55,11 @@ class RouletteBetManager extends RESTClient {
     this.strategies = strategies;
 
     this.running = true;
-    this.lastLogMessage = null;
 
+    this.lastLogMessage = null;
     this.timeStarted = Math.floor(Date.now() / 1000);
     this.timeResetDiff = 60 * this.getRandomRangeNumber(18, 23);
+    this.backtestCollection = config?.backtestCollection ?? false;
 
     this.state = new ClientState();
   }
@@ -88,7 +91,7 @@ class RouletteBetManager extends RESTClient {
           await this.runStageBet(dealerMessage);
           break;
         case GameStage.WAIT:
-          this.runStageWait(dealerMessage);
+          await this.runStageWait(dealerMessage);
           break;
         case GameStage.RESULTS:
           await this.runStageResult(dealerMessage);
@@ -244,7 +247,7 @@ class RouletteBetManager extends RESTClient {
     }
   }
 
-  runStageWait(dealerMessage: TableMessage): void {
+  async runStageWait(dealerMessage: TableMessage): Promise<void> {
     this.logMessage("waiting for next round");
 
     const currentBetSize = this.state.gameState?.betSize ?? 0;
@@ -260,6 +263,15 @@ class RouletteBetManager extends RESTClient {
       } else {
         this.state.setGameStage(GameStage.BET);
       }
+    }
+
+    if (this.backtestCollection) {
+      const tableName = this.driver.getTableName();
+      const numberHistory = this.driver.getNumberHistory();
+
+      await this.postTableBacktest(tableName, numberHistory);
+
+      this.backtestCollection = false;
     }
   }
 

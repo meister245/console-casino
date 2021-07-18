@@ -16,7 +16,17 @@ const gameBetsPath = path.resolve(userDataDir, "gameBets.log");
 const gameStatePath = path.resolve(userDataDir, "gameState.json");
 const gameStatsPath = path.resolve(userDataDir, "gameStats.json");
 
+interface BacktestCollectionState {
+  [tableName: string]: number;
+}
+
 class Utils {
+  backtestCollectionState: BacktestCollectionState;
+
+  constructor() {
+    this.backtestCollectionState = this.getBacktestCollectionState();
+  }
+
   getConfig(): RouletteConfig {
     const filePath = path.resolve(resourcesDir, "config.json");
     const content = fs.readFileSync(filePath, { encoding: "utf8" });
@@ -50,14 +60,40 @@ class Utils {
     return fileNames;
   }
 
-  readBacktestFile(filePath: string): number[] {
-    const content = fs.readFileSync(filePath, { encoding: "utf8" });
-    return JSON.parse(content);
+  getBacktestCollectionState(): BacktestCollectionState {
+    const state = {} as BacktestCollectionState;
+
+    for (const filePath of this.getBacktestFiles()) {
+      const fileName = filePath.split("/").pop();
+      const [tableName, fileTimeStamp] = fileName.split("_");
+
+      const timeStampValue = parseInt(fileTimeStamp);
+
+      if (tableName in state && state[tableName] < timeStampValue) {
+        state[tableName] = timeStampValue;
+      } else if (!(tableName in state)) {
+        state[tableName] = timeStampValue;
+      }
+
+      return state;
+    }
   }
 
   getClient(): unknown {
     const filePath = path.resolve(distDir, "client.min.js");
     return fs.readFileSync(filePath, { encoding: "utf8" });
+  }
+
+  readBacktestFile(filePath: string): number[] {
+    const content = fs.readFileSync(filePath, { encoding: "utf8" });
+
+    let numbers = [] as number[];
+
+    for (const row of content.split("\n")) {
+      numbers = numbers.concat(row.split(",").map((value) => parseInt(value)));
+    }
+
+    return numbers;
   }
 
   restoreGameState(object: State): void {
@@ -73,6 +109,29 @@ class Utils {
       const content = fs.readFileSync(gameStatsPath, { encoding: "utf8" });
       const data = JSON.parse(content);
       data && Object.assign(object, data);
+    }
+  }
+
+  writeBacktestFile(tableName: string, numbers: number[]): void {
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    this.backtestCollectionState[tableName] = currentTime;
+
+    const fileName = `${tableName}_${currentTime}`;
+    const filePath = path.resolve(backtestDir, fileName);
+
+    !fs.existsSync(backtestDir) && fs.mkdirSync(backtestDir);
+
+    while (numbers.length > 0) {
+      const chunk = numbers
+        .splice(0, 100)
+        .map((value: number) => value.toString())
+        .reduce((acc: string, value: string) => `${acc},${value}`);
+
+      fs.writeFileSync(filePath, chunk + "\n", {
+        encoding: "utf-8",
+        flag: "a",
+      });
     }
   }
 

@@ -86,6 +86,31 @@ class RESTClient {
       .catch(onError);
   }
 
+  async postTableBacktest(
+    tableName: string,
+    numbers: number[],
+    retryTimes = 3
+  ): Promise<TableRequestResponse> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(1000).then(() => this.postTableAssign(retryTimes - 1));
+    };
+
+    return fetch(`${serverUrl}/table/backtest/`, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tableName, numbers }),
+    })
+      .then((resp) => resp.json())
+      .catch(onError);
+  }
+
   async deleteTable(
     tableName: string,
     retryTimes = 3
