@@ -21,13 +21,13 @@
                 {
                     "betType": "dozenFirst",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
                     "betType": "dozenSecond",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 }
             ]
@@ -55,13 +55,13 @@
                 {
                     "betType": "dozenSecond",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
                     "betType": "dozenThird",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 }
             ]
@@ -89,13 +89,13 @@
                 {
                     "betType": "dozenFirst",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
                     "betType": "dozenThird",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 }
             ]

@@ -21,13 +21,13 @@
                 {
                     "betType": "columnTop",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
                     "betType": "columnMiddle",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 }
             ]
@@ -55,13 +55,13 @@
                 {
                     "betType": "columnMiddle",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
                     "betType": "columnBottom",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 }
             ]
@@ -89,13 +89,13 @@
                 {
                     "betType": "columnTop",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
                     "betType": "columnBottom",
                     "sampleSize": 100,
-                    "percentage": 25,
+                    "percentage": 26,
                     "action": "lowerEqual"
                 }
             ]
