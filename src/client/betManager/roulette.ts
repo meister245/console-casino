@@ -204,6 +204,7 @@ class RouletteBetManager extends RESTClient {
     let triggerPercentageMatching = false;
 
     const { trigger, parent } = strategy;
+    const reversedHistory = numberHistory.slice().reverse();
 
     if (parent && parent.includes(lastBetStrategy)) {
       suspendedMatching = true;
@@ -214,12 +215,12 @@ class RouletteBetManager extends RESTClient {
     }
 
     triggerPatternMatching = this.isPatternMatching(
-      numberHistory,
+      reversedHistory,
       trigger.pattern
     );
 
     triggerPercentageMatching = this.isPercentageMatching(
-      numberHistory,
+      reversedHistory,
       trigger.distribution
     );
 

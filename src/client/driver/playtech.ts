@@ -128,9 +128,10 @@ class Playtech extends DriverCommon {
       const numberHistoryElements = numberHistoryParentElement.querySelectorAll(
         "[class^=roulette-history-item__value-text]"
       );
-      return [...numberHistoryElements].map((elem) =>
+      const numbers = [...numberHistoryElements].map((elem) =>
         parseInt(elem.textContent, 10)
       );
+      return numbers.slice().reverse();
     } catch {
       this.toggleExtendedHistory();
       return this.getNumberHistory();
