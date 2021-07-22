@@ -16,6 +16,8 @@ const gameBetsPath = path.resolve(userDataDir, "gameBets.log");
 const gameStatePath = path.resolve(userDataDir, "gameState.json");
 const gameStatsPath = path.resolve(userDataDir, "gameStats.json");
 
+const backtestFileRegex = /^((?:-?[^_\W]+)+)-(\d+)$/;
+
 interface BacktestCollectionState {
   [tableName: string]: number;
 }
@@ -65,14 +67,17 @@ class Utils {
 
     for (const filePath of this.getBacktestFiles()) {
       const fileName = filePath.split("/").pop();
-      const [tableName, fileTimeStamp] = fileName.split("_");
+      const match = backtestFileRegex.exec(fileName);
 
-      const timeStampValue = parseInt(fileTimeStamp);
+      if (match) {
+        const tableName = match[1];
+        const fileTimeStamp = parseInt(match[2]);
 
-      if (tableName in state && state[tableName] < timeStampValue) {
-        state[tableName] = timeStampValue;
-      } else if (!(tableName in state)) {
-        state[tableName] = timeStampValue;
+        if (!Object.keys(state).includes(tableName)) {
+          state[tableName] = fileTimeStamp;
+        } else if (tableName in state && state[tableName] < fileTimeStamp) {
+          state[tableName] = fileTimeStamp;
+        }
       }
     }
 
@@ -117,7 +122,7 @@ class Utils {
 
     this.backtestCollectionState[tableName] = currentTime;
 
-    const fileName = `${tableName}_${currentTime}`;
+    const fileName = [tableName, currentTime].join("-");
     const filePath = path.resolve(backtestDir, fileName);
 
     !fs.existsSync(backtestDir) && fs.mkdirSync(backtestDir);
