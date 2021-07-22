@@ -58,6 +58,7 @@ export interface RouletteConfig {
   lobbyUrl: string;
   tableRegex: string[];
   backtestCollection?: boolean;
+  backtestCollectionInterval?: number;
 }
 
 export interface RouletteStrategies {

@@ -78,7 +78,7 @@ app.post("/table/backtest/", (req, res) => {
       const currentTime = Math.floor(Date.now() / 1000);
       const lastCollectionDiff = currentTime - lastCollectionTime;
 
-      if (lastCollectionDiff > 60 * 60) {
+      if (lastCollectionDiff > 60 * config?.backtestCollectionInterval ?? 240) {
         utils.writeBacktestFile(tableName, numbers);
       }
     }

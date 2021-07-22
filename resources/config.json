@@ -1,5 +1,6 @@
 {
     "backtestCollection": true,
+    "backtestCollectionInterval": 240,
     "chipSize": 0.1,
     "driverName": "playtech",
     "dryRun": true,
