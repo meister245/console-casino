@@ -74,9 +74,9 @@ class Utils {
       } else if (!(tableName in state)) {
         state[tableName] = timeStampValue;
       }
-
-      return state;
     }
+
+    return state;
   }
 
   getClient(): unknown {

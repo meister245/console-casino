@@ -71,15 +71,19 @@ app.post("/table/backtest/", (req, res) => {
     tableName: req.body.tableName,
   };
 
-  const lastCollectionTime = utils.backtestCollectionState[tableName];
+  if (tableName in utils.backtestCollectionState) {
+    const lastCollectionTime = utils.backtestCollectionState[tableName];
 
-  if (lastCollectionTime) {
-    const currentTime = Math.floor(Date.now() / 1000);
-    const lastCollectionDiff = currentTime - lastCollectionTime;
+    if (lastCollectionTime) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const lastCollectionDiff = currentTime - lastCollectionTime;
 
-    if (lastCollectionDiff > 60 * 60) {
-      utils.writeBacktestFile(tableName, numbers);
+      if (lastCollectionDiff > 60 * 60) {
+        utils.writeBacktestFile(tableName, numbers);
+      }
     }
+  } else {
+    utils.writeBacktestFile(tableName, numbers);
   }
 
   res.set("Content-Type", "application/json");
