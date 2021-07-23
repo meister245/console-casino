@@ -84,8 +84,8 @@ class RouletteBetManager extends RESTClient {
         .toLowerCase() as TableMessage;
 
       switch (this.state.gameStage) {
-        case GameStage.SPIN:
-          this.runStageSpin(dealerMessage);
+        case GameStage.SETUP:
+          await this.runStageSetup(dealerMessage);
           break;
         case GameStage.BET:
           await this.runStageBet(dealerMessage);
@@ -133,7 +133,7 @@ class RouletteBetManager extends RESTClient {
     return false;
   }
 
-  runStageSpin(dealerMessage: TableMessage): void {
+  async runStageSetup(dealerMessage: TableMessage): Promise<void> {
     this.logMessage("waiting for next spin");
 
     if (dealerMessage === TableMessage.WAIT) {
@@ -270,8 +270,7 @@ class RouletteBetManager extends RESTClient {
       const numberHistory = this.driver.getNumberHistory();
 
       await this.postTableBacktest(tableName, numberHistory);
-
-      this.backtestCollection = false;
+      this.backtestCollection = !this.backtestCollection;
     }
   }
 

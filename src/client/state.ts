@@ -2,9 +2,9 @@ import { RouletteStrategy } from "../types";
 
 export enum GameStage {
   BET = "stage-bet",
-  SPIN = "stage-spin",
   WAIT = "stage-wait",
   RESULTS = "stage-results",
+  SETUP = "stage-setup",
 }
 
 export interface GameState {
@@ -23,7 +23,7 @@ class ClientState {
   private lastGameState: GameState | null;
 
   constructor() {
-    this.gameStage = GameStage.SPIN;
+    this.gameStage = GameStage.SETUP;
     this.gameState = null;
     this.gameStrategy = null;
 
