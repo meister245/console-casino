@@ -5,9 +5,10 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 14
+            "stopLoss": 15
         },
         "progression": [
+            0,
             0,
             0,
             1,
@@ -40,9 +41,10 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 14
+            "stopLoss": 15
         },
         "progression": [
+            0,
             0,
             0,
             1,
@@ -75,9 +77,10 @@
         ],
         "limits": {
             "stopWin": 1,
-            "stopLoss": 14
+            "stopLoss": 15
         },
         "progression": [
+            0,
             0,
             0,
             1,
