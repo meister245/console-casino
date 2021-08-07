@@ -4,19 +4,20 @@
         "bets": [
             "even"
         ],
+        "chipSize": 1.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
         },
         "progression": [
+            0,
+            0,
+            0,
+            0,
             1,
             2,
             4,
-            8,
-            16,
-            32,
-            64,
-            128
+            8
         ],
         "trigger": {
             "distribution": [
@@ -34,19 +35,20 @@
         "bets": [
             "odd"
         ],
+        "chipSize": 1.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
         },
         "progression": [
+            0,
+            0,
+            0,
+            0,
             1,
             2,
             4,
-            8,
-            16,
-            32,
-            64,
-            128
+            8
         ],
         "trigger": {
             "distribution": [

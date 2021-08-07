@@ -45,11 +45,11 @@ class ClientState {
     };
   }
 
-  setNextBetSize(chipSize: number): void {
+  setNextBetSize(): void {
     const nextProgressionUnit =
       this.gameStrategy.progression[this.gameState.betProgression - 1];
 
-    this.gameState.betSize = chipSize * nextProgressionUnit;
+    this.gameState.betSize = this.gameStrategy.chipSize * nextProgressionUnit;
     this.gameState.betSize = parseFloat(this.gameState.betSize.toFixed(2));
   }
 

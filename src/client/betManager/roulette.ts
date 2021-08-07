@@ -166,7 +166,7 @@ class RouletteBetManager extends RESTClient {
 
       if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
         this.state.backupGameState();
-        this.state.setNextBetSize(this.config.chipSize);
+        this.state.setNextBetSize();
         await this.submitBets(tableName);
       }
 
@@ -412,16 +412,17 @@ class RouletteBetManager extends RESTClient {
     let totalBetSize = 0;
 
     !this.config.dryRun && (await sleep(2000));
-    !this.config.dryRun && this.driver.setChipSize(this.config.chipSize);
+    !this.config.dryRun &&
+      this.driver.setChipSize(this.state.gameStrategy.chipSize);
 
     for (const betName of this.state.gameStrategy.bets) {
       const clickTimes = Math.round(
-        this.state.gameState.betSize / this.config.chipSize
+        this.state.gameState.betSize / this.state.gameStrategy.chipSize
       );
 
       for (let step = 0; step < clickTimes; step++) {
         !this.config.dryRun && this.driver.setBet(betName);
-        totalBetSize += this.config.chipSize.valueOf();
+        totalBetSize += this.state.gameStrategy.chipSize.valueOf();
       }
     }
 

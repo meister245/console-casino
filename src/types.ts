@@ -50,7 +50,6 @@ export type RouletteBotConfig = {
 };
 
 export interface RouletteConfig {
-  chipSize: number;
   dryRun: boolean;
   stopOnLoss: boolean;
   driverName: string;
@@ -67,6 +66,7 @@ export interface RouletteStrategies {
 
 export interface RouletteStrategy {
   bets: RouletteBet[];
+  chipSize: number;
   limits: RouletteLimits;
   progression: number[];
   trigger: RouletteTriggers;

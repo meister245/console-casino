@@ -4,6 +4,7 @@
         "bets": [
             "dozenFirst"
         ],
+        "chipSize": 1.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 15
@@ -12,18 +13,18 @@
             0,
             0,
             0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             2,
             3,
-            5,
-            7,
-            11,
-            16,
-            24,
-            36,
-            54,
-            90
+            5
         ],
         "trigger": {
             "distribution": [
@@ -41,6 +42,7 @@
         "bets": [
             "dozenSecond"
         ],
+        "chipSize": 1.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 15
@@ -49,18 +51,18 @@
             0,
             0,
             0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             2,
             3,
-            5,
-            7,
-            11,
-            16,
-            24,
-            36,
-            54,
-            90
+            5
         ],
         "trigger": {
             "distribution": [
@@ -78,6 +80,7 @@
         "bets": [
             "dozenThird"
         ],
+        "chipSize": 1.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 15
@@ -86,18 +89,18 @@
             0,
             0,
             0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             1,
             1,
             2,
             3,
-            5,
-            7,
-            11,
-            16,
-            24,
-            36,
-            54,
-            90
+            5
         ],
         "trigger": {
             "distribution": [

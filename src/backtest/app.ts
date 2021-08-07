@@ -30,7 +30,7 @@ const backtestProcess = async (numbers: number[], tableName: string) => {
     }
 
     if (betManager.state.gameState) {
-      betManager.state.setNextBetSize(config.chipSize);
+      betManager.state.setNextBetSize();
       await betManager.submitBets(tableName);
       await betManager.resultEvaluate(number, tableName);
     }

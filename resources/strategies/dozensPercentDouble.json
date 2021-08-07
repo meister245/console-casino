@@ -5,17 +5,20 @@
             "dozenFirst",
             "dozenSecond"
         ],
+        "chipSize": 0.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 6
+            "stopLoss": 8
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             1,
             3,
             9,
-            27,
-            85
+            27
         ],
         "trigger": {
             "distribution": [
@@ -40,17 +43,20 @@
             "dozenSecond",
             "dozenThird"
         ],
+        "chipSize": 0.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 6
+            "stopLoss": 8
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             1,
             3,
             9,
-            27,
-            85
+            27
         ],
         "trigger": {
             "distribution": [
@@ -75,17 +81,20 @@
             "dozenFirst",
             "dozenThird"
         ],
+        "chipSize": 0.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 6
+            "stopLoss": 8
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             1,
             3,
             9,
-            27,
-            85
+            27
         ],
         "trigger": {
             "distribution": [
