@@ -1,5 +1,6 @@
 {
     "redPercent": {
+        "group": "outerSingle",
         "bets": [
             "red"
         ],
@@ -29,6 +30,7 @@
         }
     },
     "blackPercent": {
+        "group": "outerSingle",
         "bets": [
             "black"
         ],

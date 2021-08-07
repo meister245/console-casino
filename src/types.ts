@@ -71,6 +71,7 @@ export interface RouletteStrategy {
   progression: number[];
   trigger: RouletteTriggers;
   parent?: string[];
+  group?: string;
 }
 
 interface RouletteLimits {

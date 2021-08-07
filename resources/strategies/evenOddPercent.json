@@ -1,5 +1,6 @@
 {
     "evenPercent": {
+        "group": "outerSingle",
         "bets": [
             "even"
         ],
@@ -29,6 +30,7 @@
         }
     },
     "oddPercent": {
+        "group": "outerSingle",
         "bets": [
             "odd"
         ],

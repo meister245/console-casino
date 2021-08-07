@@ -1,5 +1,6 @@
 {
     "columnTopPercent": {
+        "group": "columnDozenSingle",
         "bets": [
             "columnTop"
         ],
@@ -36,6 +37,7 @@
         }
     },
     "columnMiddlePercent": {
+        "group": "columnDozenSingle",
         "bets": [
             "columnMiddle"
         ],
@@ -72,6 +74,7 @@
         }
     },
     "columnBottomPercent": {
+        "group": "columnDozenSingle",
         "bets": [
             "columnBottom"
         ],

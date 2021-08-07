@@ -1,5 +1,6 @@
 {
     "dozenFirstSecondPercent": {
+        "group": "columnDozenDouble",
         "bets": [
             "dozenFirst",
             "dozenSecond"
@@ -34,6 +35,7 @@
         }
     },
     "dozenSecondThirdPercent": {
+        "group": "columnDozenDouble",
         "bets": [
             "dozenSecond",
             "dozenThird"
@@ -68,6 +70,7 @@
         }
     },
     "dozenFirstThirdPercent": {
+        "group": "columnDozenDouble",
         "bets": [
             "dozenFirst",
             "dozenThird"

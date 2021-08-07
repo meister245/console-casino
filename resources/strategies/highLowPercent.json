@@ -1,5 +1,6 @@
 {
     "highPercent": {
+        "group": "outerSingle",
         "bets": [
             "high"
         ],
@@ -29,6 +30,7 @@
         }
     },
     "lowPercent": {
+        "group": "outerSingle",
         "bets": [
             "low"
         ],
