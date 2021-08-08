@@ -67,6 +67,7 @@ export interface RouletteStrategy {
   bets: RouletteBet[];
   chipSize: number;
   minBalance: number;
+  maxBalance?: number;
   limits: RouletteLimits;
   progression: number[];
   trigger: RouletteTriggers;

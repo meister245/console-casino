@@ -190,6 +190,10 @@ class RouletteBetManager extends RESTClient {
     for (const strategyName in this.strategies) {
       const strategy = this.strategies[strategyName];
 
+      if (strategy.maxBalance && strategy.maxBalance < balance) {
+        continue;
+      }
+
       if (!this.config.dryRun && strategy.minBalance > balance) {
         continue;
       }
