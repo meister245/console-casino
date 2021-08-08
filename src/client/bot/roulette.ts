@@ -29,10 +29,6 @@ class RouletteBot extends RESTClient {
 
     const tableRegex = await this.setupTable(driver, betManager);
 
-    if (!config.dryRun && config.minBalance > driver.getBalance()) {
-      throw new Error("balance too low");
-    }
-
     betManager.logMessage(config.dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
     while (this.running && tableRegex) {

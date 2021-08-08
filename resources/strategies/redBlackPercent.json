@@ -5,6 +5,7 @@
             "red"
         ],
         "chipSize": 1.0,
+        "minBalance": 15.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
@@ -36,6 +37,7 @@
             "black"
         ],
         "chipSize": 1.0,
+        "minBalance": 15.0,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8

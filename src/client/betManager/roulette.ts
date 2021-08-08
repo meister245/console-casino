@@ -159,9 +159,16 @@ class RouletteBetManager extends RESTClient {
       }
 
       if (!this.state.gameState && this.validateChipSize(serverState)) {
+        const balance = this.driver.getBalance();
         const tableName = this.driver.getTableName();
         const numberHistory = this.driver.getNumberHistory();
-        await this.findMatchingStrategy(numberHistory, serverState, tableName);
+
+        await this.findMatchingStrategy(
+          balance,
+          numberHistory,
+          serverState,
+          tableName
+        );
       }
 
       if (this.state.gameState && this.validateChipSize(this.state.gameState)) {
@@ -175,12 +182,17 @@ class RouletteBetManager extends RESTClient {
   }
 
   async findMatchingStrategy(
+    balance: number,
     numberHistory: number[],
     serverState: ServerGameState,
     tableName: string
   ): Promise<void> {
     for (const strategyName in this.strategies) {
       const strategy = this.strategies[strategyName];
+
+      if (!this.config.dryRun && strategy.minBalance > balance) {
+        continue;
+      }
 
       const isStrategyMatching = this.isMatchingStrategy(
         strategy,

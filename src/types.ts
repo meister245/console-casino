@@ -53,7 +53,6 @@ export interface RouletteConfig {
   dryRun: boolean;
   stopOnLoss: boolean;
   driverName: string;
-  minBalance: number;
   lobbyUrl: string;
   tableRegex: string[];
   backtestCollection?: boolean;
@@ -67,6 +66,7 @@ export interface RouletteStrategies {
 export interface RouletteStrategy {
   bets: RouletteBet[];
   chipSize: number;
+  minBalance: number;
   limits: RouletteLimits;
   progression: number[];
   trigger: RouletteTriggers;

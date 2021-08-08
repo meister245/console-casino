@@ -23,6 +23,7 @@ const backtestProcess = async (numbers: number[], tableName: string) => {
       }
 
       await betManager.findMatchingStrategy(
+        99999,
         numberHistory,
         serverState,
         tableName
