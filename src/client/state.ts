@@ -1,4 +1,4 @@
-import { RouletteStrategy } from "../types";
+import { RouletteBetSize, RouletteStrategy } from "../types";
 
 export enum GameStage {
   BET = "stage-bet",
@@ -8,7 +8,7 @@ export enum GameStage {
 }
 
 export interface GameState {
-  betSize: number;
+  betSize: RouletteBetSize;
   betStrategy: string;
   betProgression: number;
   suspended: boolean;
@@ -37,7 +37,7 @@ class ClientState {
   ): void {
     this.gameStrategy = strategy;
     this.gameState = {
-      betSize: 0,
+      betSize: {} as RouletteBetSize,
       betStrategy: strategyName,
       suspended: suspended,
       betProgression: 1,
@@ -45,12 +45,21 @@ class ClientState {
     };
   }
 
+  getBetSizeTotal(): number {
+    return Object.values(this.gameState.betSize).reduce((a, b) => a + b, 0);
+  }
+
   setNextBetSize(): void {
     const nextProgressionUnit =
       this.gameStrategy.progression[this.gameState.betProgression - 1];
 
-    this.gameState.betSize = this.gameStrategy.chipSize * nextProgressionUnit;
-    this.gameState.betSize = parseFloat(this.gameState.betSize.toFixed(2));
+    for (const betConfig of this.gameStrategy.bets) {
+      const betSize = betConfig.chipSize * nextProgressionUnit;
+
+      this.gameState.betSize[betConfig.betType] = parseFloat(
+        betSize.toFixed(2)
+      );
+    }
   }
 
   setNextBetProgression(): void {

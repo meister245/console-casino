@@ -2,15 +2,21 @@
     "columnTopPercent": {
         "group": "columnDozenSingle",
         "bets": [
-            "columnTop"
+            {
+                "betSize": 0.1,
+                "betType": "columnTop",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 12.0,
+        "minBalance": 1.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 15
+            "stopLoss": 18
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             0,
             0,
@@ -41,15 +47,21 @@
     "columnMiddlePercent": {
         "group": "columnDozenSingle",
         "bets": [
-            "columnMiddle"
+            {
+                "betSize": 0.1,
+                "betType": "columnMiddle",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 12.0,
+        "minBalance": 1.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 15
+            "stopLoss": 18
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             0,
             0,
@@ -80,15 +92,21 @@
     "columnBottomPercent": {
         "group": "columnDozenSingle",
         "bets": [
-            "columnBottom"
+            {
+                "betSize": 0.1,
+                "betType": "columnBottom",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 12.0,
+        "minBalance": 1.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 15
+            "stopLoss": 18
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             0,
             0,

@@ -36,6 +36,10 @@ export enum RouletteBet {
   LINE_ELEVEN = "lineEleven",
 }
 
+export type RouletteBetSize = {
+  [entry in RouletteBet]: number;
+};
+
 export type RouletteNumbers = {
   [item in RouletteBet]: number[];
 };
@@ -63,9 +67,14 @@ export interface RouletteStrategies {
   [entry: string]: RouletteStrategy;
 }
 
-export interface RouletteStrategy {
-  bets: RouletteBet[];
+export interface RouletteBetConfig {
+  betType: RouletteBet;
+  betSize: number;
   chipSize: number;
+}
+
+export interface RouletteStrategy {
+  bets: RouletteBetConfig[];
   minBalance: number;
   maxBalance?: number;
   limits: RouletteLimits;

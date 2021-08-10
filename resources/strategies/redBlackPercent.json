@@ -2,10 +2,13 @@
     "redPercent": {
         "group": "outerSingle",
         "bets": [
-            "red"
+            {
+                "betSize": 0.1,
+                "betType": "red",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 15.0,
+        "minBalance": 1.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
@@ -34,10 +37,13 @@
     "blackPercent": {
         "group": "outerSingle",
         "bets": [
-            "black"
+            {
+                "betSize": 0.1,
+                "betType": "black",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 15.0,
+        "minBalance": 1.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8

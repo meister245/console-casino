@@ -2,15 +2,21 @@
     "dozenFirstPercent": {
         "group": "columnDozenSingle",
         "bets": [
-            "dozenFirst"
+            {
+                "betSize": 0.1,
+                "betType": "dozenFirst",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 12.0,
+        "minBalance": 1.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 15
+            "stopLoss": 18
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             0,
             0,
@@ -41,15 +47,21 @@
     "dozenSecondPercent": {
         "group": "columnDozenSingle",
         "bets": [
-            "dozenSecond"
+            {
+                "betSize": 0.1,
+                "betType": "dozenSecond",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 12.0,
+        "minBalance": 1.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 15
+            "stopLoss": 18
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             0,
             0,
@@ -80,15 +92,21 @@
     "dozenThirdPercent": {
         "group": "columnDozenSingle",
         "bets": [
-            "dozenThird"
+            {
+                "betSize": 0.1,
+                "betType": "dozenThird",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 12.0,
+        "minBalance": 1.2,
         "limits": {
             "stopWin": 1,
-            "stopLoss": 15
+            "stopLoss": 18
         },
         "progression": [
+            0,
+            0,
+            0,
             0,
             0,
             0,

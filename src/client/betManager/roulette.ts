@@ -7,6 +7,9 @@ import {
 } from "../../constants";
 import {
   GameResult,
+  RouletteBet,
+  RouletteBetConfig,
+  RouletteBetSize,
   RouletteConfig,
   RouletteNumbers,
   RouletteStrategies,
@@ -313,12 +316,14 @@ class RouletteBetManager extends RESTClient {
   }
 
   resultEvaluate(lastNumber: number, tableName: string): Promise<void> {
-    const isWin = this.isLastBetWin(lastNumber);
     const stopLossLimit = this.state.gameStrategy?.limits?.stopLoss ?? 0;
     const suspendLossLimit = this.state.gameStrategy?.limits?.suspendLoss ?? 0;
 
+    const betWinTypes = this.getBetWinTypes(lastNumber);
+    const isWin = betWinTypes.length > 0;
+
     if (isWin) {
-      return this.resultWinHandler(tableName);
+      return this.resultWinHandler(betWinTypes, tableName);
     }
 
     if (!isWin && suspendLossLimit > 0) {
@@ -336,20 +341,24 @@ class RouletteBetManager extends RESTClient {
     }
   }
 
-  isLastBetWin(lastNumber: number): boolean {
-    let isWin = false;
-
+  getBetWinTypes(lastNumber: number): RouletteBet[] {
+    const betWinTypes = [] as RouletteBet[];
     const winTypes = this.getWinTypes(lastNumber);
 
-    this.state.gameStrategy.bets.forEach((betName: string) => {
-      isWin = isWin || winTypes.includes(betName);
+    this.state.gameStrategy.bets.forEach((config: RouletteBetConfig) => {
+      if (winTypes.includes(config.betType)) {
+        betWinTypes.push(config.betType);
+      }
     });
 
-    return isWin;
+    return betWinTypes;
   }
 
-  async resultWinHandler(tableName: string): Promise<void> {
-    this.calculateWinProfit();
+  async resultWinHandler(
+    betWinTypes: RouletteBet[],
+    tableName: string
+  ): Promise<void> {
+    this.calculateWinProfit(betWinTypes);
 
     const gameResult =
       this.state.gameState.profit > 0 ? GameResult.WIN : GameResult.NULL;
@@ -409,17 +418,17 @@ class RouletteBetManager extends RESTClient {
     }
   }
 
-  calculateWinProfit(): void {
-    const betType = this.state.gameStrategy.bets[0];
+  calculateWinProfit(betWinTypes: RouletteBet[]): void {
+    for (const betType of betWinTypes) {
+      const lastBetProfit =
+        roulettePayout[betType] * this.state.gameState.betSize[betType];
 
-    const lastBetProfit =
-      roulettePayout[betType] * this.state.gameState.betSize;
+      this.state.gameState.profit += lastBetProfit;
 
-    this.state.gameState.profit += lastBetProfit;
-
-    this.state.gameState.profit = parseFloat(
-      this.state.gameState.profit.toFixed(2)
-    );
+      this.state.gameState.profit = parseFloat(
+        this.state.gameState.profit.toFixed(2)
+      );
+    }
   }
 
   async submitBets(tableName: string): Promise<void> {
@@ -428,24 +437,24 @@ class RouletteBetManager extends RESTClient {
     let totalBetSize = 0;
 
     !this.config.dryRun && (await sleep(2000));
-    !this.config.dryRun &&
-      this.driver.setChipSize(this.state.gameStrategy.chipSize);
 
-    for (const betName of this.state.gameStrategy.bets) {
+    for (const betConfig of this.state.gameStrategy.bets) {
+      !this.config.dryRun && this.driver.setChipSize(betConfig.chipSize);
+
       const clickTimes = Math.round(
-        this.state.gameState.betSize / this.state.gameStrategy.chipSize
+        this.state.gameState.betSize[betConfig.betType] / betConfig.chipSize
       );
 
       for (let step = 0; step < clickTimes; step++) {
-        !this.config.dryRun && this.driver.setBet(betName);
-        totalBetSize += this.state.gameStrategy.chipSize.valueOf();
+        !this.config.dryRun && this.driver.setBet(betConfig.betType);
+        totalBetSize += betConfig.chipSize.valueOf();
       }
     }
 
     if (totalBetSize > 0) {
       await this.postBetLog({
         tableName: tableName,
-        betSize: this.state.gameState.betSize,
+        betSize: this.state.getBetSizeTotal(),
         betStrategy: this.state.gameState.betStrategy,
       });
 
@@ -507,22 +516,27 @@ class RouletteBetManager extends RESTClient {
   }
 
   validateChipSize(state: ServerGameState | GameState): boolean {
-    const betSize = state?.betSize ?? 0;
+    let result = true;
+    const betSize = state?.betSize ?? ({} as RouletteBetSize);
 
-    if (betSize === 0) {
+    if (Object.keys(betSize).length === 0) {
       return true;
     }
 
-    let betSizeTemp = betSize.valueOf();
-    let smallestChipSize = this.driver.getChipSizes()[0];
+    for (const value of Object.values(betSize)) {
+      let betSizeTemp = value.valueOf();
+      let smallestChipSize = this.driver.getChipSizes()[0];
 
-    while (smallestChipSize < 0) {
-      betSizeTemp = betSizeTemp * 10;
-      smallestChipSize = smallestChipSize * 10;
+      while (smallestChipSize < 0) {
+        betSizeTemp = betSizeTemp * 10;
+        smallestChipSize = smallestChipSize * 10;
+      }
+
+      const remainder = Math.round(betSizeTemp % smallestChipSize);
+      result = result && smallestChipSize <= betSizeTemp && remainder === 0;
     }
 
-    const remainder = Math.round(betSizeTemp % smallestChipSize);
-    return smallestChipSize <= betSizeTemp && remainder === 0;
+    return result;
   }
 
   isPatternMatching(numberHistory: number[], pattern: string[]): boolean {

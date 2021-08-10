@@ -2,10 +2,13 @@
     "highPercent": {
         "group": "outerSingle",
         "bets": [
-            "high"
+            {
+                "betSize": 0.1,
+                "betType": "high",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 15.0,
+        "minBalance": 1.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
@@ -34,10 +37,13 @@
     "lowPercent": {
         "group": "outerSingle",
         "bets": [
-            "low"
+            {
+                "betSize": 0.1,
+                "betType": "low",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 15.0,
+        "minBalance": 1.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8

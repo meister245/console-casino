@@ -1,10 +1,10 @@
-import { RouletteConfig } from "./../types";
+import { RouletteBetSize, RouletteConfig } from "./../types";
 
 export interface ServerGameState {
   running: boolean;
   active: boolean;
   suspended: boolean;
-  betSize?: number;
+  betSize?: RouletteBetSize;
   betProgression?: number;
   betStrategy?: string;
   tableName?: string;
@@ -19,7 +19,7 @@ class State implements ServerState {
   running: boolean;
   active: boolean;
   suspended: boolean;
-  betSize?: number;
+  betSize?: RouletteBetSize;
   betProgression?: number;
   betStrategy?: string;
   tableName?: string;
@@ -85,12 +85,12 @@ class State implements ServerState {
     this.tableName = tableName;
   }
 
-  updateGameState(betSize: number, betProgression: number): void {
+  updateGameState(betSize: RouletteBetSize, betProgression: number): void {
     this.betSize = betSize;
     this.betProgression = betProgression;
   }
 
-  suspendGameState(betSize: number, betStrategy: string): void {
+  suspendGameState(betSize: RouletteBetSize, betStrategy: string): void {
     this.active = false;
     this.suspended = true;
     this.betSize = betSize;

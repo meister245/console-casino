@@ -3,6 +3,7 @@ import fetch from "cross-fetch";
 import { serverUrl } from "../constants";
 import {
   GameResult,
+  RouletteBetSize,
   RouletteBotConfig,
   ServerGameState,
   ServerState,
@@ -32,7 +33,7 @@ interface BetRequestProps {
   betStrategy?: string;
   betProgression?: number;
   betResult?: GameResult;
-  betSize?: number;
+  betSize?: RouletteBetSize;
   profit?: number;
   tableName?: string;
 }
@@ -217,7 +218,7 @@ class RESTClient {
   }
 
   postBetUpdate(
-    betSize: number,
+    betSize: RouletteBetSize,
     betProgression: number,
     tableName: string
   ): Promise<BetRequestResponse> {
@@ -230,7 +231,7 @@ class RESTClient {
   }
 
   postBetSuspend(
-    betSize: number,
+    betSize: RouletteBetSize,
     betStrategy: string,
     tableName: string
   ): Promise<BetRequestResponse> {

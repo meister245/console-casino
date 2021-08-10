@@ -2,7 +2,7 @@ import express = require("express");
 import cors = require("cors");
 
 import Utils from "../util";
-import { BetRequestAction, GameResult } from "./../types";
+import { BetRequestAction, GameResult, RouletteBetConfig } from "./../types";
 import { logger, logRequest } from "./logger";
 import State from "./state";
 import Stats from "./stats";
@@ -168,15 +168,15 @@ app.post("/bet/", (req, res) => {
 
 app.post("/bet/log/", (req, res) => {
   const { betStrategy, betSize, tableName } = {
-    betSize: req.body.betSize,
     betStrategy: req.body.betStrategy,
+    betSize: req.body.betSize,
     tableName: req.body.tableName,
   };
 
   const strategy = strategies[betStrategy];
-  const totalSize = betSize * strategy.bets.length;
+  const bets = strategy.bets.map((elem: RouletteBetConfig) => elem.betType);
 
-  utils.writeGameBet(strategy.bets, totalSize, betStrategy, tableName);
+  utils.writeGameBet(bets, betSize, betStrategy, tableName);
   res.send(JSON.stringify({ success: true }));
 });
 

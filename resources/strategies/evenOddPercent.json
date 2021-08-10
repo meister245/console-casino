@@ -2,10 +2,13 @@
     "evenPercent": {
         "group": "outerSingle",
         "bets": [
-            "even"
+            {
+                "betSize": 0.1,
+                "betType": "even",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 15.0,
+        "minBalance": 1.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
@@ -34,10 +37,13 @@
     "oddPercent": {
         "group": "outerSingle",
         "bets": [
-            "odd"
+            {
+                "betSize": 0.1,
+                "betType": "odd",
+                "chipSize": 0.1
+            }
         ],
-        "chipSize": 1.0,
-        "minBalance": 15.0,
+        "minBalance": 1.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
