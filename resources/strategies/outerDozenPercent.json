@@ -1,0 +1,74 @@
+{
+    "lowDozenThirdPercent": {
+        "group": "outerDozenCombination",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "low",
+                "chipSize": 0.1
+            },
+            {
+                "betSize": 0.1,
+                "betType": "dozenThird",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 0.2,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 4
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            1
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "lineSeven",
+                    "sampleSize": 50,
+                    "percentage": 30,
+                    "action": "higherEqual"
+                }
+            ]
+        }
+    },
+    "highDozenFirstPercent": {
+        "group": "outerDozenCombination",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "high",
+                "chipSize": 0.1
+            },
+            {
+                "betSize": 0.1,
+                "betType": "dozenFirst",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 0.2,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 4
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            1
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "lineFive",
+                    "sampleSize": 50,
+                    "percentage": 30,
+                    "action": "higherEqual"
+                }
+            ]
+        }
+    }
+}
