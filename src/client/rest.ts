@@ -7,6 +7,7 @@ import {
   RouletteBotConfig,
   ServerGameState,
   ServerState,
+  ServerStats,
 } from "./../types";
 import { GameState } from "./state";
 
@@ -155,6 +156,22 @@ class RESTClient {
     };
 
     return fetch(`${serverUrl}/state/?tableName=${source}`)
+      .then((resp) => resp.json())
+      .catch(onError);
+  }
+
+  async getServerStats(retryTimes = 3): Promise<ServerStats> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return wait(150).then(() => this.getServerStats(retryTimes - 1));
+    };
+
+    return fetch(`${serverUrl}/stats/`)
       .then((resp) => resp.json())
       .catch(onError);
   }

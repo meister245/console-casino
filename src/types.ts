@@ -1,7 +1,8 @@
 import { BetRequestAction } from "./client/rest";
 import { ServerGameState, ServerState } from "./server/state";
+import { ServerStats } from "./server/stats";
 
-export { BetRequestAction, ServerGameState, ServerState };
+export { BetRequestAction, ServerGameState, ServerState, ServerStats };
 
 export enum GameResult {
   WIN = "win",
