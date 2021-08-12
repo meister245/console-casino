@@ -1,6 +1,6 @@
 {
     "lowDozenThirdPercent": {
-        "group": "outerDozenCombination",
+        "group": "outerDozen",
         "bets": [
             {
                 "betSize": 0.1,
@@ -36,7 +36,7 @@
         }
     },
     "highDozenFirstPercent": {
-        "group": "outerDozenCombination",
+        "group": "outerDozen",
         "bets": [
             {
                 "betSize": 0.1,

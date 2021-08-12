@@ -1,0 +1,212 @@
+{
+    "redPercent": {
+        "group": "outerSingle",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "red",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            4,
+            8
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "red",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "blackPercent": {
+        "group": "outerSingle",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "black",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            4,
+            8
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "black",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "highPercent": {
+        "group": "outerSingle",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "high",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            4,
+            8
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "high",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "lowPercent": {
+        "group": "outerSingle",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "low",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            4,
+            8
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "low",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "evenPercent": {
+        "group": "outerSingle",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "even",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            4,
+            8
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "even",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "oddPercent": {
+        "group": "outerSingle",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "odd",
+                "chipSize": 0.1
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "progression": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            4,
+            8
+        ],
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "odd",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    }
+}
