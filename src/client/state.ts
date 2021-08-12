@@ -50,10 +50,10 @@ class ClientState {
   }
 
   setNextBetSize(): void {
-    const nextProgressionUnit =
-      this.gameStrategy.progression[this.gameState.betProgression - 1];
-
     for (const betConfig of this.gameStrategy.bets) {
+      const nextProgressionUnit =
+        betConfig.progression[this.gameState.betProgression - 1];
+
       const betSize = betConfig.chipSize * nextProgressionUnit;
 
       this.gameState.betSize[betConfig.betType] = parseFloat(

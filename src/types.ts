@@ -72,6 +72,7 @@ export interface RouletteBetConfig {
   betType: RouletteBet;
   betSize: number;
   chipSize: number;
+  progression: number[];
 }
 
 export interface RouletteStrategy {
@@ -79,7 +80,6 @@ export interface RouletteStrategy {
   minBalance: number;
   maxBalance?: number;
   limits: RouletteLimits;
-  progression: number[];
   trigger: RouletteTriggers;
   parent?: string[];
   group?: string;
