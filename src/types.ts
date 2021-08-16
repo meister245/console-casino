@@ -77,6 +77,7 @@ export interface RouletteBetConfig {
 
 export interface RouletteStrategy {
   bets: RouletteBetConfig[];
+  disabled?: boolean;
   minBalance: number;
   maxBalance?: number;
   limits: RouletteLimits;
