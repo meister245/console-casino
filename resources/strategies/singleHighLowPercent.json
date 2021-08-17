@@ -1,0 +1,72 @@
+{
+    "highPercent": {
+        "group": "singleOuter",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "high",
+                "chipSize": 0.1,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "high",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "lowPercent": {
+        "group": "singleOuter",
+        "bets": [
+            {
+                "betSize": 0.1,
+                "betType": "low",
+                "chipSize": 0.1,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "minBalance": 1.5,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "low",
+                    "sampleSize": 50,
+                    "percentage": 26,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    }
+}

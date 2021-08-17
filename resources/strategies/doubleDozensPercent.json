@@ -1,10 +1,10 @@
 {
-    "columnTopMiddlePercent": {
-        "group": "columnDozenDouble",
+    "dozenFirstSecondPercent": {
+        "group": "doubleDozensPercent",
         "bets": [
             {
                 "betSize": 0.1,
-                "betType": "columnTop",
+                "betType": "dozenFirst",
                 "chipSize": 0.1,
                 "progression": [
                     0,
@@ -19,7 +19,7 @@
             },
             {
                 "betSize": 0.1,
-                "betType": "columnMiddle",
+                "betType": "dozenSecond",
                 "chipSize": 0.1,
                 "progression": [
                     0,
@@ -41,13 +41,13 @@
         "trigger": {
             "distribution": [
                 {
-                    "betType": "columnTop",
+                    "betType": "dozenFirst",
                     "sampleSize": 100,
                     "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
-                    "betType": "columnMiddle",
+                    "betType": "dozenSecond",
                     "sampleSize": 100,
                     "percentage": 26,
                     "action": "lowerEqual"
@@ -55,12 +55,12 @@
             ]
         }
     },
-    "columnMiddleBottomPercent": {
-        "group": "columnDozenDouble",
+    "dozenSecondThirdPercent": {
+        "group": "doubleDozensPercent",
         "bets": [
             {
                 "betSize": 0.1,
-                "betType": "columnMiddle",
+                "betType": "dozenSecond",
                 "chipSize": 0.1,
                 "progression": [
                     0,
@@ -75,7 +75,7 @@
             },
             {
                 "betSize": 0.1,
-                "betType": "columnBottom",
+                "betType": "dozenThird",
                 "chipSize": 0.1,
                 "progression": [
                     0,
@@ -97,13 +97,13 @@
         "trigger": {
             "distribution": [
                 {
-                    "betType": "columnMiddle",
+                    "betType": "dozenSecond",
                     "sampleSize": 100,
                     "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
-                    "betType": "columnBottom",
+                    "betType": "dozenThird",
                     "sampleSize": 100,
                     "percentage": 26,
                     "action": "lowerEqual"
@@ -111,12 +111,12 @@
             ]
         }
     },
-    "columnTopBottomPercent": {
-        "group": "columnDozenDouble",
+    "dozenFirstThirdPercent": {
+        "group": "doubleDozensPercent",
         "bets": [
             {
                 "betSize": 0.1,
-                "betType": "columnMiddle",
+                "betType": "dozenFirst",
                 "chipSize": 0.1,
                 "progression": [
                     0,
@@ -131,7 +131,7 @@
             },
             {
                 "betSize": 0.1,
-                "betType": "columnBottom",
+                "betType": "dozenThird",
                 "chipSize": 0.1,
                 "progression": [
                     0,
@@ -153,13 +153,13 @@
         "trigger": {
             "distribution": [
                 {
-                    "betType": "columnTop",
+                    "betType": "dozenFirst",
                     "sampleSize": 100,
                     "percentage": 26,
                     "action": "lowerEqual"
                 },
                 {
-                    "betType": "columnBottom",
+                    "betType": "dozenThird",
                     "sampleSize": 100,
                     "percentage": 26,
                     "action": "lowerEqual"

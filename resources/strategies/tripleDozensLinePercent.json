@@ -1,0 +1,226 @@
+{
+    "dozensLineOnePercent": {
+        "group": "tripleNoProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "dozenSecond",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "dozenThird",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "lineThree",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "minBalance": 3.0,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "lineOne",
+                    "sampleSize": 50,
+                    "percentage": 30,
+                    "action": "higherEqual"
+                }
+            ]
+        }
+    },
+    "dozensLineThreePercent": {
+        "group": "tripleNoProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "dozenSecond",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "dozenThird",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "lineOne",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "minBalance": 3.0,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "lineThree",
+                    "sampleSize": 50,
+                    "percentage": 30,
+                    "action": "higherEqual"
+                }
+            ]
+        }
+    },
+    "dozensLineElevenPercent": {
+        "group": "tripleNoProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "dozenFirst",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "dozenSecond",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "lineNine",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "minBalance": 3.0,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "lineEleven",
+                    "sampleSize": 50,
+                    "percentage": 30,
+                    "action": "higherEqual"
+                }
+            ]
+        }
+    },
+    "dozensLineNinePercent": {
+        "group": "tripleNoProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "dozenFirst",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "dozenSecond",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            },
+            {
+                "betSize": 1.0,
+                "betType": "lineEleven",
+                "chipSize": 1.0,
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        ],
+        "minBalance": 3.0,
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 5
+        },
+        "trigger": {
+            "distribution": [
+                {
+                    "betType": "lineNine",
+                    "sampleSize": 50,
+                    "percentage": 30,
+                    "action": "higherEqual"
+                }
+            ]
+        }
+    }
+}
