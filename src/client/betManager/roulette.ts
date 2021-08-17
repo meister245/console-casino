@@ -423,15 +423,19 @@ class RouletteBetManager extends RESTClient {
   }
 
   calculateWinProfit(betWinTypes: RouletteBet[]): void {
-    for (const betType of betWinTypes) {
-      const lastBetProfit =
-        roulettePayout[betType] * this.state.gameState.betSize[betType];
+    const betTypes = Object.keys(this.state.gameState.betSize) as RouletteBet[];
 
-      this.state.gameState.profit += lastBetProfit;
+    for (const betType of betTypes) {
+      if (betWinTypes.includes(betType)) {
+        const lastBetProfit =
+          roulettePayout[betType] * this.state.gameState.betSize[betType];
 
-      this.state.gameState.profit = parseFloat(
-        this.state.gameState.profit.toFixed(2)
-      );
+        this.state.gameState.profit += lastBetProfit;
+
+        this.state.gameState.profit = parseFloat(
+          this.state.gameState.profit.toFixed(2)
+        );
+      }
     }
   }
 
