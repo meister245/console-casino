@@ -1,6 +1,6 @@
 {
     "redPercent": {
-        "group": "singleOuter",
+        "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -35,7 +35,7 @@
         }
     },
     "blackPercent": {
-        "group": "singleOuter",
+        "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,

@@ -47,16 +47,30 @@ const logResults = async (totalNumbers: number) => {
   const totalDays = totalSeconds / 60 / 60 / 24;
   const totalDaysParallel = totalDays / numberOfTables;
 
-  const { totalProfit } = await betManager.getServerStats();
+  const { totalProfit, totalGames } = await betManager.getServerStats();
 
   const averageProfitPerDay = totalProfit / totalDays;
   const averageProfitPerDayParallel = totalProfit / totalDaysParallel;
 
+  const averageGamesPerDay = totalGames / totalDays;
+  const averageGamesPerDayParallel = totalGames / totalDaysParallel;
+
   console.log();
 
   console.log(`=== total ===`);
+  console.log(`total games - ${totalGames}`);
   console.log(`total profit - ${totalProfit}`);
   console.log(`total number of days - ${totalDays.toFixed(1)}`);
+
+  console.log();
+
+  console.log(`=== average games ===`);
+  console.log(`per day - 1 table - ${averageGamesPerDay.toFixed(2)}`);
+  console.log(
+    `per day - ${numberOfTables} table - ${averageGamesPerDayParallel.toFixed(
+      2
+    )}`
+  );
 
   console.log();
 
@@ -72,13 +86,11 @@ const logResults = async (totalNumbers: number) => {
       2
     )}`
   );
-
   console.log(
     `per week - ${numberOfTables} tables - ${(
       averageProfitPerDayParallel * 7
     ).toFixed(2)}`
   );
-
   console.log(
     `per month - ${numberOfTables} tables - ${(
       averageProfitPerDayParallel * 30

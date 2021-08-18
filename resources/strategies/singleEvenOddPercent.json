@@ -1,6 +1,6 @@
 {
     "evenPercent": {
-        "group": "singleOuter",
+        "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -35,7 +35,7 @@
         }
     },
     "oddPercent": {
-        "group": "singleOuter",
+        "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,

@@ -1,6 +1,6 @@
 {
     "highPercent": {
-        "group": "singleOuter",
+        "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -35,7 +35,7 @@
         }
     },
     "lowPercent": {
-        "group": "singleOuter",
+        "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,
