@@ -29,10 +29,15 @@ class Utils {
     this.backtestCollectionState = this.getBacktestCollectionState();
   }
 
+  getEnv(): string | undefined {
+    return process.env?.["NODE_ENV"];
+  }
+
   getConfig(): RouletteConfig {
+    const dryRun = this.getEnv() === "dev";
     const filePath = path.resolve(resourcesDir, "config.json");
     const content = fs.readFileSync(filePath, { encoding: "utf8" });
-    return JSON.parse(content);
+    return { dryRun, ...JSON.parse(content) };
   }
 
   getStrategies(): RouletteStrategies {

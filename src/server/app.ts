@@ -16,6 +16,10 @@ export const app = express();
 export const stats = new Stats();
 export const state = new State();
 
+if (!utils.getEnv()) {
+  throw new Error("no environment specified");
+}
+
 utils.restoreGameState(state);
 utils.restoreGameStats(stats);
 

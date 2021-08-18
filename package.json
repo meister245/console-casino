@@ -8,6 +8,8 @@
     "build": "webpack && tsc",
     "prestart": "npm run build",
     "start": "node .",
+    "start-dev": "NODE_ENV=dev npm start",
+    "start-prod": "NODE_ENV=prod npm start",
     "backtest": "npm run clean && node dist/backtest/app.js",
     "test": "mocha -r ts-node/register tests/**/*.ts",
     "clean": "npm run-script clean-data && npm run-script clean-logs",

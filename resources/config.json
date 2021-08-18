@@ -2,7 +2,6 @@
     "backtestCollection": true,
     "backtestCollectionInterval": 240,
     "driverName": "playtech",
-    "dryRun": true,
     "lobbyUrl": "https://launcher.betfair.com/?gameId=live-roulette-cptl&channel=casino&returnURL=https%3A%2F%2Fcasino.betfair.com%2Fp%2Flive-casino&launchProduct=gaming&RPBucket=gaming&mode=real&dataContext=web&dataChannel=ecasino&switchedToPopup=true",
     "stopOnLoss": false,
     "tableRegex": [
