@@ -1,6 +1,6 @@
 {
     "columnTopMiddlePercent": {
-        "group": "doubleColumnsPercent",
+        "group": "doubleDozenColumnProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -56,7 +56,7 @@
         }
     },
     "columnMiddleBottomPercent": {
-        "group": "doubleColumnsPercent",
+        "group": "doubleDozenColumnProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -112,7 +112,7 @@
         }
     },
     "columnTopBottomPercent": {
-        "group": "doubleColumnsPercent",
+        "group": "doubleDozenColumnProgression",
         "bets": [
             {
                 "betSize": 0.1,

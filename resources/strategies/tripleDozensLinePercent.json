@@ -197,7 +197,7 @@
             {
                 "betSize": 0.5,
                 "betType": "lineEleven",
-                "chipSize": 1.0,
+                "chipSize": 0.5,
                 "progression": [
                     0,
                     0,

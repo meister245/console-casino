@@ -10,15 +10,15 @@
                     0,
                     0,
                     0,
-                    0,
                     1,
                     2,
                     4,
-                    8
+                    8,
+                    16
                 ]
             }
         ],
-        "minBalance": 1.5,
+        "minBalance": 3.1,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8
@@ -45,15 +45,15 @@
                     0,
                     0,
                     0,
-                    0,
                     1,
                     2,
                     4,
-                    8
+                    8,
+                    16
                 ]
             }
         ],
-        "minBalance": 1.5,
+        "minBalance": 3.1,
         "limits": {
             "stopWin": 1,
             "stopLoss": 8

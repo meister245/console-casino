@@ -1,6 +1,6 @@
 {
     "dozenFirstSecondPercent": {
-        "group": "doubleDozensPercent",
+        "group": "doubleDozenColumnProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -56,7 +56,7 @@
         }
     },
     "dozenSecondThirdPercent": {
-        "group": "doubleDozensPercent",
+        "group": "doubleDozenColumnProgression",
         "bets": [
             {
                 "betSize": 0.1,
@@ -112,7 +112,7 @@
         }
     },
     "dozenFirstThirdPercent": {
-        "group": "doubleDozensPercent",
+        "group": "doubleDozenColumnProgression",
         "bets": [
             {
                 "betSize": 0.1,
