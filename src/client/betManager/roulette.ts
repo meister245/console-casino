@@ -473,7 +473,12 @@ class RouletteBetManager extends RESTClient {
       );
     }
 
-    this.logMessage(`bets: ${this.state.gameStrategy.bets}`);
+    this.logMessage(
+      `bets: ${this.state.gameStrategy.bets
+        .map((item) => item.betType)
+        .toString()}`
+    );
+
     this.logMessage(`total: ${totalBetSize.toFixed(2)}`);
   }
 

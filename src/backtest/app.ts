@@ -60,7 +60,10 @@ const logResults = async (totalNumbers: number) => {
   console.log(`=== total ===`);
   console.log(`total games - ${totalGames}`);
   console.log(`total profit - ${totalProfit}`);
-  console.log(`total number of days - ${totalDays.toFixed(1)}`);
+  console.log(`total number of days - 1 table - ${totalDays.toFixed(1)}`);
+  console.log(
+    `total number of days - 6 table - ${totalDaysParallel.toFixed(1)}`
+  );
 
   console.log();
 
