@@ -39,7 +39,6 @@
                 ]
             }
         ],
-        "minBalance": 2.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 5
@@ -95,7 +94,6 @@
                 ]
             }
         ],
-        "minBalance": 2.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 5
@@ -151,7 +149,6 @@
                 ]
             }
         ],
-        "minBalance": 2.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 5
@@ -207,7 +204,6 @@
                 ]
             }
         ],
-        "minBalance": 2.5,
         "limits": {
             "stopWin": 1,
             "stopLoss": 5

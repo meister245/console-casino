@@ -197,10 +197,6 @@ class RouletteBetManager extends RESTClient {
         continue;
       }
 
-      if (strategy.maxBalance && strategy.maxBalance < balance) {
-        continue;
-      }
-
       if (!this.config.dryRun && strategy.minBalance > balance) {
         continue;
       }

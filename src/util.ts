@@ -4,7 +4,12 @@ import path = require("path");
 
 import State from "./server/state";
 import Stats, { ServerStats } from "./server/stats";
-import { RouletteConfig, RouletteStrategies, ServerGameState } from "./types";
+import {
+  RouletteBetConfig,
+  RouletteConfig,
+  RouletteStrategies,
+  ServerGameState,
+} from "./types";
 
 const distDir = path.resolve(__dirname, "..", "dist");
 const resourcesDir = path.resolve(__dirname, "..", "resources");
@@ -47,7 +52,19 @@ class Utils {
     fs.readdirSync(strategiesDir).forEach((file) => {
       const filePath = path.resolve(strategiesDir, file);
       const content = fs.readFileSync(filePath, { encoding: "utf8" });
-      Object.assign(strategies, JSON.parse(content));
+      const data = JSON.parse(content);
+
+      for (const strategyName in data) {
+        const strategy = data[strategyName];
+
+        strategy.minBalance = strategy.bets.reduce(
+          (acc: number, config: RouletteBetConfig) =>
+            acc + config.progression.reduce((a, b) => a + b) * config.betSize,
+          0
+        );
+
+        strategies[strategyName] = strategy;
+      }
     });
 
     return strategies;
