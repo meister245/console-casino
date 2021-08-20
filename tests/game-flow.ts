@@ -20,8 +20,15 @@ describe("Game state workflow", () => {
     strategies["testStrategy"] = {
       limits: {},
       trigger: {},
-      progression: [1, 2, 4, 8, 16, 32, 64, 128],
-      bets: [RouletteBet.RED],
+      minBalance: 26.0,
+      bets: [
+        {
+          betSize: 0.1,
+          betType: RouletteBet.RED,
+          chipSize: 0.1,
+          progression: [1, 2, 4, 8, 16, 32, 64, 128],
+        },
+      ],
     };
 
     server = app.listen(3000, () => {

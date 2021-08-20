@@ -4,7 +4,7 @@ import sinon from "sinon";
 import request from "supertest";
 
 import { app, state, strategies, utils } from "../src/server/app";
-import { RouletteBet } from "./../src/types";
+import { RouletteBet, RouletteBetSize } from "./../src/types";
 import { dataInit, dataReset, dataSuspend, dataUpdate } from "./constants";
 
 describe("Game suspend state workflow", () => {
@@ -20,14 +20,21 @@ describe("Game suspend state workflow", () => {
     strategies["testStrategy"] = {
       limits: {},
       trigger: {},
-      progression: [1, 2, 4, 8, 16, 32, 64, 128],
-      bets: [RouletteBet.RED],
+      minBalance: 26.0,
+      bets: [
+        {
+          betSize: 0.1,
+          betType: RouletteBet.RED,
+          chipSize: 0.1,
+          progression: [1, 2, 4, 8, 16, 32, 64, 128],
+        },
+      ],
     };
 
     server = app.listen(3000, () => {
       state.active = true;
       state.betStrategy = "testStrategy";
-      state.betSize = 0.1;
+      state.betSize = { red: 0.1 } as RouletteBetSize;
       state.tableName = "testTable";
       done();
     });
@@ -48,7 +55,7 @@ describe("Game suspend state workflow", () => {
           active: true,
           running: true,
           suspended: false,
-          betSize: 0.1,
+          betSize: { red: 0.1 },
           betStrategy: "testStrategy",
           tableName: "testTable",
           tables: [],
