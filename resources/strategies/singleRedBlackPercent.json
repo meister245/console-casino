@@ -10,11 +10,11 @@
                     0,
                     0,
                     0,
+                    0,
                     1,
                     2,
                     4,
-                    8,
-                    16
+                    8
                 ]
             }
         ],
@@ -27,7 +27,7 @@
                 {
                     "betType": "red",
                     "sampleSize": 50,
-                    "percentage": 26,
+                    "percentage": 25,
                     "action": "lowerEqual"
                 }
             ]
@@ -44,11 +44,11 @@
                     0,
                     0,
                     0,
+                    0,
                     1,
                     2,
                     4,
-                    8,
-                    16
+                    8
                 ]
             }
         ],
@@ -61,7 +61,7 @@
                 {
                     "betType": "black",
                     "sampleSize": 50,
-                    "percentage": 26,
+                    "percentage": 25,
                     "action": "lowerEqual"
                 }
             ]
