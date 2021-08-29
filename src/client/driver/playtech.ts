@@ -62,13 +62,14 @@ class Playtech extends DriverCommon {
   }
 
   getLobbyTables(): NodeListOf<HTMLElement> {
-    return document.querySelectorAll(".lobby-table__container");
+    return document.querySelectorAll('[class^="lobby-table__container"]');
   }
 
   navigateLobbyTable(tableRegex: string): boolean {
     for (const table of this.getLobbyTables()) {
       const lobbyTableName =
-        table.querySelector(".lobby-table__name-container")?.textContent ?? "";
+        table.querySelector('[class^="lobby-table__name-container"]')
+          ?.textContent ?? "";
 
       const transformedName = lobbyTableName.replace(/\s/g, "-").toLowerCase();
 
@@ -82,9 +83,9 @@ class Playtech extends DriverCommon {
   }
 
   getMessages(): string[] {
-    return [...document.querySelectorAll(".modal-confirm_desktop")].map((msg) =>
-      msg.textContent.toLowerCase()
-    );
+    return [
+      ...document.querySelectorAll('[class^="modal-confirm_desktop"]'),
+    ].map((msg) => msg.textContent.toLowerCase());
   }
 
   getBalance(): number {
@@ -110,7 +111,10 @@ class Playtech extends DriverCommon {
   }
 
   getDealerMessage(): string {
-    return document.querySelector(".dealer-message-text")?.textContent ?? "";
+    return (
+      document.querySelector('[class^="dealer-message-text"]')?.textContent ??
+      ""
+    );
   }
 
   getDealerName(): string {
@@ -126,7 +130,7 @@ class Playtech extends DriverCommon {
         '[class^="roulette-history-extended__items"]'
       );
       const numberHistoryElements = numberHistoryParentElement.querySelectorAll(
-        "[class^=roulette-history-item__value-text]"
+        '[class^="roulette-history-item__value-text"]'
       );
       const numbers = [...numberHistoryElements].map((elem) =>
         parseInt(elem.textContent, 10)
@@ -147,7 +151,7 @@ class Playtech extends DriverCommon {
 
   getLastNumbers(): number[] {
     const historyLineElement = document.querySelector(
-      ".roulette-game-area__history-line"
+      "[class^=roulette-game-area__history-line]"
     );
     const historyNumbersParentElement = historyLineElement.children[0];
 
@@ -158,7 +162,7 @@ class Playtech extends DriverCommon {
 
   getTableName(): string {
     const tableName =
-      document.querySelector(".table-info__name")?.textContent ?? "";
+      document.querySelector('[class^="table-info__name"]')?.textContent ?? "";
     return tableName.replace(/\s/g, "-").toLowerCase();
   }
 
