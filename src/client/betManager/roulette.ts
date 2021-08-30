@@ -536,6 +536,10 @@ class RouletteBetManager extends RESTClient {
       let betSizeTemp = value.valueOf();
       let smallestChipSize = this.driver.getChipSizes()[0];
 
+      if (betSizeTemp === 0) {
+        continue;
+      }
+
       while (smallestChipSize < 0) {
         betSizeTemp = betSizeTemp * 10;
         smallestChipSize = smallestChipSize * 10;
