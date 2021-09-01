@@ -16,6 +16,8 @@
     "test": "NODE_ENV=dev mocha -r ts-node/register tests/**/*.ts",
     "clean": "npm run-script clean-data && npm run-script clean-logs",
     "clean-data": "rm -rf ~/.console-casino/",
+    "clean-state": "rm -rf ~/.console-casino/gameState.json",
+    "clean-stats": "rm -rf ~/.console-casino/gameStats.json",
     "clean-logs": "rm -rf /var/tmp/console-casino.log",
     "clean-backtest": "rm -rf ~/.console-casino-backtest/"
   },
