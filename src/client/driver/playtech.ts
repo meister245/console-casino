@@ -213,6 +213,49 @@ class Playtech extends DriverCommon {
     );
   }
 
+  toggleMainMenu(): void {
+    this.simulatedClick(
+      document.querySelector('[data-automation-locator="button.MainMenu"]')
+    );
+  }
+
+  toggleVideoSettings(): void {
+    try {
+      this.simulatedClick(
+        document.querySelector(
+          '[data-automation-locator="button.videoSettings"]'
+        )
+      );
+    } catch {
+      this.toggleMainMenu();
+      this.toggleVideoSettings();
+    }
+  }
+
+  closeMenuPopup(): void {
+    this.simulatedClick(
+      document.querySelector('[data-automation-locator="element.closePopup"]')
+    );
+  }
+
+  setVideoQuality(value: "low" | "high"): void {
+    try {
+      const settings = document.querySelectorAll(
+        "[class^=video-slider__controls-text]"
+      );
+
+      const setting = [...settings].find(
+        (elem) => elem.textContent.toLowerCase() === value
+      );
+
+      this.simulatedClick(setting);
+      this.closeMenuPopup();
+    } catch {
+      this.toggleVideoSettings();
+      this.setVideoQuality(value);
+    }
+  }
+
   toggleExtendedHistory(): void {
     this.simulatedClick(
       document.querySelector(

@@ -140,6 +140,7 @@ class RouletteBetManager extends RESTClient {
     this.logMessage("waiting for next spin");
 
     if (dealerMessage === TableMessage.WAIT) {
+      this.driver.setVideoQuality("low");
       this.state.setGameStage(GameStage.BET);
     }
   }
