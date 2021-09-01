@@ -82,6 +82,8 @@ class RouletteBetManager extends RESTClient {
 
   async runStage(): Promise<void> {
     if (this.isActive()) {
+      this.driver.closeMessages();
+
       const dealerMessage = this.driver
         .getDealerMessage()
         .toLowerCase() as TableMessage;
@@ -305,7 +307,6 @@ class RouletteBetManager extends RESTClient {
 
       if (isNaN(lastNumber)) {
         this.state.restoreGameState();
-        this.driver.closeMessages();
       }
 
       if (!isNaN(lastNumber) && this.state.gameState) {
