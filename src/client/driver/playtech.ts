@@ -103,11 +103,9 @@ class Playtech extends DriverCommon {
   }
 
   getChipSizes(): number[] {
-    return [...document.querySelectorAll(".chip-svg")]
-      .map((item: Element) =>
-        parseFloat(item.textContent.replace(/[Kk]/, "000"))
-      )
-      .sort();
+    return [...document.querySelectorAll('[class^="chip__label"]')].map(
+      (item: Element) => parseFloat(item.textContent.replace(/[Kk]/, "000"))
+    );
   }
 
   getDealerMessage(): string {

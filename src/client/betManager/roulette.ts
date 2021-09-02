@@ -527,16 +527,22 @@ class RouletteBetManager extends RESTClient {
   }
 
   validateChipSize(state: ServerGameState | GameState): boolean {
-    let result = true;
+    const chipSizes = this.driver.getChipSizes();
     const betSize = state?.betSize ?? ({} as RouletteBetSize);
 
     if (Object.keys(betSize).length === 0) {
       return true;
     }
 
+    if (!chipSizes) {
+      return false;
+    }
+
+    let result = true;
+
     for (const value of Object.values(betSize)) {
       let betSizeTemp = value.valueOf();
-      let smallestChipSize = this.driver.getChipSizes()[0];
+      let smallestChipSize = [...chipSizes].shift();
 
       if (betSizeTemp === 0) {
         continue;
