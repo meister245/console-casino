@@ -141,10 +141,14 @@ class Playtech extends DriverCommon {
   }
 
   getLastNumber(): number {
-    const elem = document.querySelector(
-      '[data-automation-locator="field.lastHistoryItem"]'
-    ) as HTMLElement;
-    return parseInt(elem.textContent, 10);
+    try {
+      return this.getLastNumbers().shift();
+    } catch {
+      const elem = document.querySelector(
+        '[data-automation-locator="field.lastHistoryItem"]'
+      ) as HTMLElement;
+      return parseInt(elem.textContent, 10);
+    }
   }
 
   getLastNumbers(): number[] {
