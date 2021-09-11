@@ -13,7 +13,7 @@ interface RouletteSelectors {
   [item: string]: string;
 }
 
-class Playtech extends DriverCommon {
+class DriverPlaytech extends DriverCommon {
   selectors: DriverSelectors;
 
   constructor() {
@@ -65,16 +65,20 @@ class Playtech extends DriverCommon {
     return document.querySelectorAll('[class^="lobby-table__container"]');
   }
 
-  navigateLobbyTable(tableRegex: string): boolean {
-    for (const table of this.getLobbyTables()) {
+  navigateLobbyTable(tableName: string): boolean {
+    for (const tableElement of this.getLobbyTables()) {
+      if (tableElement.querySelector(".lobby-table__wrapper_active")) {
+        continue;
+      }
+
       const lobbyTableName =
-        table.querySelector('[class^="lobby-table__name-container"]')
+        tableElement.querySelector('[class^="lobby-table__name-container"]')
           ?.textContent ?? "";
 
       const transformedName = lobbyTableName.replace(/\s/g, "-").toLowerCase();
 
-      if (transformedName.match(tableRegex)) {
-        this.simulatedClick(table);
+      if (transformedName === tableName) {
+        this.simulatedClick(tableElement);
         return true;
       }
     }
@@ -281,4 +285,4 @@ class Playtech extends DriverCommon {
   }
 }
 
-export default Playtech;
+export default DriverPlaytech;

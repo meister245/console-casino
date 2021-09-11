@@ -5,7 +5,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenSecond",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -17,7 +16,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenThird",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -29,7 +27,6 @@
             {
                 "betSize": 0.5,
                 "betType": "lineThree",
-                "chipSize": 0.5,
                 "progression": [
                     0,
                     0,
@@ -43,7 +40,7 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "trigger": {
+        "triggers": {
             "distribution": [
                 {
                     "betType": "lineOne",
@@ -60,7 +57,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenSecond",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -72,7 +68,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenThird",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -84,7 +79,6 @@
             {
                 "betSize": 0.5,
                 "betType": "lineOne",
-                "chipSize": 0.5,
                 "progression": [
                     0,
                     0,
@@ -98,7 +92,7 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "trigger": {
+        "triggers": {
             "distribution": [
                 {
                     "betType": "lineThree",
@@ -115,7 +109,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenFirst",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -127,7 +120,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenSecond",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -139,7 +131,6 @@
             {
                 "betSize": 0.5,
                 "betType": "lineNine",
-                "chipSize": 0.5,
                 "progression": [
                     0,
                     0,
@@ -153,7 +144,7 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "trigger": {
+        "triggers": {
             "distribution": [
                 {
                     "betType": "lineEleven",
@@ -170,7 +161,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenFirst",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -182,7 +172,6 @@
             {
                 "betSize": 1.0,
                 "betType": "dozenSecond",
-                "chipSize": 1.0,
                 "progression": [
                     0,
                     0,
@@ -194,7 +183,6 @@
             {
                 "betSize": 0.5,
                 "betType": "lineEleven",
-                "chipSize": 0.5,
                 "progression": [
                     0,
                     0,
@@ -208,7 +196,7 @@
             "stopWin": 1,
             "stopLoss": 5
         },
-        "trigger": {
+        "triggers": {
             "distribution": [
                 {
                     "betType": "lineNine",

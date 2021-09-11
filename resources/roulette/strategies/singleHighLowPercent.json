@@ -1,11 +1,10 @@
 {
-    "redPercent": {
+    "highPercent": {
         "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,
-                "betType": "red",
-                "chipSize": 0.1,
+                "betType": "high",
                 "progression": [
                     0,
                     0,
@@ -22,10 +21,10 @@
             "stopWin": 1,
             "stopLoss": 8
         },
-        "trigger": {
+        "triggers": {
             "distribution": [
                 {
-                    "betType": "red",
+                    "betType": "high",
                     "sampleSize": 50,
                     "percentage": 25,
                     "action": "lowerEqual"
@@ -33,13 +32,12 @@
             ]
         }
     },
-    "blackPercent": {
+    "lowPercent": {
         "group": "singleMartingaleProgression",
         "bets": [
             {
                 "betSize": 0.1,
-                "betType": "black",
-                "chipSize": 0.1,
+                "betType": "low",
                 "progression": [
                     0,
                     0,
@@ -56,10 +54,10 @@
             "stopWin": 1,
             "stopLoss": 8
         },
-        "trigger": {
+        "triggers": {
             "distribution": [
                 {
-                    "betType": "black",
+                    "betType": "low",
                     "sampleSize": 50,
                     "percentage": 25,
                     "action": "lowerEqual"

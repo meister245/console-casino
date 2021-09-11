@@ -12,9 +12,8 @@
     ],
   },
   "include": [
-    "./src/client/*",
-    "./src/server/*",
     "./src/backtest/*",
+    "./src/server/*",
   ],
   "lib": [
     "es2018",

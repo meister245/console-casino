@@ -1,7 +1,9 @@
 const path = require('path')
 
 module.exports = {
-  entry: './src/client/bot/roulette.ts',
+  entry: {
+    playtechRoulette: ['./src/client/main/playtechRoulette.ts'],
+  }, 
   mode: 'production',
   module: {
     rules: [
@@ -16,7 +18,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js']
   },
   output: {
-    filename: 'client.min.js',
+    filename: 'client/[name].min.js',
     path: path.resolve(__dirname, 'dist')
   }
 }

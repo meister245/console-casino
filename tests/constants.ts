@@ -1,3 +1,8 @@
+import {
+  RouletteBet,
+  RouletteTriggerAction,
+} from "../src/server/roulette/enums";
+
 export const dataInit = {
   action: "init",
   betStrategy: "testStrategy",
@@ -23,4 +28,62 @@ export const dataReset = {
   betResult: "win",
   betMultiplier: 2,
   tableName: "testTable",
+};
+
+export const betStrategySingleBet = {
+  bets: [
+    {
+      betSize: 0.1,
+      betType: "high" as RouletteBet,
+      chipSize: 0.1,
+      progression: [0, 1, 2, 4, 8],
+    },
+  ],
+  limits: {
+    stopWin: 1,
+    stopLoss: 5,
+  },
+  minBalance: 20,
+  triggers: {
+    distribution: [
+      {
+        betType: "lineSeven" as RouletteBet,
+        sampleSize: 50,
+        percentage: 30,
+        action: "higherEqual" as RouletteTriggerAction,
+      },
+    ],
+  },
+};
+
+export const betStrategyMultiBet = {
+  bets: [
+    {
+      betSize: 0.1,
+      betType: "red" as RouletteBet,
+      chipSize: 0.1,
+      progression: [0, 1, 2, 4, 8],
+    },
+    {
+      betSize: 0.5,
+      betType: "low" as RouletteBet,
+      chipSize: 0.1,
+      progression: [1, 3, 2, 4, 5],
+    },
+  ],
+  limits: {
+    stopWin: 1,
+    stopLoss: 5,
+  },
+  minBalance: 20,
+  triggers: {
+    distribution: [
+      {
+        betType: "lineSeven" as RouletteBet,
+        sampleSize: 50,
+        percentage: 30,
+        action: "higherEqual" as RouletteTriggerAction,
+      },
+    ],
+  },
 };
