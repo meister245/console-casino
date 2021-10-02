@@ -3,34 +3,37 @@ import {
   RouletteTriggerAction,
 } from "../src/server/roulette/enums";
 
-export const dataInit = {
-  action: "init",
-  betStrategy: "testStrategy",
-  tableName: "testTable",
+export const testTableName = "unittestTable";
+export const testStrategyName = "unittestStrategy";
+export const testChipSize = [0.1, 0.2, 0.25, 0.5, 1, 2];
+
+export const betStrategyLowTriggerHighPercent = {
+  bets: [
+    {
+      betSize: 0.1,
+      betType: "low" as RouletteBet,
+      chipSize: 0.1,
+      progression: [0, 1, 2, 4, 8],
+    },
+  ],
+  limits: {
+    stopWin: 1,
+    stopLoss: 5,
+  },
+  minBalance: 20,
+  triggers: {
+    distribution: [
+      {
+        betType: "high" as RouletteBet,
+        sampleSize: 10,
+        percentage: 25,
+        action: "higherEqual" as RouletteTriggerAction,
+      },
+    ],
+  },
 };
 
-export const dataUpdate = {
-  action: "update",
-  betSize: 0.1,
-  tableName: "testTable",
-};
-
-export const dataSuspend = {
-  action: "suspend",
-  betStrategy: "testStrategy",
-  betSize: 0.2,
-  tableName: "testTable",
-};
-
-export const dataReset = {
-  action: "reset",
-  betStrategy: "testStrategy",
-  betResult: "win",
-  betMultiplier: 2,
-  tableName: "testTable",
-};
-
-export const betStrategySingleBet = {
+export const betStrategyHighTriggerLineSevenPercent = {
   bets: [
     {
       betSize: 0.1,
@@ -56,7 +59,7 @@ export const betStrategySingleBet = {
   },
 };
 
-export const betStrategyMultiBet = {
+export const betStrategyRedLowTriggerLineSevenPercent = {
   bets: [
     {
       betSize: 0.1,

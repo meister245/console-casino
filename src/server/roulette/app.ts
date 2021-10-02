@@ -108,13 +108,27 @@ app.post("/state/bet/", (req, res) => {
   };
 
   const state = tableState[tableName];
-  state.processBet(bets);
 
-  res.send(JSON.stringify({ success: true }));
+  if (state && state.gameState) {
+    state.processBet(bets);
+    res.send(JSON.stringify({ success: true }));
+  } else {
+    res.send(JSON.stringify({ success: false }));
+  }
+});
+
+app.get("/table/", (req, res) => {
+  res.set("Content-Type", "application/json");
+  res.send(JSON.stringify(tableNames, null, 2));
 });
 
 app.post("/table/assign/", (req, res) => {
   res.set("Content-Type", "application/json");
+
+  if (tableNames.length === 0) {
+    res.send(JSON.stringify({ success: false }));
+    return;
+  }
 
   const response = {
     success: true,
@@ -133,10 +147,16 @@ app.delete("/table/release/", (req, res) => {
     tableName: req.body.tableName,
   };
 
-  if (!tableNames.includes(tableName)) {
-    tableNames.push(tableName);
-    tableState[tableName] = undefined;
+  const isTableNameInConfig = config.tableNames.includes(tableName);
+  const isTableNameAssigned = !tableNames.includes(tableName);
+
+  if (!isTableNameInConfig || !isTableNameAssigned) {
+    res.send(JSON.stringify({ success: false }));
+    return;
   }
+
+  tableNames.push(tableName);
+  tableState[tableName] = undefined;
 
   res.send(JSON.stringify({ success: true }));
 });
