@@ -1,4 +1,4 @@
-import { logger } from "../common/logger";
+import { fileLogger as logger } from "../common/logger";
 import { config, strategies, utils } from "./app";
 import { roulettePayout } from "./constants";
 import { RouletteBet, RouletteGameResult } from "./enums";

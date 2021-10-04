@@ -1,5 +1,3 @@
-import { NextFunction } from "connect";
-import { Request, Response } from "express";
 import winston from "winston";
 
 const levels = {
@@ -23,6 +21,8 @@ const transports = [
   new winston.transports.File({ filename: "/var/tmp/console-casino.log" }),
 ];
 
+winston.addColors(colors);
+
 const format = winston.format.combine(
   winston.format.timestamp({
     format: () => new Date().toISOString().slice(0, 23),
@@ -33,24 +33,22 @@ const format = winston.format.combine(
   )
 );
 
-winston.addColors(colors);
+const getLogger = (
+  level?: string,
+  transports?: winston.transport[]
+): winston.Logger => {
+  const loggerLevel = level || "debug";
+  const loggerTransports = transports || [new winston.transports.Console()];
 
-const logger = winston.createLogger({
-  level: "info",
-  levels,
-  format,
-  transports,
-});
-
-const logRequest = (req: Request, res: Response, done: NextFunction): void => {
-  const logMessage = [`${req.method} ${req.url}`];
-
-  if (req.body) {
-    logMessage.push(JSON.stringify(req.body));
-  }
-
-  logger.info(logMessage.join(" - "));
-  done();
+  return winston.createLogger({
+    level: loggerLevel,
+    levels,
+    format,
+    transports: loggerTransports,
+  });
 };
 
-export { logger, logRequest };
+const consoleLogger = getLogger();
+const fileLogger = getLogger("info", transports);
+
+export { consoleLogger, fileLogger };

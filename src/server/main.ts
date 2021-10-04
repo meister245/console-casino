@@ -1,4 +1,4 @@
-import { logger } from "./common/logger";
+import { consoleLogger as logger } from "./common/logger";
 import { app, config, utils } from "./roulette/app";
 
 if (!utils.getEnv()) {

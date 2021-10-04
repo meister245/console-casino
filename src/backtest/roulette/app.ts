@@ -1,6 +1,6 @@
 import path = require("path");
 
-import { logger } from "../../server/common/logger";
+import { consoleLogger as logger } from "../../server/common/logger";
 import RouletteTableState from "../../server/roulette/state";
 import RouletteStats from "../../server/roulette/stats";
 import Utils from "../../server/roulette/util";
@@ -29,17 +29,16 @@ class RouletteBacktest {
   async run(): Promise<void> {
     let totalNumbers = 0;
 
-    const promises = [];
     const stats = new RouletteStats();
 
     for (const { numbers, filePath } of getBacktestNumbers()) {
       totalNumbers += numbers.length;
 
-      const tableName = filePath.split("/").pop();
-      promises.push(this.backtestProcess(stats, numbers, tableName));
-    }
+      logger.info(filePath);
 
-    await Promise.all(promises);
+      const tableName = filePath.split("/").pop();
+      await this.backtestProcess(stats, numbers, tableName);
+    }
 
     this.logResults(stats, totalNumbers);
 

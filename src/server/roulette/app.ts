@@ -1,7 +1,10 @@
 import express = require("express");
 import cors = require("cors");
 
-import { logRequest } from "../common/logger";
+import { NextFunction } from "connect";
+import { Request, Response } from "express";
+
+import { fileLogger as logger } from "../common/logger";
 import RouletteTableState from "./state";
 import RouletteStats from "./stats";
 import { RouletteBetSize } from "./types";
@@ -19,6 +22,17 @@ export const strategies = utils.getStrategies();
 
 const tableNames = [...config.tableNames];
 const tableState: { [item: string]: RouletteTableState } = {};
+
+const logRequest = (req: Request, res: Response, done: NextFunction): void => {
+  const logMessage = [`${req.method} ${req.url}`];
+
+  if (req.body) {
+    logMessage.push(JSON.stringify(req.body));
+  }
+
+  logger.info(logMessage.join(" - "));
+  done();
+};
 
 // workaround for WSL2 network bridge stuck connections
 app.use((req, res, next) => {
