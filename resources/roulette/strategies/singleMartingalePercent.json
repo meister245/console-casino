@@ -1,0 +1,218 @@
+{
+    "evenPercent": {
+        "group": "singleMartingaleProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "even",
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "triggers": {
+            "pattern": [
+                ["odd", "odd"]
+            ],
+            "distribution": [
+                {
+                    "betType": "even",
+                    "sampleSize": 50,
+                    "percentage": 25,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "oddPercent": {
+        "group": "singleMartingaleProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "odd",
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "triggers": {
+            "pattern": [
+                ["even", "even"]
+            ],
+            "distribution": [
+                {
+                    "betType": "odd",
+                    "sampleSize": 50,
+                    "percentage": 25,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "highPercent": {
+        "group": "singleMartingaleProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "high",
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "triggers": {
+            "pattern": [
+                ["low", "low"]
+            ],
+            "distribution": [
+                {
+                    "betType": "high",
+                    "sampleSize": 50,
+                    "percentage": 25,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "lowPercent": {
+        "group": "singleMartingaleProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "low",
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "triggers": {
+            "pattern": [
+                ["high", "high"]
+            ],
+            "distribution": [
+                {
+                    "betType": "low",
+                    "sampleSize": 50,
+                    "percentage": 25,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "redPercent": {
+        "group": "singleMartingaleProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "red",
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "pattern": [
+            ["black", "black"]
+        ],
+        "triggers": {
+            "distribution": [
+                {
+                    "betType": "red",
+                    "sampleSize": 50,
+                    "percentage": 25,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    },
+    "blackPercent": {
+        "group": "singleMartingaleProgression",
+        "bets": [
+            {
+                "betSize": 1.0,
+                "betType": "black",
+                "progression": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    4,
+                    8
+                ]
+            }
+        ],
+        "limits": {
+            "stopWin": 1,
+            "stopLoss": 8
+        },
+        "triggers": {
+            "pattern": [
+                ["red", "red"]
+            ],
+            "distribution": [
+                {
+                    "betType": "black",
+                    "sampleSize": 50,
+                    "percentage": 25,
+                    "action": "lowerEqual"
+                }
+            ]
+        }
+    }
+}
