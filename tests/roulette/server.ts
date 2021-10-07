@@ -3,7 +3,7 @@ import { Server } from "http";
 import sinon from "sinon";
 import request from "supertest";
 
-import { logger } from "../../src/server/common/logger";
+import { fileLogger as logger } from "../../src/server/common/logger";
 import { app, strategies, utils } from "../../src/server/roulette/app";
 import {
   betStrategyLowTriggerHighPercent,

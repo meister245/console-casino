@@ -93,23 +93,13 @@ export const isMatchingStrategy = (
   triggers: RouletteTriggers,
   numberHistory: number[]
 ): boolean => {
-  let triggerPatternMatching = false;
-  let triggerPercentageMatching = false;
+  const triggerPatternMatching = triggers.pattern
+    ? isPatternMatching(numberHistory, triggers.pattern)
+    : true;
 
-  if (triggers.pattern) {
-    triggerPatternMatching = isPatternMatching(numberHistory, triggers.pattern);
-  } else {
-    triggerPatternMatching = true;
-  }
-
-  if (triggers.distribution) {
-    triggerPercentageMatching = isPercentageMatching(
-      numberHistory,
-      triggers.distribution
-    );
-  } else {
-    triggerPercentageMatching = true;
-  }
+  const triggerPercentageMatching = triggers.distribution
+    ? isPercentageMatching(numberHistory, triggers.distribution)
+    : true;
 
   return triggerPatternMatching && triggerPercentageMatching;
 };

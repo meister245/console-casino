@@ -34,6 +34,7 @@ class DriverPlaytech extends DriverCommon {
         1000: "chipsPanel.chip100000",
       },
       roulette: {
+        straightZero: "betPlace.straight-0",
         even: "betPlace.spots50x50-even",
         odd: "betPlace.spots50x50-odd",
         red: "betPlace.spots50x50-red",

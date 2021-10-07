@@ -32,7 +32,7 @@ describe("Roulette triggers", () => {
       "lineNine",
     ]);
 
-    assert.deepStrictEqual(getWinTypes(0), []);
+    assert.deepStrictEqual(getWinTypes(0), ["straightZero"]);
     assert.deepStrictEqual(getWinTypes(66), []);
 
     done();

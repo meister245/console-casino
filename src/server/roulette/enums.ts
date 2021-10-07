@@ -1,4 +1,5 @@
 export enum RouletteBet {
+  STRAIGHT_ZERO = "straightZero",
   RED = "red",
   BLACK = "black",
   LOW = "low",
