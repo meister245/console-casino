@@ -28,12 +28,23 @@
             "stopLoss": 4
         },
         "triggers": {
+            "pattern": [
+                ["low"],
+                ["lineSeven"],
+                ["straightZero"]
+            ],
             "distribution": [
                 {
                     "betType": "lineSeven",
                     "sampleSize": 50,
-                    "percentage": 30,
+                    "percentage": 20,
                     "action": "higherEqual"
+                },
+                {
+                    "betType": "dozenThird",
+                    "sampleSize": 100,
+                    "percentage": 28,
+                    "action": "lowerEqual"
                 }
             ]
         }
@@ -67,12 +78,23 @@
             "stopLoss": 4
         },
         "triggers": {
+            "pattern": [
+                ["high"],
+                ["lineFive"],
+                ["straightZero"]
+            ],
             "distribution": [
                 {
                     "betType": "lineFive",
                     "sampleSize": 50,
-                    "percentage": 30,
+                    "percentage": 20,
                     "action": "higherEqual"
+                },
+                {
+                    "betType": "dozenFirst",
+                    "sampleSize": 100,
+                    "percentage": 28,
+                    "action": "lowerEqual"
                 }
             ]
         }

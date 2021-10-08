@@ -23,7 +23,10 @@
         },
         "triggers": {
             "pattern": [
-                ["odd", "odd"]
+                ["odd", "odd"],
+                ["odd", "straightZero"],
+                ["straightZero", "odd"],
+                ["straightZero", "straightZero"]
             ],
             "distribution": [
                 {
@@ -59,7 +62,10 @@
         },
         "triggers": {
             "pattern": [
-                ["even", "even"]
+                ["even", "even"],
+                ["even", "straightZero"],
+                ["straightZero", "even"],
+                ["straightZero", "straightZero"]
             ],
             "distribution": [
                 {
@@ -95,7 +101,10 @@
         },
         "triggers": {
             "pattern": [
-                ["low", "low"]
+                ["low", "low"],
+                ["low", "straightZero"],
+                ["straightZero", "low"],
+                ["straightZero", "straightZero"]
             ],
             "distribution": [
                 {
@@ -131,7 +140,10 @@
         },
         "triggers": {
             "pattern": [
-                ["high", "high"]
+                ["high", "high"],
+                ["high", "straightZero"],
+                ["straightZero", "high"],
+                ["straightZero", "straightZero"]
             ],
             "distribution": [
                 {
@@ -166,7 +178,10 @@
             "stopLoss": 8
         },
         "pattern": [
-            ["black", "black"]
+            ["black", "black"],
+            ["black", "straightZero"],
+            ["straightZero", "black"],
+            ["straightZero", "straightZero"]
         ],
         "triggers": {
             "distribution": [
@@ -203,7 +218,10 @@
         },
         "triggers": {
             "pattern": [
-                ["red", "red"]
+                ["red", "red"],
+                ["red", "straightZero"],
+                ["straightZero", "red"],
+                ["straightZero", "straightZero"]
             ],
             "distribution": [
                 {
