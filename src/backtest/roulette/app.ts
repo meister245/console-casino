@@ -13,6 +13,21 @@ function* getBacktestNumbers() {
   }
 }
 
+type BacktestTableResultDetails = {
+  totalDays: number;
+  averageProfitPerDay: number;
+  averageProfitPerWeek: number;
+  averageProfitPerMonth: number;
+};
+
+type BacktestTableResults = {
+  [item: number]: BacktestTableResultDetails;
+};
+
+type BacktestResults = {
+  tableCount: BacktestTableResults;
+};
+
 class RouletteBacktest {
   balance: number;
   chipSize: number[];
@@ -40,7 +55,7 @@ class RouletteBacktest {
       await this.backtestProcess(stats, numbers, tableName);
     }
 
-    this.logResults(stats, totalNumbers);
+    stats["backtest"] = this.calculateBacktestResults(stats, totalNumbers);
 
     const fileName = ["backtest", Math.floor(Date.now() / 1000)].join("-");
 
@@ -67,56 +82,38 @@ class RouletteBacktest {
     }
   }
 
-  logResults(stats: RouletteStats, totalNumbers: number): void {
-    const totalSeconds = totalNumbers * this.averageSecondsPerGame;
+  calculateBacktestResults(
+    stats: RouletteStats,
+    totalNumbers: number
+  ): BacktestResults {
+    const totalDays =
+      (totalNumbers * this.averageSecondsPerGame) / 60 / 60 / 24;
 
-    const totalDays = totalSeconds / 60 / 60 / 24;
-    const totalDaysParallel = totalDays / this.numberOfTables;
+    const calculateTableParallelResult = (days: number) => {
+      const totalDaysParallel = totalDays / days;
+      const averageProfitPerDayParallel = stats.totalProfit / totalDaysParallel;
 
-    const averageProfitPerDay = stats.totalProfit / totalDays;
-    const averageProfitPerDayParallel = stats.totalProfit / totalDaysParallel;
+      return {
+        totalDays: parseFloat(totalDaysParallel.toFixed(1)),
+        averageProfitPerDay: parseFloat(averageProfitPerDayParallel.toFixed(2)),
+        averageProfitPerWeek: parseFloat(
+          (averageProfitPerDayParallel * 7).toFixed(2)
+        ),
+        averageProfitPerMonth: parseFloat(
+          (averageProfitPerDayParallel * 30).toFixed(2)
+        ),
+      };
+    };
 
-    const averageGamesPerDay = stats.totalGames / totalDays;
-    const averageGamesPerDayParallel = stats.totalGames / totalDaysParallel;
-
-    logger.info(`=== total ===`);
-    logger.info(`total games - ${stats.totalGames}`);
-    logger.info(`total profit - ${stats.totalProfit}`);
-    logger.info(`total number of days - 1 table - ${totalDays.toFixed(1)}`);
-    logger.info(
-      `total number of days - 6 table - ${totalDaysParallel.toFixed(1)}`
-    );
-
-    logger.info(`=== average games ===`);
-    logger.info(`per day - 1 table - ${averageGamesPerDay.toFixed(2)}`);
-    logger.info(
-      `per day - ${
-        this.numberOfTables
-      } table - ${averageGamesPerDayParallel.toFixed(2)}`
-    );
-
-    logger.info(`=== average profit ===`);
-    logger.info(`per day - 1 table - ${averageProfitPerDay.toFixed(2)}`);
-    logger.info(`per week - 1 table - ${(averageProfitPerDay * 7).toFixed(2)}`);
-    logger.info(
-      `per month - 1 table - ${(averageProfitPerDay * 30).toFixed(2)}`
-    );
-
-    logger.info(
-      `per day - ${
-        this.numberOfTables
-      } tables - ${averageProfitPerDayParallel.toFixed(2)}`
-    );
-    logger.info(
-      `per week - ${this.numberOfTables} tables - ${(
-        averageProfitPerDayParallel * 7
-      ).toFixed(2)}`
-    );
-    logger.info(
-      `per month - ${this.numberOfTables} tables - ${(
-        averageProfitPerDayParallel * 30
-      ).toFixed(2)}`
-    );
+    return {
+      tableCount: {
+        1: calculateTableParallelResult(1),
+        6: calculateTableParallelResult(6),
+        12: calculateTableParallelResult(12),
+        20: calculateTableParallelResult(20),
+        30: calculateTableParallelResult(30),
+      },
+    };
   }
 }
 

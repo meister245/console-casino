@@ -34,6 +34,8 @@ class RouletteStats implements RouletteStatsProps {
   strategyStats: RouletteStrategyStats;
   strategyGroupStats: RouletteStrategyStats;
 
+  backtest?: unknown;
+
   constructor() {
     this.dateStarted = new Date();
     this.totalProfit = 0;
