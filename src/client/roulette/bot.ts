@@ -40,10 +40,14 @@ class RouletteBot extends RESTClient {
     const driver = getDriver(driverName);
     const tableManager = new RouletteTableManager(driver);
 
+    await sleep(5000);
+
     const { tableName, lobbyUrl, dryRun } = await this.setupTable(
       driver,
       tableManager
     );
+
+    await sleep(3000);
 
     tableManager.logMessage(dryRun ? "DEVELOPMENT" : "PRODUCTION");
 
