@@ -4,7 +4,7 @@ import sinon from "sinon";
 import request from "supertest";
 
 import { fileLogger as logger } from "../../src/server/common/logger";
-import { app, strategies, utils } from "../../src/server/roulette/app";
+import { app, config, strategies, utils } from "../../src/server/roulette/app";
 import {
   betStrategyLowTriggerHighPercent,
   testChipSize,
@@ -98,5 +98,87 @@ describe("Roulette server requests", () => {
         if (err) throw err;
         done();
       });
+  });
+
+  it("table names can be retrieved", (done) => {
+    request(app)
+      .get("/table")
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, config.tableNames);
+
+        if (err) throw err;
+        done();
+      });
+  });
+
+  it("table can be assigned", (done) => {
+    const assignedTableName = config.tableNames[0];
+
+    request(app)
+      .post("/table/assign/")
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, {
+          success: true,
+          tableName: assignedTableName,
+          lobbyUrl: config.lobbyUrl,
+          dryRun: config.dryRun,
+        });
+
+        if (err) throw err;
+      });
+
+    const expectedTableNames = config.tableNames.slice(1);
+
+    request(app)
+      .get("/table")
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, expectedTableNames);
+
+        if (err) throw err;
+      });
+
+    done();
+  });
+
+  it("table can be released", (done) => {
+    const releasedTableName = config.tableNames[0];
+
+    request(app)
+      .delete("/table/release/")
+      .send({
+        tableName: releasedTableName,
+      })
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, {
+          success: true,
+        });
+
+        if (err) throw err;
+      });
+
+    const expectedTableNames = [
+      ...config.tableNames.slice(1),
+      releasedTableName,
+    ];
+
+    request(app)
+      .get("/table")
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, expectedTableNames);
+
+        if (err) throw err;
+      });
+
+    done();
   });
 });

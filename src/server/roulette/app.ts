@@ -166,11 +166,9 @@ app.delete("/table/release/", (req, res) => {
 
   if (!isTableNameInConfig || !isTableNameAssigned) {
     res.send(JSON.stringify({ success: false }));
-    return;
+  } else {
+    tableNames.push(tableName);
+    tableState[tableName] = undefined;
+    res.send(JSON.stringify({ success: true }));
   }
-
-  tableNames.push(tableName);
-  tableState[tableName] = undefined;
-
-  res.send(JSON.stringify({ success: true }));
 });
