@@ -19,9 +19,8 @@ class RouletteTableManager extends RESTClient {
   private running: boolean;
   private driver: Playtech;
 
+  private leaseTime: number;
   private lastLogMessage: null | string;
-  private timeResetDiff: number;
-  private timeStarted: number;
 
   state: TableState;
 
@@ -32,13 +31,16 @@ class RouletteTableManager extends RESTClient {
     this.running = true;
     this.state = TableState.SETUP;
 
+    this.leaseTime = 0;
     this.lastLogMessage = null;
-    this.timeStarted = Math.floor(Date.now() / 1000);
-    this.timeResetDiff = 60 * this.getRandomRangeNumber(18, 23);
   }
 
   isActive(): boolean {
     return this.running;
+  }
+
+  setLeaseTime(value: number): void {
+    this.leaseTime = value;
   }
 
   setTableState(state: TableState): void {
@@ -77,12 +79,10 @@ class RouletteTableManager extends RESTClient {
   }
 
   async isReloadRequired(): Promise<boolean> {
-    if (!this.state) {
-      const timeDiff = Math.floor(Date.now() / 1000) - this.timeStarted;
+    const currentTime = Math.floor(Date.now() / 1000);
 
-      if (timeDiff > this.timeResetDiff) {
-        return true;
-      }
+    if (!this.state && currentTime > this.leaseTime) {
+      return true;
     }
 
     for (const msg of this.driver.getMessages()) {

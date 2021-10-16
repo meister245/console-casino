@@ -7,20 +7,21 @@ import { Request, Response } from "express";
 import { fileLogger as logger } from "../common/logger";
 import RouletteTableState from "./state";
 import RouletteStats from "./stats";
+import RouletteTable from "./table";
 import { RouletteBetSize } from "./types";
 import RouletteUtils, { RouletteDriver } from "./util";
 
 export const utils = new RouletteUtils();
-export const stats = new RouletteStats();
-
-stats.restoreStats();
 
 export const app = express();
-
 export const config = utils.getConfig();
 export const strategies = utils.getStrategies();
 
-const tableNames = [...config.tableNames];
+export const stats = new RouletteStats();
+export const table = new RouletteTable(config);
+
+stats.restoreStats();
+
 const tableState: { [item: string]: RouletteTableState } = {};
 
 const logRequest = (req: Request, res: Response, done: NextFunction): void => {
@@ -123,32 +124,47 @@ app.post("/state/bet/", (req, res) => {
 
   const state = tableState[tableName];
 
+  let success = false;
+
   if (state && state.gameState) {
     state.processBet(bets);
-    res.send(JSON.stringify({ success: true }));
-  } else {
-    res.send(JSON.stringify({ success: false }));
+    success = true;
   }
+
+  res.send(JSON.stringify({ success }, null, 2));
 });
 
 app.get("/table/", (req, res) => {
   res.set("Content-Type", "application/json");
-  res.send(JSON.stringify(tableNames, null, 2));
+  res.send(JSON.stringify({ success: true, lease: table.getLease() }, null, 2));
 });
 
 app.post("/table/assign/", (req, res) => {
   res.set("Content-Type", "application/json");
 
-  if (tableNames.length === 0) {
-    res.send(JSON.stringify({ success: false }));
-    return;
-  }
+  const { leaseTime, tableName } = table.assignTable();
+
+  const response = {
+    success: tableName ? true : false,
+    tableName: tableName,
+    leaseTime: leaseTime,
+    lobbyUrl: config.lobbyUrl,
+    dryRun: config.dryRun,
+  };
+
+  res.send(JSON.stringify(response, null, 2));
+});
+
+app.post("/table/extend/", (req, res) => {
+  res.set("Content-Type", "application/json");
+
+  const { tableName } = {
+    tableName: req.body.tableName,
+  };
 
   const response = {
     success: true,
-    tableName: tableNames.shift(),
-    lobbyUrl: config.lobbyUrl,
-    dryRun: config.dryRun,
+    leaseTime: table.extendLease(tableName),
   };
 
   res.send(JSON.stringify(response, null, 2));
@@ -161,14 +177,6 @@ app.delete("/table/release/", (req, res) => {
     tableName: req.body.tableName,
   };
 
-  const isTableNameInConfig = config.tableNames.includes(tableName);
-  const isTableNameAssigned = !tableNames.includes(tableName);
-
-  if (!isTableNameInConfig || !isTableNameAssigned) {
-    res.send(JSON.stringify({ success: false }));
-  } else {
-    tableNames.push(tableName);
-    tableState[tableName] = undefined;
-    res.send(JSON.stringify({ success: true }));
-  }
+  table.releaseTable(tableName);
+  res.send(JSON.stringify({ success: true }, null, 2));
 });

@@ -81,8 +81,10 @@ class RouletteBot extends RESTClient {
     let isTableFound = false;
 
     while (this.running && !isTableFound) {
-      const { success, tableName, lobbyUrl, dryRun } =
+      const { success, tableName, lobbyUrl, dryRun, leaseTime } =
         await this.postTableAssign();
+
+      tableManager.setLeaseTime(leaseTime);
 
       if (!success) {
         tableManager.logMessage("network error");

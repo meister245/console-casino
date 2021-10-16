@@ -35,6 +35,11 @@ type RequestTableAssignResponse = {
   dryRun: boolean;
   lobbyUrl?: string;
   tableName?: string;
+  leaseTime?: number;
+} & RequestResponse;
+
+type RequestTableExtendResponse = {
+  leaseTime: number;
 } & RequestResponse;
 
 export const sleep = (ms: number): Promise<void> => {
@@ -132,6 +137,30 @@ class RESTClient {
     return fetch(`${serverUrl}/table/assign/`, {
       method: "POST",
       mode: "cors",
+    })
+      .then((resp) => resp.json())
+      .catch(onError);
+  }
+
+  async postTableExtend(
+    params: RequestParams,
+    retryTimes = 3
+  ): Promise<RequestTableExtendResponse> {
+    const onError = async (err: Error) => {
+      console.log(err);
+
+      if (retryTimes === 0) {
+        throw err;
+      }
+
+      return sleep(1000).then(() => this.postTableAssign(retryTimes - 1));
+    };
+
+    return fetch(`${serverUrl}/table/extend/`, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
     })
       .then((resp) => resp.json())
       .catch(onError);

@@ -4,7 +4,13 @@ import sinon from "sinon";
 import request from "supertest";
 
 import { fileLogger as logger } from "../../src/server/common/logger";
-import { app, config, strategies, utils } from "../../src/server/roulette/app";
+import {
+  app,
+  config,
+  strategies,
+  table,
+  utils,
+} from "../../src/server/roulette/app";
 import {
   betStrategyLowTriggerHighPercent,
   testChipSize,
@@ -100,30 +106,33 @@ describe("Roulette server requests", () => {
       });
   });
 
-  it("table names can be retrieved", (done) => {
+  it("table leases can be retrieved", (done) => {
     request(app)
       .get("/table")
       .expect("Content-Type", /json/)
       .end((err, res) => {
         assert.strictEqual(res.status, 200);
-        assert.deepStrictEqual(res.body, config.tableNames);
+        assert.deepStrictEqual(res.body, { lease: {}, success: true });
 
         if (err) throw err;
         done();
       });
   });
 
-  it("table can be assigned", (done) => {
-    const assignedTableName = config.tableNames[0];
+  it("table lease can be assigned", (done) => {
+    const tableName = config.tableNames[0];
 
     request(app)
       .post("/table/assign/")
       .expect("Content-Type", /json/)
       .end((err, res) => {
+        const leases = table.getLease();
+
         assert.strictEqual(res.status, 200);
         assert.deepStrictEqual(res.body, {
           success: true,
-          tableName: assignedTableName,
+          tableName: tableName,
+          leaseTime: leases[tableName],
           lobbyUrl: config.lobbyUrl,
           dryRun: config.dryRun,
         });
@@ -131,14 +140,15 @@ describe("Roulette server requests", () => {
         if (err) throw err;
       });
 
-    const expectedTableNames = config.tableNames.slice(1);
-
     request(app)
       .get("/table")
       .expect("Content-Type", /json/)
       .end((err, res) => {
         assert.strictEqual(res.status, 200);
-        assert.deepStrictEqual(res.body, expectedTableNames);
+        assert.deepStrictEqual(res.body, {
+          lease: table.getLease(),
+          success: true,
+        });
 
         if (err) throw err;
       });
@@ -146,14 +156,50 @@ describe("Roulette server requests", () => {
     done();
   });
 
-  it("table can be released", (done) => {
-    const releasedTableName = config.tableNames[0];
+  it("table lease can be extended", (done) => {
+    const leases = table.getLease();
+    const tableName = config.tableNames[0];
+
+    request(app)
+      .post("/table/extend/")
+      .send({ tableName })
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        const updatedLeases = table.getLease();
+
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, {
+          success: true,
+          leaseTime: updatedLeases[tableName],
+        });
+
+        assert(leases[tableName] < updatedLeases[tableName]);
+
+        if (err) throw err;
+      });
+
+    request(app)
+      .get("/table")
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.strictEqual(res.status, 200);
+        assert.deepStrictEqual(res.body, {
+          lease: table.getLease(),
+          success: true,
+        });
+
+        if (err) throw err;
+      });
+
+    done();
+  });
+
+  it("table lease can be released", (done) => {
+    const tableName = config.tableNames[0];
 
     request(app)
       .delete("/table/release/")
-      .send({
-        tableName: releasedTableName,
-      })
+      .send({ tableName })
       .expect("Content-Type", /json/)
       .end((err, res) => {
         assert.strictEqual(res.status, 200);
@@ -164,17 +210,12 @@ describe("Roulette server requests", () => {
         if (err) throw err;
       });
 
-    const expectedTableNames = [
-      ...config.tableNames.slice(1),
-      releasedTableName,
-    ];
-
     request(app)
       .get("/table")
       .expect("Content-Type", /json/)
       .end((err, res) => {
         assert.strictEqual(res.status, 200);
-        assert.deepStrictEqual(res.body, expectedTableNames);
+        assert.deepStrictEqual(res.body, { lease: {}, success: true });
 
         if (err) throw err;
       });
