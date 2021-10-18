@@ -29,7 +29,7 @@ export type RouletteConfig = {
   dryRun: boolean;
   stopOnLoss: boolean;
   driverName: string;
-  lobbyUrl: string;
+  resetUrl: string;
   tableNames: string[];
   backtestCollection?: boolean;
   backtestCollectionInterval?: number;

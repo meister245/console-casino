@@ -19,6 +19,7 @@
     ],
     "ignorePatterns": [
         "webpack.config.js",
+        "src/scripts/*.js",
         "dist/**/*.js"
     ]
 }

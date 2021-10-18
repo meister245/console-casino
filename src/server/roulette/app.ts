@@ -148,7 +148,7 @@ app.post("/table/assign/", (req, res) => {
     success: tableName ? true : false,
     tableName: tableName,
     leaseTime: leaseTime,
-    lobbyUrl: config.lobbyUrl,
+    resetUrl: config.resetUrl,
     dryRun: config.dryRun,
   };
 

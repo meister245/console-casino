@@ -8,7 +8,7 @@ export enum RouletteDriver {
 
 type TableSetupParams = {
   dryRun: boolean;
-  lobbyUrl: string;
+  resetUrl: string;
   tableName: string;
 };
 
@@ -42,7 +42,7 @@ class RouletteBot extends RESTClient {
 
     await sleep(5000);
 
-    const { tableName, lobbyUrl, dryRun } = await this.setupTable(
+    const { tableName, resetUrl, dryRun } = await this.setupTable(
       driver,
       tableManager
     );
@@ -53,7 +53,7 @@ class RouletteBot extends RESTClient {
 
     while (this.running && tableName) {
       if (await tableManager.isReloadRequired()) {
-        await tableManager.reload(tableName, lobbyUrl);
+        await tableManager.reload(tableName, resetUrl);
       }
 
       if (driver.getDealerName()) {
@@ -81,7 +81,7 @@ class RouletteBot extends RESTClient {
     let isTableFound = false;
 
     while (this.running && !isTableFound) {
-      const { success, tableName, lobbyUrl, dryRun, leaseTime } =
+      const { success, tableName, resetUrl, dryRun, leaseTime } =
         await this.postTableAssign();
 
       tableManager.setLeaseTime(leaseTime);
@@ -103,19 +103,19 @@ class RouletteBot extends RESTClient {
       if (!isTableFound) {
         tableManager.logMessage(`table offline`);
         await sleep(60 * 10 * 1000);
-        await tableManager.reload(tableName, lobbyUrl);
+        await tableManager.reload(tableName, resetUrl);
         this.stop();
         return;
       }
 
       if (await tableManager.isReloadRequired()) {
         await sleep(60 * 1000);
-        await tableManager.reload(tableName, lobbyUrl);
+        await tableManager.reload(tableName, resetUrl);
         this.stop();
         return;
       }
 
-      return { tableName, lobbyUrl, dryRun };
+      return { tableName, resetUrl, dryRun };
     }
   }
 }

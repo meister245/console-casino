@@ -33,7 +33,7 @@ type RequestStateUpdateResponse = {
 
 type RequestTableAssignResponse = {
   dryRun: boolean;
-  lobbyUrl?: string;
+  resetUrl?: string;
   tableName?: string;
   leaseTime?: number;
 } & RequestResponse;

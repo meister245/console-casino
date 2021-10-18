@@ -133,7 +133,7 @@ describe("Roulette server requests", () => {
           success: true,
           tableName: tableName,
           leaseTime: leases[tableName],
-          lobbyUrl: config.lobbyUrl,
+          resetUrl: config.resetUrl,
           dryRun: config.dryRun,
         });
 

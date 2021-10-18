@@ -50,10 +50,10 @@ class RouletteTableManager extends RESTClient {
   getRandomRangeNumber = (min: number, max: number): number =>
     Math.floor(Math.random() * (max - min)) + min;
 
-  async reload(tableName: string, lobbyUrl: string): Promise<void> {
+  async reload(tableName: string, resetUrl: string): Promise<void> {
     this.running = false;
     await this.deleteTableRelease({ tableName });
-    window.location.href = lobbyUrl;
+    window.location.href = resetUrl;
   }
 
   async runState(): Promise<void> {
