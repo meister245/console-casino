@@ -1,15 +1,20 @@
 import Playtech from "../../driver/playtech";
-import RouletteTableManager from "./manager";
+import { messageRegexInactive, messageRegexInProgress } from "../constants";
 import RESTClient, { sleep } from "./rest";
+import RouletteTableManager from "./table";
 
 export enum RouletteDriver {
   PLAYTECH = "playtech",
 }
 
-type TableSetupParams = {
-  dryRun: boolean;
-  resetUrl: string;
-  tableName: string;
+let lastLogMessage = "";
+
+const logMessage = (msg: string): void => {
+  if (lastLogMessage !== msg) {
+    const logMsg = ["console-casino", "bot-manager", msg];
+    console.log(logMsg.join(" - "));
+    lastLogMessage = msg;
+  }
 };
 
 const getDriver = (driverName: RouletteDriver): Playtech => {
@@ -23,6 +28,11 @@ const getDriver = (driverName: RouletteDriver): Playtech => {
 
 class RouletteBot extends RESTClient {
   private running: boolean;
+
+  dryRun: boolean;
+  leaseTime: number;
+  resetUrl: string;
+  tableName: string;
 
   constructor() {
     super();
@@ -41,82 +51,115 @@ class RouletteBot extends RESTClient {
     const tableManager = new RouletteTableManager(driver);
 
     await sleep(5000);
+    await this.setupTable(driver, tableManager);
 
-    const { tableName, resetUrl, dryRun } = await this.setupTable(
-      driver,
-      tableManager
-    );
+    logMessage(this.dryRun ? "DEVELOPMENT" : "PRODUCTION");
+
+    const currentTime = Math.floor(Date.now() / 1000);
+    const timeDiff = this.leaseTime - currentTime;
+
+    logMessage(`table will be reset in ${timeDiff} seconds`);
 
     await sleep(3000);
 
-    tableManager.logMessage(dryRun ? "DEVELOPMENT" : "PRODUCTION");
-
-    while (this.running && tableName) {
-      if (await tableManager.isReloadRequired()) {
-        await tableManager.reload(tableName, resetUrl);
+    while (this.running && this.tableName) {
+      if (await this.isReloadRequired(tableManager)) {
+        await this.reload(tableManager);
       }
 
-      if (driver.getDealerName()) {
+      if (tableManager.isActive()) {
         await tableManager.runState();
       }
 
       await sleep(1500);
     }
 
-    tableManager.logMessage("bot process terminated");
+    logMessage("terminated process");
   }
 
   stop(): void {
     this.running = false;
   }
 
+  reset(): void {
+    this.dryRun = undefined;
+    this.leaseTime = undefined;
+    this.resetUrl = undefined;
+    this.tableName = undefined;
+  }
+
+  async assignTable(): Promise<void> {
+    const { success, tableName, resetUrl, dryRun, leaseTime } =
+      await this.postTableAssign();
+
+    if (!success) {
+      logMessage("network error");
+      await sleep(60 * 1000);
+    } else if (!tableName) {
+      logMessage("no table can be assigned");
+      await sleep(60 * 1000 * 5);
+    } else {
+      this.dryRun = dryRun;
+      this.leaseTime = leaseTime;
+      this.resetUrl = resetUrl;
+      this.tableName = tableName;
+    }
+  }
+
   async setupTable(
     driver: Playtech,
     tableManager: RouletteTableManager
-  ): Promise<TableSetupParams> {
+  ): Promise<void> {
     while (driver.getLobbyTables().length === 0) {
+      logMessage("waiting for lobby tables");
       await sleep(1500);
     }
 
-    let isTableFound = false;
-
-    while (this.running && !isTableFound) {
-      const { success, tableName, resetUrl, dryRun, leaseTime } =
-        await this.postTableAssign();
-
-      tableManager.setLeaseTime(leaseTime);
-
-      if (!success) {
-        tableManager.logMessage("network error");
-        await sleep(5000);
-        continue;
-      }
-
-      if (!tableName) {
-        tableManager.logMessage("no free tables");
-        this.stop();
-        return;
-      }
-
-      isTableFound = driver.navigateLobbyTable(tableName);
-
-      if (!isTableFound) {
-        tableManager.logMessage(`table offline`);
-        await sleep(60 * 10 * 1000);
-        await tableManager.reload(tableName, resetUrl);
-        this.stop();
-        return;
-      }
-
-      if (await tableManager.isReloadRequired()) {
-        await sleep(60 * 1000);
-        await tableManager.reload(tableName, resetUrl);
-        this.stop();
-        return;
-      }
-
-      return { tableName, resetUrl, dryRun };
+    while (!this.tableName) {
+      await this.assignTable();
     }
+
+    if (!driver.navigateLobbyTable(this.tableName)) {
+      logMessage(`table ${this.tableName} not found`);
+      await sleep(60 * 1000 * 10);
+      await this.reload(tableManager);
+    }
+  }
+
+  async reload(tableManager: RouletteTableManager): Promise<void> {
+    logMessage("table reload initiated");
+
+    try {
+      await this.deleteTableRelease({ tableName: this.tableName });
+      window.location.href = this.resetUrl;
+    } catch {
+      logMessage("error while releasing table");
+    } finally {
+      tableManager.stop();
+    }
+  }
+
+  async isReloadRequired(tableManager: RouletteTableManager): Promise<boolean> {
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (!tableManager.isStrategyActive && currentTime > this.leaseTime) {
+      logMessage("lease time expired");
+      return true;
+    }
+
+    for (const msg of tableManager.driver.getMessages()) {
+      if (msg && msg.match(messageRegexInactive)) {
+        logMessage("table has become inactive");
+        return true;
+      }
+
+      if (msg && msg.match(messageRegexInProgress)) {
+        logMessage("table session interrupted");
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 

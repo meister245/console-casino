@@ -1,5 +1,4 @@
 import Playtech from "../../driver/playtech";
-import { messageRegexInactive, messageRegexInProgress } from "../constants";
 import RESTClient from "./rest";
 
 enum TableMessage {
@@ -15,45 +14,46 @@ enum TableState {
   SETUP = "stage-setup",
 }
 
+let lastLogMessage = "";
+
+const logMessage = (msg: string): void => {
+  if (lastLogMessage !== msg) {
+    const logMessage = ["console-casino", "table-manager", msg];
+    console.log(logMessage.join(" - "));
+    lastLogMessage = msg;
+  }
+};
+
 class RouletteTableManager extends RESTClient {
   private running: boolean;
-  private driver: Playtech;
 
-  private leaseTime: number;
-  private lastLogMessage: null | string;
-
+  leaseTime: number;
+  driver: Playtech;
   state: TableState;
+  isStrategyActive: boolean;
 
   constructor(driver: Playtech) {
     super();
 
-    this.driver = driver;
     this.running = true;
-    this.state = TableState.SETUP;
+    this.isStrategyActive = false;
 
     this.leaseTime = 0;
-    this.lastLogMessage = null;
+    this.driver = driver;
+    this.state = TableState.SETUP;
   }
 
   isActive(): boolean {
     return this.running;
   }
 
-  setLeaseTime(value: number): void {
-    this.leaseTime = value;
+  stop(): void {
+    this.running = false;
+    logMessage("terminated process");
   }
 
   setTableState(state: TableState): void {
     this.state = state;
-  }
-
-  getRandomRangeNumber = (min: number, max: number): number =>
-    Math.floor(Math.random() * (max - min)) + min;
-
-  async reload(tableName: string, resetUrl: string): Promise<void> {
-    this.running = false;
-    await this.deleteTableRelease({ tableName });
-    window.location.href = resetUrl;
   }
 
   async runState(): Promise<void> {
@@ -78,30 +78,8 @@ class RouletteTableManager extends RESTClient {
     }
   }
 
-  async isReloadRequired(): Promise<boolean> {
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    if (!this.state && currentTime > this.leaseTime) {
-      return true;
-    }
-
-    for (const msg of this.driver.getMessages()) {
-      if (msg && msg.match(messageRegexInactive)) {
-        this.logMessage("table inactive");
-        return true;
-      }
-
-      if (msg && msg.match(messageRegexInProgress)) {
-        this.logMessage("table session unfinished");
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   async runStateSetup(dealerMessage: TableMessage): Promise<void> {
-    this.logMessage("waiting for next spin");
+    logMessage("waiting for next spin");
 
     if (dealerMessage === TableMessage.WAIT) {
       const data = {
@@ -119,7 +97,7 @@ class RouletteTableManager extends RESTClient {
   }
 
   async runStateBet(dealerMessage: TableMessage): Promise<void> {
-    this.logMessage("waiting to be able to place bets");
+    logMessage("waiting to be able to place bets");
 
     const expectedMessages = [TableMessage.BETS, TableMessage.LAST_BETS];
 
@@ -133,8 +111,10 @@ class RouletteTableManager extends RESTClient {
       const { success, bets, clicks, chipSize, strategyName } =
         await this.postStateUpdate(data);
 
+      this.isStrategyActive = bets ? true : false;
+
       if (success && bets) {
-        this.logMessage(`bet strategy: ${strategyName}`);
+        logMessage(`bet strategy: ${strategyName}`);
         this.submitBets(bets, clicks, chipSize);
       }
 
@@ -143,7 +123,7 @@ class RouletteTableManager extends RESTClient {
   }
 
   async runStateWait(dealerMessage: TableMessage): Promise<void> {
-    this.logMessage("waiting for next round");
+    logMessage("waiting for next round");
 
     const expectedMessages = [TableMessage.EMPTY, TableMessage.WAIT];
 
@@ -174,17 +154,8 @@ class RouletteTableManager extends RESTClient {
       });
     }
 
-    this.logMessage(`bets: ${Object.keys(bets).toString()}`);
-    this.logMessage(`total: ${totalBetSize.toFixed(2)}`);
-  }
-
-  logMessage(msg: string): void {
-    const logMessage = ["console-casino", this.state, msg];
-
-    if (logMessage.toString() !== this.lastLogMessage) {
-      this.lastLogMessage = logMessage.toString();
-      console.log(logMessage.join(" - "));
-    }
+    logMessage(`bets: ${Object.keys(bets).toString()}`);
+    logMessage(`total: ${totalBetSize.toFixed(2)}`);
   }
 }
 
