@@ -27,20 +27,28 @@ const logMessage = (msg: string): void => {
 class RouletteTableManager extends RESTClient {
   private running: boolean;
 
+  isStrategyActive: boolean;
+  isLeaseExtension: boolean;
+
   leaseTime: number;
   driver: Playtech;
   state: TableState;
-  isStrategyActive: boolean;
 
   constructor(driver: Playtech) {
     super();
 
     this.running = true;
+
     this.isStrategyActive = false;
+    this.isLeaseExtension = false;
 
     this.leaseTime = 0;
     this.driver = driver;
     this.state = TableState.SETUP;
+  }
+
+  toggleExtension(): void {
+    this.isLeaseExtension = !this.isLeaseExtension;
   }
 
   isActive(): boolean {
@@ -152,6 +160,8 @@ class RouletteTableManager extends RESTClient {
         bets: bets,
         tableName: this.driver.getTableName(),
       });
+
+      this.toggleExtension();
     }
 
     logMessage(`bets: ${Object.keys(bets).toString()}`);

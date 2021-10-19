@@ -37,8 +37,14 @@ class RouletteTable {
   }
 
   extendLease(tableName: string): number {
+    const maxExtendedLeaseTime = Math.floor(Date.now() / 1000) + 60 * 5;
+
     if (Object.keys(this.tableLease).includes(tableName)) {
-      this.tableLease[tableName] += 60 * 10;
+      const timeExtension = maxExtendedLeaseTime - this.tableLease[tableName];
+
+      if (maxExtendedLeaseTime > this.tableLease[tableName]) {
+        this.tableLease[tableName] += timeExtension;
+      }
     }
 
     return this.tableLease[tableName];

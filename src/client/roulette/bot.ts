@@ -71,6 +71,10 @@ class RouletteBot extends RESTClient {
         await tableManager.runState();
       }
 
+      if (tableManager.isLeaseExtension) {
+        await this.extendTableLease(tableManager, driver);
+      }
+
       await sleep(1500);
     }
 
@@ -86,6 +90,26 @@ class RouletteBot extends RESTClient {
     this.leaseTime = undefined;
     this.resetUrl = undefined;
     this.tableName = undefined;
+  }
+
+  async extendTableLease(
+    tableManager: RouletteTableManager,
+    driver: Playtech
+  ): Promise<void> {
+    const { success, leaseTime } = await this.postTableExtend({
+      tableName: driver.getTableName(),
+    });
+
+    if (success) {
+      tableManager.leaseTime = leaseTime;
+
+      const currentTime = Math.floor(Date.now() / 1000);
+      const timeDiff = leaseTime - currentTime;
+
+      logMessage(`table will be reset in ${timeDiff} seconds`);
+    }
+
+    tableManager.toggleExtension();
   }
 
   async assignTable(): Promise<void> {
