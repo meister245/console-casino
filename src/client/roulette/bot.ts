@@ -53,13 +53,6 @@ class RouletteBot extends RESTClient {
     await sleep(5000);
     await this.setupTable(driver, tableManager);
 
-    logMessage(this.dryRun ? "DEVELOPMENT" : "PRODUCTION");
-
-    const currentTime = Math.floor(Date.now() / 1000);
-    const timeDiff = this.leaseTime - currentTime;
-
-    logMessage(`table will be reset in ${timeDiff} seconds`);
-
     await sleep(3000);
 
     while (this.running && this.tableName) {
@@ -143,11 +136,30 @@ class RouletteBot extends RESTClient {
       await this.assignTable();
     }
 
+    logMessage(this.dryRun ? "DEVELOPMENT" : "PRODUCTION");
+
     if (!driver.navigateLobbyTable(this.tableName)) {
       logMessage(`table ${this.tableName} not found`);
       await sleep(60 * 1000 * 10);
       await this.reload(tableManager);
     }
+
+    const resetTime = Math.floor(Date.now() / 1000) + 60;
+
+    while (!driver.getDealerName()) {
+      logMessage("waiting for table to load");
+
+      if (resetTime < Math.floor(Date.now() / 1000)) {
+        logMessage(`failed to load table`);
+        await this.reload(tableManager);
+      }
+
+      await sleep(1500);
+    }
+
+    const leaseExpireSeconds = this.leaseTime - Math.floor(Date.now() / 1000);
+
+    logMessage(`table will be reset in ${leaseExpireSeconds} seconds`);
   }
 
   async reload(tableManager: RouletteTableManager): Promise<void> {
