@@ -47,6 +47,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+  res.set("Content-Type", "application/javascript");
+  res.send(JSON.stringify({ success: true }, null, 2));
+});
+
 app.get("/client/:name", (req, res) => {
   res.set("Content-Type", "application/javascript");
 

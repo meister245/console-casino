@@ -4,22 +4,68 @@
 // @include     https://casino-com-flash.bfcdl.com/live_desktop/*
 // ==/UserScript==
 
+// === INSERT LOGIN CREDENTIALS ===
+
 const email = "";
 const password = "";
+const serverUrl = "http://localhost:8080";
 
-const liveCasinoUrlPattern = "https://casino.betfair.com/p/live-casino";
-const lobbyUrlPattern = "https://casino-com-flash.bfcdl.com/live_desktop";
+// ===
 
-const clientUrl = "http://localhost:8080/client/playtech";
+const runScript = () => {
+  const liveCasinoUrlPattern = "https://casino.betfair.com/p/live-casino";
+  const lobbyUrlPattern = "https://casino-com-flash.bfcdl.com/live_desktop";
 
-const main = () => {
   if (!betfairIsLoggedIn()) {
+    console.log("logging into casino");
     betfairLogin();
   } else if (window.location.href.includes(liveCasinoUrlPattern)) {
+    console.log("navigating to casino roulette lobby");
     betfairNavigateLobby();
   } else if (window.location.href.includes(lobbyUrlPattern)) {
-    loadScript(clientUrl);
+    console.log("loading console-casino client");
+    loadClientScript(`${serverUrl}/client/playtech`);
   }
+};
+
+const betfairLogin = () => {
+  const loginNameElement = document.querySelector("#ssc-liu");
+  const loginPasswordElement = document.querySelector("#ssc-lipw");
+  const loginSubmitElement = document.querySelector("#ssc-lis");
+
+  loginNameElement.value = email;
+  loginPasswordElement.value = password;
+
+  simulatedClick(loginSubmitElement);
+};
+
+const betfairIsLoggedIn = () => {
+  return document.querySelector("#ssc-liu") === null;
+};
+
+const betfairNavigateLobby = () => {
+  const casinoLauncherElement = document.querySelector(
+    '[href^="https://launcher.betfair.com/?gameId=live-roulette-cptl"]'
+  );
+
+  const lobbyUrl = casinoLauncherElement.href;
+
+  if (lobbyUrl) {
+    window.location.href = lobbyUrl;
+  }
+};
+
+const loadClientScript = (url) => {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    const headElement = document.getElementsByTagName("head")[0];
+
+    script.onload = resolve;
+    script.onerror = reject;
+    script.src = url;
+
+    headElement.appendChild(script);
+  });
 };
 
 const simulatedClick = (target) => {
@@ -63,44 +109,4 @@ const simulatedClick = (target) => {
   target.dispatchEvent(event);
 };
 
-const betfairLogin = () => {
-  const loginNameElement = document.querySelector("#ssc-liu");
-  const loginPasswordElement = document.querySelector("#ssc-lipw");
-  const loginSubmitElement = document.querySelector("#ssc-lis");
-
-  loginNameElement.value = email;
-  loginPasswordElement.value = password;
-
-  simulatedClick(loginSubmitElement);
-};
-
-const betfairIsLoggedIn = () => {
-  return document.querySelector("#ssc-liu") === null;
-};
-
-const betfairNavigateLobby = () => {
-  const casinoLauncherElement = document.querySelector(
-    '[href^="https://launcher.betfair.com/?gameId=live-roulette-cptl"]'
-  );
-
-  const lobbyUrl = casinoLauncherElement.href;
-
-  if (lobbyUrl) {
-    window.location.href = lobbyUrl;
-  }
-};
-
-const loadScript = (url) => {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    const headElement = document.getElementsByTagName("head")[0];
-
-    script.onload = resolve;
-    script.onerror = reject;
-    script.src = url;
-
-    headElement.appendChild(script);
-  });
-};
-
-main();
+runScript()

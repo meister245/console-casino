@@ -3,7 +3,7 @@
         "group": "singleMartingaleProgression",
         "bets": [
             {
-                "betSize": 1.0,
+                "betSize": 0.1,
                 "betType": "even",
                 "progression": [
                     0,
@@ -42,7 +42,7 @@
         "group": "singleMartingaleProgression",
         "bets": [
             {
-                "betSize": 1.0,
+                "betSize": 0.1,
                 "betType": "odd",
                 "progression": [
                     0,
@@ -81,7 +81,7 @@
         "group": "singleMartingaleProgression",
         "bets": [
             {
-                "betSize": 1.0,
+                "betSize": 0.1,
                 "betType": "high",
                 "progression": [
                     0,
@@ -120,7 +120,7 @@
         "group": "singleMartingaleProgression",
         "bets": [
             {
-                "betSize": 1.0,
+                "betSize": 0.1,
                 "betType": "low",
                 "progression": [
                     0,
@@ -159,7 +159,7 @@
         "group": "singleMartingaleProgression",
         "bets": [
             {
-                "betSize": 1.0,
+                "betSize": 0.1,
                 "betType": "red",
                 "progression": [
                     0,
@@ -198,7 +198,7 @@
         "group": "singleMartingaleProgression",
         "bets": [
             {
-                "betSize": 1.0,
+                "betSize": 0.1,
                 "betType": "black",
                 "progression": [
                     0,
